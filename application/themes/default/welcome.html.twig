@@ -1,0 +1,85 @@
+{% extends '_layout/index.html.twig' %}
+
+{% block jumbotron %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Hello, world!</h1>
+		<p>Control your electricity usage like you never thought possible</p>
+		<p><a class="btn btn-primary btn-lg" role="button" href="{{site_url('/start')}}">Get started &raquo;</a></p>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+
+<!-- START THE FEATURETTES -->
+
+{# <hr class="featurette-divider"> #}
+
+<div class="row featurette">
+	<div class="col-md-6">
+		<h2 class="featurette-heading">Watch our video. <span class="text-muted">It'll blow your mind.</span></h2>
+		<br/>
+		<p class="lead">Do you often find yourself turning appliances like TV's off with powerstrips to save on electicity? Today all that <strong>STOPS</strong>.</p>
+		<p class="lead">The {{proj_name}} is the future home power savings. Requiring <strong>minimal setup</strong>, the {{proj_name}} is the first commercially available energy management tool. </p>
+	</div>
+	<div class="col-md-5">
+		{# <iframe width="560" height="315" src="//www.youtube.com/embed/R85IYE3CXKo?rel=0" frameborder="0" allowfullscreen></iframe> #}
+		<img class="featurette-image img-responsive" src="http://placehold.it/500x500" alt="Generic placeholder image">
+	</div>
+</div>
+
+<hr class="featurette-divider">
+
+<div class="row featurette">
+	<div class="col-md-5">
+		<img class="featurette-image img-responsive" src="http://placehold.it/500x500" alt="Generic placeholder image">
+	</div>
+	<div class="col-md-7">
+		<br/>
+		<h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
+		<br/>
+		<p class="lead">Whith the prices of electronics dropping every day, Phantom Power is becomming a huge problem with more and more power consumed every day. This is especially frustrating for people who enjoy stunning audio visual displays.</p>
+		<p class="lead">The {{proj_name}} solves this problem by allowing users to monitor and control when appliances are using power. Through an inventive web interface you can begin controlling the power wasted by gadgets today!</p>
+	</div>
+</div>
+
+<hr class="featurette-divider">
+
+<div class="row featurette">
+	<div class="col-md-7">
+		<br/>
+		<h2 class="featurette-heading">We offer security and support. <span class="text-muted">Always.</span></h2>
+		<br/>
+		<p class="lead">Your textures <i>never</i> leave SecondLife. In fact they never leave your control. All your textures remain secure in your inventory.</p>
+	</div>
+	<div class="col-md-5">
+		<img class="featurette-image img-responsive" src="http://placehold.it/500x500" alt="Generic placeholder image">
+	</div>
+</div>
+
+<hr class="featurette-divider">
+<p class="lead">Are you ready to start saving on your electricity bill?</p>
+<p><a class="btn btn-primary btn-lg" role="button" href="{{site_url('/start')}}">Start now &raquo;</a></p>
+<!-- /END THE FEATURETTES -->
+
+{# <div class="row">
+	<div class="col-md-4">
+		<h2>Heading</h2>
+		<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+	</div>
+	<div class="col-md-4">
+		<h2>Heading</h2>
+		<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+		<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+	</div>
+	<div class="col-md-4">
+		<h2>Heading</h2>
+		<p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+		<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+	</div>
+</div> #}
+
+{% endblock %}

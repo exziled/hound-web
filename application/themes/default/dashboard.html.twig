@@ -1,0 +1,46 @@
+{% extends "_layout/index.html.twig" %}
+
+{% block head %}
+	{{ parent() }}
+{% endblock %}
+
+{% block content %}
+	<div class="page-header">
+		<h1>Dashboard <small>Your {{proj_name}} at a glance</small></h1>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Nodes</h3>
+		</div>
+		<div class="panel-body">
+			<p>You have {{numNodes}} nodes.</p>
+			{% if numNodes %}<a href="#">List them</a> |{% endif %}
+			<a href="#">Add some</a>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Account</h3>
+		</div>
+		<div class="panel-body">
+			<p>Waiting on email verification @todo</p>
+			<a>Resend the verification email</a>
+		</div>
+	</div>
+	{# <div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Servers</h3>
+		</div>
+		<div class="panel-body">
+			<p>You have {{numservers|default('0')}} Servers.</p>
+			{% if numservers %}
+				<a>Search them</a> | 
+			{% endif %}
+				<a>Add some</a>
+		</div>
+	</div> #}
+{% endblock %}
+
+{% block foot %}
+	{{ parent() }}
+{% endblock %}

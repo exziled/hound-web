@@ -22,7 +22,9 @@ class Welcome extends MY_Controller {
 	 */
 	public function index_get()
 	{
-		$this->load->view('welcome_message');
+		//$this->load->view('welcome_message');
+		$this->twiggy->title()->prepend('Home');
+		$this->twiggy->display('welcome');
 	}
 }
 
