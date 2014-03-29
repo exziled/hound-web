@@ -122,7 +122,11 @@ if (defined('ENVIRONMENT'))
  */
 	// $assign_to_config['name_of_config_item'] = 'value of config item';
 
-
+//@source: http://stackoverflow.com/questions/4882790/how-to-set-date-timezone-for-code-igniter-to-work-with-php5-3
+if( ! ini_get('date.timezone') )
+{
+   date_default_timezone_set('America/New_York');
+}
 
 // --------------------------------------------------------------------
 // END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
