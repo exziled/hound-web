@@ -39,7 +39,7 @@ class User_manager {
 	function save_user($full_name, $login, $password, $email, $active = 1, $permissions=array()) {        
 		
 		// first we must check if is a valid insert
-		if( ! $this->login_exists($login) && $full_name!= "") {
+		if( ! $this->login_exists($login)) {
 	
 			// generate the hashed password
 			$hashed_password = $this->CI->bcrypt->hash($password);
@@ -56,10 +56,10 @@ class User_manager {
 				// Return the new user id
 				return $new_user_id;
 			}
-		} else {
-			// Login already exists or full name is empty
-			return false;
 		}
+		// Login already exists or full name is empty
+		return false;
+		
 	}
     
 	// Delete the user
