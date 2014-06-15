@@ -80,14 +80,17 @@ class Login extends MY_Controller {
 		$this->session->set_message("Success",'You are now logged out.');
 		redirect('/'); //redirect to homepage
 	}
-	public function register_get($username = "")
+	public function register_get()
 	{
 		$this->twiggy->set('hidelogin', TRUE);
+		$this->twiggy->set('username', $this->session->flashdata('REG-username'));
 		$this->twiggy->display('register');
 
 	}
 	public function register_post()
 	{
+		$minpwlen = 5;
+		$minuserlen = 3;
 
 		$error = FALSE;
 
@@ -96,18 +99,49 @@ class Login extends MY_Controller {
 			$this->session->set_message("Danger",'That username is already registered. Did you forget your password?'.site_url('/login/forgot'));
 			$error = TRUE;
 		}
-		if ($this->input->post['password'] != $this->input->post['passwordverify']) {
+		if (empty($this->input->post('username'))) {
+			$this->session->set_message("Danger",'Username required');
+			$error = TRUE;
+		}
+		if (strlen($this->input->post('username')) < $minuserlen) {
+			$this->session->set_message("Danger",'Username must be at least '.$minuserlen.' characters');
+			$error = TRUE;
+		}
+
+		if (empty($this->input->post('password'))) {
+			$this->session->set_message("Danger",'Password required');
+			$error = TRUE;
+		}
+		if ($this->input->post('password') != $this->input->post('passwordverify')) {
 			$this->session->set_message("Danger",'Passwords do not match.');
 			$error = TRUE;
 		}
-		if (error) {
-			register_get($this->input->post('username'));
+		if (strlen($this->input->post('password')) < $minpwlen) {
+			$this->session->set_message("Danger",'Password must be at least '.$minpwlen.' characters');
+			$error = TRUE;
+		}
+
+		
+
+
+		if ($error) {
+			$this->session->set_flashdata('REG-username', $this->input->post('username'));
+			redirect("/register");
 		}
 		else
 		{
-			echo "Account created!";
-			//create account
-			//send to dashboard
+			$newuserid = $this->user_manager->save_user("", $this->input->post('username'), $this->input->post('password'), "");
+			if ($newuserid) {
+				//Log the user in
+				$this->user->login($this->input->post('username'), $this->input->post('password'));
+				$this->session->set_message("Success", "Account Created! Welcome ".$this->input->post('username'));
+				redirect("/dashboard");
+			}
+			else
+			{
+				echo "There was an error creating your account. An Administrator has been notified.";
+				//@todo tell an admin
+			}
 		}
 	}
 
