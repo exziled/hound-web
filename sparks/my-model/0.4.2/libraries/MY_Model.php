@@ -1,23 +1,25 @@
 <?php
 /**
- * @name		CodeIgniter Base Model
- * @author		Jens Segers
- * @contributor	Jamie Rumbelow <http://jamierumbelow.net>
- * @link		http://www.jenssegers.be
- * @license		MIT License Copyright (c) 2012 Jens Segers
- * 
+ * @name        CodeIgniter Base Model
+ * @author      Jens Segers
+ * @contributor Jamie Rumbelow <http://jamierumbelow.net>
+ * @link        http://www.jenssegers.be
+ * @license     MIT License Copyright (c) 2012 Jens Segers
+ *
+ * @source      http://getsparks.org/packages/my-model/versions/HEAD/show
+ *
  * This model is based on Jamie Rumbelow's model with some personal modifications
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -34,23 +36,23 @@ if (!class_exists('CI_Model'))
     require_once (BASEPATH . 'core/Model.php');
 
 class MY_Model extends CI_Model {
-    
+
     /*
      * Your database table, if not set the name will be guessed
      */
     protected $table = NULL;
-    
+
     /*
      * The primary key name, by default set to 'id'
      */
     protected $primary_key = 'id';
-    
+
     /*
      * The database table fields, used for filtering data arrays before inserting and updating
-	 * If not set, an additional query will be made to fetch these fields
+     * If not set, an additional query will be made to fetch these fields
      */
     protected $fields = array();
-    
+
     /*
      * Callbacks, should contain an array of methods
      */
@@ -62,26 +64,26 @@ class MY_Model extends CI_Model {
     protected $after_get = array();
     protected $before_delete = array();
     protected $after_delete = array();
-    
+
     /*
      * Database result mode, choose between object and array
      * Depending on this value result() or result_array() will be used internally
      */
     protected $result_mode = 'array';
-    
+
     /*
      * Validation, should contain validation arrays like the form validation
      */
     protected $validate = array();
-    
+
     /*
      * Skip the validation
      */
     protected $skip_validation = FALSE;
-    
+
     /**
      * Magic function that passes unrecognized method calls to the database class for chaining
-     * 
+     *
      * @param string $method
      * @param array $params
      * @return void
@@ -92,7 +94,7 @@ class MY_Model extends CI_Model {
             return $this;
         }
     }
-    
+
     /**
      * Get a single record with matching WHERE parameters
      *
@@ -105,42 +107,42 @@ class MY_Model extends CI_Model {
 
         $where = $this->_callbacks('before_get', array($where));
         $this->_set_where($where);
-        
+
         if ($this->result_mode == 'object') {
             $row = $this->db->get($this->_table())->row();
         } else {
             $row = $this->db->get($this->_table())->row_array();
         }
-        
+
         $row = $this->_callbacks('after_get', array($row));
-        
+
         return $row;
     }
-    
+
     /**
      * Get all records from the database
-     * 
+     *
      * @return array
      */
     public function get_all() {
         $where = & func_get_args();
-        
+
         $where = $this->_callbacks('before_get', array($where));
         $this->_set_where($where);
-        
+
         if ($this->result_mode == 'object') {
             $result = $this->db->get($this->_table())->result();
         } else {
             $result = $this->db->get($this->_table())->result_array();
         }
-        
+
         foreach ($result as &$row) {
             $row = $this->_callbacks('after_get', array($row));
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Get multiple records from the database with matching WHERE parameters
      * Alias for get_all, created for when get_all does not sound good enough
@@ -152,7 +154,7 @@ class MY_Model extends CI_Model {
     public function get_many() {
         return $this->get_all();
     }
-    
+
     /**
      * Insert a new record into the database
      * Returns the insert ID
@@ -163,25 +165,90 @@ class MY_Model extends CI_Model {
      */
     public function insert($data, $skip_validation = FALSE) {
         $valid = TRUE;
-        
+
         if ($skip_validation === FALSE) {
             $valid = $this->_run_validation($data);
         }
-        
+
         if ($valid) {
             $data = $this->_callbacks('before_create', array($data));
-            
+
             $data = array_intersect_key($data, array_flip($this->_fields()));
             $this->db->insert($this->_table(), $data);
-            
+
             $this->_callbacks('after_create', array($data, $this->db->insert_id()));
-            
+
             return $this->db->insert_id();
         } else {
             return FALSE;
         }
     }
-    
+
+    public function insert_string($data)
+    {
+        return $this->db->insert_string($this->_table(), $data);
+    }
+
+    /**
+     * Inserts or Updates the information on the given table.
+     * @param <string> $table the name of the table to work with
+     * @param <array> $data field => value
+     * Added by Techplex Engineer
+     */
+    public function insertOrUpdate($info, $table=false) {
+
+        if (!$table)
+            $table = $this->table;
+
+        if (!is_array($info))
+            return "First parameter to insertOrUpdate must be an array.";
+
+        //Will handle querys with one or more entries to IoU
+        if (!is_array(@$info[0]))
+            $info = array($info);
+
+        foreach ($info as $data) {
+            //Removes submit
+            //$data = $this->stripSubmit($data);
+
+            $fields = "";
+            $values = "";
+            //Build the list of csv properly quoted
+            if (!is_array($data))
+                die("Not Array: " . $data);
+            foreach ($data as $key => $val) {
+                $fields .= "`" . mysql_real_escape_string($key) . "`, ";
+                $values .= "'" . mysql_real_escape_string($val) . "', ";
+            }
+
+            $fields = substr($fields, 0, -2); //cuts off the space and comma at the end
+            $values = substr($values, 0, -2); //cuts off the space and comma at the end
+            //Write the update portion of the query
+            $update = "";
+            foreach ($data as $key => $val) {
+                $update .= "`" . mysql_real_escape_string($key) . "` = '" . mysql_real_escape_string($val) . "', ";
+            }
+            $update = substr($update, 0, -2); //cuts off the space and comma at the end
+
+            $sql = "INSERT INTO " . $table . " (" . $fields . ") VALUES (" . $values . ")
+                                ON DUPLICATE KEY UPDATE " . $update . ";";
+
+            //Prevent Database Injection //@todo
+            //Run query
+            $qry = mysql_query($sql); // or die(mysql_error());
+        }
+        if (mysql_error())
+        {
+            echo $sql . "<br>\n" . mysql_error();
+            return FALSE;
+        }
+        else
+        {
+            return TRUE;
+        }
+        //echo $sql;
+    }
+
     /**
      * Update a record, specified by an ID.
      *
@@ -191,26 +258,26 @@ class MY_Model extends CI_Model {
      */
     public function update($primary_value, $data, $skip_validation = FALSE) {
         $valid = TRUE;
-        
+
         $data = $this->_callbacks('before_update', array($data, $primary_value));
-        
+
         if ($skip_validation === FALSE) {
             $valid = $this->_run_validation($data);
         }
-        
+
         if ($valid) {
             $data = array_intersect_key($data, array_flip($this->_fields()));
-            
+
             $result = $this->db->where($this->primary_key, $primary_value)->set($data)->update($this->_table());
-            
+
             $this->_callbacks('after_update', array($data, $primary_value, $result));
-            
+
             return $this->db->affected_rows();
         } else {
             return FALSE;
         }
     }
-    
+
     /**
      * Delete a row from the database based on a WHERE parameters
      *
@@ -220,17 +287,17 @@ class MY_Model extends CI_Model {
      */
     public function delete() {
         $where = & func_get_args();
-        
+
         $where = $this->_callbacks('before_delete', array($where));
         $this->_set_where($where);
-        
+
         $result = $this->db->delete($this->_table());
-        
+
         $this->_callbacks('after_delete', array($where, $result));
-        
+
         return $this->db->affected_rows();
     }
-    
+
     /**
      * Count the number of rows based on a WHERE parameters
      *
@@ -241,10 +308,10 @@ class MY_Model extends CI_Model {
     public function count_all_results() {
         $where = & func_get_args();
         $this->_set_where($where);
-        
+
         return $this->db->count_all_results($this->_table());
     }
-    
+
     /**
      * Return a count of every row in the table
      *
@@ -253,10 +320,10 @@ class MY_Model extends CI_Model {
     public function count_all() {
         return $this->db->count_all($this->_table());
     }
-    
+
     /**
      * An easier limit function
-     * 
+     *
      * @param integer $limit
      * @param integer $offset
      */
@@ -268,16 +335,16 @@ class MY_Model extends CI_Model {
         }
         return $this;
     }
-    
+
     /**
      * List all table fields
-     * 
+     *
      * @return array $fields
      */
     public function list_fields() {
         return $this->db->list_fields($this->_table());
     }
-    
+
     /**
      * Retrieve and generate a dropdown-friendly array of the data
      * in the table based on a key and a value.
@@ -288,19 +355,19 @@ class MY_Model extends CI_Model {
      */
     public function dropdown() {
         $args = & func_get_args();
-        
+
         if (count($args) == 2) {
             list($key, $value) = $args;
         } else {
             $key = $this->primary_key;
             $value = $args[0];
         }
-        
+
         $this->_callbacks('before_get', array($key, $value));
-        
+
         if ($this->result_mode == 'object') {
             $result = $this->db->select(array($key, $value))->get($this->_table())->result();
-            
+
             $options = array();
             foreach ($result as $row) {
                 $row = $this->_callbacks('after_get', array($row));
@@ -308,17 +375,17 @@ class MY_Model extends CI_Model {
             }
         } else {
             $result = $this->db->select(array($key, $value))->get($this->_table())->result_array();
-            
+
             $options = array();
             foreach ($result as $row) {
                 $row = $this->_callbacks('after_get', array($row));
                 $options[$row[$key]] = $row[$value];
             }
         }
-        
+
         return $options;
     }
-    
+
     /**
      * Skip the insert validation for future calls
      */
@@ -326,23 +393,23 @@ class MY_Model extends CI_Model {
         $this->skip_validation = $bool;
         return $this;
     }
-    
+
     /**
      * Run the specific callbacks, each callback taking a $data
      * variable and returning it
      */
     private function _callbacks($name, $params = array()) {
         $data = (isset($params[0])) ? $params[0] : FALSE;
-        
+
         if (!empty($this->$name)) {
             foreach ($this->$name as $method) {
                 $data = call_user_func_array(array($this, $method), $params);
             }
         }
-        
+
         return $data;
     }
-    
+
     /**
      * Runs validation on the passed data.
      *
@@ -352,17 +419,17 @@ class MY_Model extends CI_Model {
         if ($this->skip_validation) {
             return TRUE;
         }
-        
+
         if (!empty($this->validate)) {
             foreach ($data as $key => $val) {
                 $_POST[$key] = $val;
             }
-            
+
             $this->load->library('form_validation');
-            
+
             if (is_array($this->validate)) {
                 $this->form_validation->set_rules($this->validate);
-                
+
                 return $this->form_validation->run();
             } else {
                 return $this->form_validation->run($this->validate);
@@ -371,7 +438,7 @@ class MY_Model extends CI_Model {
             return TRUE;
         }
     }
-    
+
     /**
      * Sets WHERE depending on the number of parameters, has 4 modes:
      * 1. ($id) primary key value mode
@@ -394,7 +461,7 @@ class MY_Model extends CI_Model {
             }
         }
     }
-    
+
     /**
      * Return or fetch the database fields
      */
@@ -404,7 +471,7 @@ class MY_Model extends CI_Model {
         }
         return $this->fields;
     }
-    
+
     /**
      * Return or guess the database table
      */
