@@ -110,7 +110,7 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array();
+$autoload['model'] = array('device_group','devices','devices_device_group');
 
 
 /*
@@ -123,7 +123,7 @@ $autoload['model'] = array();
 |
 */
 
-$autoload['sparks'] = array('Twiggy/0.8.5', 'codeigniter-user/1.3.0');//, 'my-model/0.4.2'
+$autoload['sparks'] = array('Twiggy/0.8.5', 'codeigniter-user/1.3.0', 'my-model/0.4.2');
 
 /* End of file autoload.php */
 /* Location: ./application/config/autoload.php */

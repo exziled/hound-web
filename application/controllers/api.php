@@ -5,23 +5,59 @@ class api extends MY_Controller {
 	function  __construct()  {
 		parent::__construct();
 	}
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -  
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in 
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see http://codeigniter.com/user_guide/general/urls.html
-	 */
+
 	public function index_get()
 	{
 		echo "API";
+		// $this->post('fred')
+	}
+
+	public function device_get($id=null)
+	{
+		if (is_null($id))
+		{
+			$device = $this->devices
+			->get_all();
+		}
+		else
+		{
+			$device = $this->devices
+			->where('device_id',$id)
+			->get();
+		}
+
+		$this->response($device, 200);
+	}
+
+	public function device_group_get($id=null)
+	{
+		if (is_null($id))
+		{
+			$device = $this->device_group
+			->get_all();
+		}
+		else
+		{
+			$device = $this->device_group
+			->where('device_group_id',$id)
+			->get();
+		}
+
+		$this->response($device, 200);
+	}
+	public function devices_in_group_get($groupid=null)
+	{
+		if (is_null($groupid))
+		{
+			$this->response(array("status"=>"failure", "message"=>"Group ID required"), 400);
+		}
+		else
+		{
+			$devicesingrp = $this->devices
+				->join("devices_device_group AS map", "map.device_id = devices.device_id")
+				->where('map.device_group_id',$groupid)
+				->get_all();
+			$this->response($devicesingrp, 200);
+		}
 	}
 }
