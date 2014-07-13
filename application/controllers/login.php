@@ -99,7 +99,7 @@ class Login extends MY_Controller {
 			$this->session->set_message("Danger",'That username is already registered. Did you forget your password?'.site_url('/login/forgot'));
 			$error = TRUE;
 		}
-		if (empty($this->input->post('username'))) {
+		if ($this->input->post('username')) {
 			$this->session->set_message("Danger",'Username required');
 			$error = TRUE;
 		}
@@ -108,7 +108,7 @@ class Login extends MY_Controller {
 			$error = TRUE;
 		}
 
-		if (empty($this->input->post('password'))) {
+		if ($this->input->post('password')) {
 			$this->session->set_message("Danger",'Password required');
 			$error = TRUE;
 		}
