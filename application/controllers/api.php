@@ -22,6 +22,6 @@ class api extends MY_Controller {
 	 */
 	public function index_get()
 	{
-		echo "API"
+		echo "API";
 	}
 }
