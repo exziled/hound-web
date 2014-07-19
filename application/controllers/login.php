@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Login extends MY_Controller {
 
@@ -7,13 +7,13 @@ class Login extends MY_Controller {
 
 		// Load the Library
 		$this->load->library(array('user', 'user_manager'));
-        $this->load->helper('url');
+		$this->load->helper('url');
 	}
 
 	public function index_get()
 	{
 		// If user is already logged in, send them to dashboard
-		$this->user->on_valid_session('dashboard');
+		$this->user->on_valid_session('/dashboard');
 
 		// Let's just have login from the homepage
 		redirect("/");
@@ -60,7 +60,7 @@ class Login extends MY_Controller {
 		 * It also creates the user session.
 		*/
 		if($this->user->login($login, $password)){
-			$this->session->set_message("Success","Logged in as ".$this->user->user_data->name);
+			$this->session->set_message("Success","Logged in as ".$this->user->user_data->login);
 			// Success
 			redirect('dashboard');
 		} else {
@@ -82,6 +82,7 @@ class Login extends MY_Controller {
 	}
 	public function register_get()
 	{
+		$this->user->on_valid_session("/dashboard");
 		$this->twiggy->set('hidelogin', TRUE);
 		$this->twiggy->set('username', $this->session->flashdata('REG-username'));
 		$this->twiggy->display('register');

@@ -14,8 +14,8 @@
 		</div>
 		<div class="panel-body">
 			<p>You have {{numNodes}} nodes.</p>
-			{% if numNodes %}<a href="#">List them</a> |{% endif %}
-			<a href="#">Add some</a>
+			{% if numNodes %}<a href="{{site_url("devices")}}">List them</a> |{% endif %}
+			<a href="{{site_url("devices/add")}}">Add some</a>
 		</div>
 	</div>
 	<div class="panel panel-default">

@@ -1,0 +1,41 @@
+{% extends "_layout/index.html.twig" %}
+
+{% block head %}
+	{{ parent() }}
+{% endblock %}
+
+{% block content %}
+	<div class="page-header">
+		<h1>{{proj_name}} List <small>How many {{proj_name}}s do you have?</small></h1>
+	</div>
+	<div class="container">
+		<div class="row">
+		{% if devices %}
+			<table class="table">
+				<thead>
+					<tr>
+						{% for key in devices[0]|keys %}
+							<th>{{ key }}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody>
+					{% for device in devices %}
+						<tr>
+							{% for property in device %}
+								<td>{{ property }}</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% else %}
+			No Devices
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block foot %}
+	{{ parent() }}
+{% endblock %}
