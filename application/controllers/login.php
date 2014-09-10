@@ -35,7 +35,7 @@ class Login extends MY_Controller {
 		// 		->order_by('timestamp')
 		// 		->count_all_results();
 		// }
-		$this->twiggy->set('numNodes', 1); //@todo get this from database
+		$this->twiggy->set('numNodes', $this->devices_model->getDevicesForUser($this->user->user_data->id, true)); //@todo get this from database
 		$this->twiggy->title()->prepend('Dashboard');
 		$this->twiggy->display('dashboard');
 	}

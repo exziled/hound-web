@@ -11,7 +11,8 @@ class Devices_model extends MY_Model {
 		'name',
 		'access_token',
 		'form_factor',
-		'date_activated'
+		'date_activated',
+		'last_checkin'
 	);
 
 	function __construct()
@@ -20,18 +21,28 @@ class Devices_model extends MY_Model {
 		parent::__construct();
 	}
 
-	public function getDevicesForUser($user_id)
+	public function getDevicesForUser($user_id, $count=false)
 	{
-		$devices = $this->devices_model
-			->select("device_id as ID")
-			// ->select("Core_id as UUID")
-			->select("devices.name as Name")
-			->select("CONCAT(`form_factor`.`name`, ' (', `form_factor`.`socket_count`,')') as `Form Factor`",false)
-			// ->select("CONCAT('a','b')")
-			->select("date_activated as `Date Added`")
-			->where('user_id',$this->user->user_data->id)
-			->join('form_factor','devices.form_factor=form_factor.form_factor_id')
-			->get_all();
-		return $devices;
+		if ($count) {
+			$devices = $this
+				->where('user_id',$user_id)
+				->count_all_results();
+			return $devices;
+		} else {
+			$devices = $this
+				->select("device_id as ID")
+				// ->select("Core_id as 'Core ID'")
+				->select("devices.name as Name")
+				//->select("CONCAT(`form_factor`.`name`, ' (', `form_factor`.`socket_count`,')') as `Form Factor`",false)
+				->select("`form_factor`.`name` as `Form Factor`")
+				->select("`form_factor`.`socket_count` as `Sockets`")
+				->select("date_activated as `Date Added`")
+				->where('user_id',$user_id)
+				->join('form_factor','devices.form_factor=form_factor.form_factor_id')
+				->get_all();
+
+			echo $this->db->last_query();
+			return $devices;
+		}
 	}
 }
