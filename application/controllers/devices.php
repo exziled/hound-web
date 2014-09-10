@@ -7,6 +7,9 @@ class Devices extends MY_Controller {
 
 	}
 
+	/**
+	 * Display a list of the users devices
+	 */
 	public function index_get()
 	{
 		$devices = $this->device_model->getDevicesForUser($this->user->user_data->id);
@@ -31,11 +34,18 @@ class Devices extends MY_Controller {
 		$this->twiggy->display('devices');
 	}
 
+	/**
+	 * Display the add device page
+	 */
 	public function add_get()
 	{
 		$this->twiggy->title()->prepend('Add Devices');
 		$this->twiggy->display('devices_add');
 	}
+
+	/**
+	 * Handle submissions from the add device page
+	 */
 	public function add_post()
 	{
 		//@todo input validation
@@ -48,6 +58,9 @@ class Devices extends MY_Controller {
 		if ($ret)
 		{
 			$this->session->set_message("Success",'New device successfully added.');
+			//@todo send post to spark core
+
+
 		}
 		else
 		{
