@@ -81,7 +81,7 @@ $autoload['helper'] = array('url', 'httprequest');
 |
 */
 
-$autoload['config'] = array();
+$autoload['config'] = array('_hound');
 
 
 /*

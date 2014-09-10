@@ -90,8 +90,8 @@ class Login extends MY_Controller {
 	}
 	public function register_post()
 	{
-		$minpwlen = 5;
-		$minuserlen = 3;
+		$minpwlen = $this->config->item('min_pw_len');
+		$minuserlen = $this->config->item('min_username_len');
 
 		$error = FALSE;
 
