@@ -65,7 +65,7 @@ $autoload['libraries'] = array('database', 'session');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url');
+$autoload['helper'] = array('url', 'httprequest');
 
 
 /*
@@ -110,7 +110,7 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array('device_group','devices_model','devices_device_group');
+$autoload['model'] = array('device_group','device_model','devices_device_group');
 
 
 /*

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Devices_model extends MY_Model {
+class Device_model extends MY_Model {
 
 	protected $table = "devices";
 	protected $primary_key = "device_id";
@@ -37,6 +37,7 @@ class Devices_model extends MY_Model {
 				->select("`form_factor`.`name` as `Form Factor`")
 				->select("`form_factor`.`socket_count` as `Sockets`")
 				->select("date_activated as `Date Added`")
+				->select("last_checkin as `Last Checkin`")
 				->where('user_id',$user_id)
 				->join('form_factor','devices.form_factor=form_factor.form_factor_id')
 				->get_all();

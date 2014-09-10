@@ -16,12 +16,12 @@ class api extends MY_Controller {
 	{
 		if (is_null($id))
 		{
-			$device = $this->devices_model
+			$device = $this->device_model
 			->get_all();
 		}
 		else
 		{
-			$device = $this->devices_model
+			$device = $this->device_model
 			->where('device_id',$id)
 			->get();
 		}
@@ -53,7 +53,7 @@ class api extends MY_Controller {
 		}
 		else
 		{
-			$devicesingrp = $this->devices_model
+			$devicesingrp = $this->device_model
 				->join("devices_device_group AS map", "map.device_id = devices.device_id")
 				->where('map.device_group_id',$groupid)
 				->get_all();

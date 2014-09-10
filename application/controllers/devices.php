@@ -9,7 +9,7 @@ class Devices extends MY_Controller {
 
 	public function index_get()
 	{
-		$devices = $this->devices_model->getDevicesForUser($this->user->user_data->id);
+		$devices = $this->device_model->getDevicesForUser($this->user->user_data->id);
 		// print_r($devices);
 		// exit();
 		foreach ($devices as $device => $prop) {
@@ -43,7 +43,7 @@ class Devices extends MY_Controller {
 		$data = $this->input->post();
 		$data['user_id'] = $this->user->user_data->id;
 
-		$ret = $this->devices_model
+		$ret = $this->device_model
 			->insert($data);
 		if ($ret)
 		{
@@ -57,8 +57,58 @@ class Devices extends MY_Controller {
 		redirect("/devices");
 
 	}
-	public function edit_get()
+	/**
+	 * Display the device edit page
+	 */
+	public function edit_get($id)
 	{
 		echo "here";
+	}
+
+	/**
+	 * Handle submissions from the edit device page
+	 */
+	public function edit_post()
+	{
+		echo "so you want to change that device do you?";
+	}
+
+	/**
+	 * display details about a spesificc hound device
+	 * @return [type]
+	 */
+	public function details_get($id)
+	{
+		echo $id;
+	}
+
+	public function refresh_get($id)
+	{
+	// 	$url = "https://api.spark.io/v1/devices/48ff6c065067555026311387/tempc?access_token=b122a221bf419da7491e4fca108f1835a2794451";
+	// 	print_r(parse_url($url));
+	// 	exit();
+
+		$devices = $this->device_model
+			->where('device_id', $id)
+			->get();
+		// print_r($devices);
+		// exit();
+
+		$function = 'tempc';//'activate';
+		$url = $this->config->item('core_url');
+
+		$url = str_replace('$(FUNCTION)', $function, $url);
+		$url = str_replace('$(COREID)', $devices['core_id'], $url);
+		$url = str_replace('$(ACCESS_TOKEN)', $devices['access_token'], $url);
+		// echo $url;
+
+		$request = new HTTPRequest($url, 'POST');
+		// $request->setRawPostData(http_build_query($data));
+		$request->send();
+		$response = $request->getResponseBody();
+		echo $response;
+		// $arrresponse = json_decode($response);
+		// if (!is_null($arrresponse))
+		// $response = $arrresponse;
 	}
 }
