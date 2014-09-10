@@ -19,7 +19,16 @@ class Devices extends MY_Controller {
 			// echo $devices[$device]['ID'];
 			$id = $devices[$device]['ID'];
 			unset($devices[$device]['ID']);
-			$devices[$device]['Name'] = "<a href=\"".site_url("/devices/edit")."\" title=\"Click to edit\">".$devices[$device]['Name']."</a>";
+			// $devices[$device]['Name'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">".$devices[$device]['Name']."</a>";
+			$devices[$device]['Operations'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">Edit</a>";
+			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/details/".$id)."\" title=\"Click to view details\">Details</a>";
+			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/refresh/".$id)."\" title=\"Click to request refresh\">Refresh</a>";
+
+			if ($devices[$device]['Last Checkin'] == "0000-00-00 00:00:00") {
+				$devices[$device]['Last Checkin'] = "Checkin pending";
+			} else {
+				$devices[$device]['Last Checkin'] = $newDate = date("g:ia M jS, Y", strtotime($devices[$device]['Last Checkin']));
+			}
 
 			$date = $devices[$device]['Date Added'];
 			$devices[$device]['Date Added'] = $newDate = date("g:ia M jS, Y", strtotime($date));
