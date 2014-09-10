@@ -3,6 +3,8 @@
 /*
  *  simple HttpRequest example using PHP
  *  tom slankard
+ *  https://gist.github.com/twslankard/989974
+ *  http://stackoverflow.com/a/20621965/429544
  */
 
 class HttpRequest {
@@ -22,6 +24,7 @@ class HttpRequest {
   private $response_message = null;
   private $port = null;
   private $verbose = true;
+  private $raw_post_data = "";
 
   public function __construct($url, $method = 'GET') {
 
@@ -48,6 +51,13 @@ class HttpRequest {
     $this->headers["Connection"] = "close";
 
   }
+  public function setRawPostData($data)
+  {
+    if ($this->method != "POST") {
+      return false;
+    }
+    $this->raw_post_data = $data;
+  }
 
   private function constructRequest() {
     $path = "/";
@@ -58,7 +68,10 @@ class HttpRequest {
     foreach($this->headers as $header => $value) {
       $req .= "$header: $value\r\n";
     }
-  
+    $req .= "Content-Length: ".strlen($this->raw_post_data)."\r\n";
+    $req .= "\r\n";
+    $req .= $this->raw_post_data;
+
     return "$req\r\n";
   }
 
@@ -79,6 +92,7 @@ class HttpRequest {
   public function send() {
 
     $fp = fsockopen($this->host_ip, $this->port);
+    if (! $fp) return False;
 
     //  construct request
     $request = $this->constructRequest();
@@ -98,7 +112,7 @@ class HttpRequest {
     if(!isset($status[1]))
       die("Couldn't get HTTP response code from response.");
     else $this->response_code = $status[1];
-    
+
     //  get the reason, e.g. "not found"
     if(!isset($status[2]))
       die("Couldn't get HTTP response reason from response.");
@@ -107,8 +121,8 @@ class HttpRequest {
     //  read the headers
     do {
       $line = $this->readLine($fp);
-      if($line != "") { 
-        $header = split(":", $line);
+      if($line != "") {
+        $header = explode(":", $line);
 
         $this->response_headers[$header[0]] = ltrim($header[1]);
       }
@@ -142,11 +156,3 @@ class HttpRequest {
   }
 
 }
-
-
-$req = new HttpRequest("http://www.iana.org/domains/example/", "GET");
-$req->headers["Connection"] = "close";
-$req->send() or die("Couldn't send!");
-echo( $req->getResponseBody() );
-
-?>
