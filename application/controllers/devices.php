@@ -106,9 +106,10 @@ class Devices extends MY_Controller {
 
 	public function refresh_get($id)
 	{
-	// 	$url = "https://api.spark.io/v1/devices/48ff6c065067555026311387/tempc?access_token=b122a221bf419da7491e4fca108f1835a2794451";
-	// 	print_r(parse_url($url));
-	// 	exit();
+		// $url = " https://api.spark.io/v1/devices/48ff6c065067555026311387/tempc?access_token=b122a221bf419da7491e4fca108f1835a2794451";
+		// echo $url;
+		// print_r(parse_url($url));
+		// exit();
 
 		$devices = $this->device_model
 			->where('device_id', $id)
@@ -122,15 +123,27 @@ class Devices extends MY_Controller {
 		$url = str_replace('$(FUNCTION)', $function, $url);
 		$url = str_replace('$(COREID)', $devices['core_id'], $url);
 		$url = str_replace('$(ACCESS_TOKEN)', $devices['access_token'], $url);
+		$url = trim($url);
 		// echo $url;
+		// exit();
+		// 
+		// $ch = curl_init();
+		// curl_setopt($ch, CURLOPT_URL,"https://api.spark.io/v1/devices/" . $devices['core_id'] . "/$function");
+		// curl_setopt($ch, CURLOPT_POST, 1);
+		// curl_setopt($ch, CURLOPT_POSTFIELDS,"access_token=" . $devices['access_token']);
+		// echo curl_exec ($ch);
+		// curl_close ($ch);
+		// 
+		$response = curl_post($url);
 
-		$request = new HTTPRequest($url, 'POST');
-		// $request->setRawPostData(http_build_query($data));
-		$request->send();
-		$response = $request->getResponseBody();
-		echo $response;
-		// $arrresponse = json_decode($response);
-		// if (!is_null($arrresponse))
+		// $request = new HTTPRequest($url, 'POST');
+		// // $request->setRawPostData(http_build_query($data));
+		// $request->send();
+		// $response = $request->getResponseBody();
+		// echo $response;
+		$response = json_decode($response, true);
+		if (!is_null($response))
+			print_r($response);
 		// $response = $arrresponse;
 	}
 }
