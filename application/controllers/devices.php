@@ -4,7 +4,7 @@ class Devices extends MY_Controller {
 
 	function __construct(){
 		parent::__construct();
-
+		$this->user->on_invalid_session('/');
 	}
 
 	/**
@@ -12,6 +12,7 @@ class Devices extends MY_Controller {
 	 */
 	public function index_get()
 	{
+		
 		$devices = $this->device_model->getDevicesForUser($this->user->user_data->id);
 		// print_r($devices);
 		// exit();
@@ -106,16 +107,10 @@ class Devices extends MY_Controller {
 
 	public function refresh_get($id)
 	{
-		// $url = " https://api.spark.io/v1/devices/48ff6c065067555026311387/tempc?access_token=b122a221bf419da7491e4fca108f1835a2794451";
-		// echo $url;
-		// print_r(parse_url($url));
-		// exit();
-
+		//lookup the core ID in the DB
 		$devices = $this->device_model
 			->where('device_id', $id)
 			->get();
-		// print_r($devices);
-		// exit();
 
 		$function = 'tempc';//'activate';
 		$url = $this->config->item('core_url');
@@ -124,26 +119,12 @@ class Devices extends MY_Controller {
 		$url = str_replace('$(COREID)', $devices['core_id'], $url);
 		$url = str_replace('$(ACCESS_TOKEN)', $devices['access_token'], $url);
 		$url = trim($url);
-		// echo $url;
-		// exit();
-		// 
-		// $ch = curl_init();
-		// curl_setopt($ch, CURLOPT_URL,"https://api.spark.io/v1/devices/" . $devices['core_id'] . "/$function");
-		// curl_setopt($ch, CURLOPT_POST, 1);
-		// curl_setopt($ch, CURLOPT_POSTFIELDS,"access_token=" . $devices['access_token']);
-		// echo curl_exec ($ch);
-		// curl_close ($ch);
-		// 
+		
 		$response = curl_post($url);
 
-		// $request = new HTTPRequest($url, 'POST');
-		// // $request->setRawPostData(http_build_query($data));
-		// $request->send();
-		// $response = $request->getResponseBody();
-		// echo $response;
 		$response = json_decode($response, true);
 		if (!is_null($response))
 			print_r($response);
-		// $response = $arrresponse;
+
 	}
 }
