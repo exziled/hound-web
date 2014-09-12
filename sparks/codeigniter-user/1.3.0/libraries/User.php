@@ -104,7 +104,7 @@ class User {
 	*/
 	function on_invalid_session($destiny){
 		if(!$this->validate_session()){
-			$this->CI->session->set_flashdata('error_message', 'Invalid session.');
+			$this->CI->session->set_message("Danger","Sorry! That page only works if you are logged in!");
 			redirect($destiny);
 		}
 	}
