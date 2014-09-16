@@ -124,7 +124,16 @@ class Devices extends MY_Controller {
 
 		$response = json_decode($response, true);
 		if (!is_null($response))
+		{
 			print_r($response);
+			if ($response['id'] == $devices['core_id']) {
+				if ($response['return_value'] == 0) {
+					//core subscription created
+				} else {
+					//set the core in an error state
+				}
+			}
+		}
 
 	}
 }
