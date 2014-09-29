@@ -1,7 +1,18 @@
 {% extends "_layout/index.html.twig" %}
 
+
+
 {% block head %}
 	{{ parent() }}
+	<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io('http://localhost:3000');
+		socket.on('news', function (data) {
+			console.log(data);
+			// socket.emit('my other event', { my: 'data' });
+			$('#list').append($('<li>').text(JSON.stringify(data)));
+		});
+	</script>
 {% endblock %}
 
 {% block content %}
@@ -39,4 +50,6 @@
 
 {% block foot %}
 	{{ parent() }}
+	<h1>Heading</h1>
+	<ul id="list"></ul>
 {% endblock %}
