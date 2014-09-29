@@ -12,8 +12,14 @@
 * @param array $options for cURL
 * @return string
 */
-function curl_post($url, array $post = NULL, array $options = array())
+function curl_post($url, $post = NULL, array $options = array())
 {
+    $body = "";
+    if (!is_null($post) && is_array($post)) {
+        $body = http_build_query($post);
+    } else {
+        $body = $post;
+    }
     $defaults = array(
         CURLOPT_POST => 1,
         CURLOPT_HEADER => 0,
@@ -22,7 +28,7 @@ function curl_post($url, array $post = NULL, array $options = array())
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_FORBID_REUSE => 1,
         CURLOPT_TIMEOUT => 4,
-        CURLOPT_POSTFIELDS => (!is_null($post)?http_build_query($post):'')
+        CURLOPT_POSTFIELDS => $body
     );
 
     $ch = curl_init();
