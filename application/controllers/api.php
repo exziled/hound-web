@@ -60,4 +60,9 @@ class api extends MY_Controller {
 			$this->response($devicesingrp, 200);
 		}
 	}
+
+	public function core_data_post()
+	{
+		error_log("Core Data:".print_r($this->post()));
+	}
 }

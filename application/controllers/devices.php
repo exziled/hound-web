@@ -105,6 +105,14 @@ class Devices extends MY_Controller {
 		echo $id;
 	}
 
+	public function log_test_get($value='')
+	{
+		echo "wrote to log";
+		log_message('error', $value+"message");
+		error_log("test");
+
+	}
+
 	public function refresh_get($id)
 	{
 		//lookup the core ID in the DB
