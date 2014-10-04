@@ -42,7 +42,7 @@ class Device_model extends MY_Model {
 				->join('form_factor','devices.form_factor=form_factor.form_factor_id')
 				->get_all();
 
-			echo $this->db->last_query();
+			// echo $this->db->last_query();
 			return $devices;
 		}
 	}
