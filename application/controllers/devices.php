@@ -102,7 +102,8 @@ class Devices extends MY_Controller {
 	 */
 	public function details_get($id)
 	{
-		echo $id;
+		$this->twiggy->title()->prepend('Device Details');
+		$this->twiggy->display('devices/details');
 	}
 
 	public function log_test_get($value='')
