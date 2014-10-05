@@ -110,7 +110,14 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array('device_group','device_model','devices_device_group');
+$autoload['model'] = array(
+	'device_group',
+	'device_model',
+	'devices_device_group',
+	'form_factor',
+	'samples',
+	'sockets',
+	);
 
 
 /*

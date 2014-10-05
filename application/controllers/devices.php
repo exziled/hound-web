@@ -12,7 +12,6 @@ class Devices extends MY_Controller {
 	 */
 	public function index_get()
 	{
-		
 		$devices = $this->device_model->getDevicesForUser($this->user->user_data->id);
 		// print_r($devices);
 		// exit();
@@ -22,8 +21,9 @@ class Devices extends MY_Controller {
 			unset($devices[$device]['ID']);
 			// $devices[$device]['Name'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">".$devices[$device]['Name']."</a>";
 			$devices[$device]['Operations'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">Edit</a>";
-			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/details/".$id)."\" title=\"Click to view details\">Details</a>";
-			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/refresh/".$id)."\" title=\"Click to request refresh\">Refresh</a>";
+			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/details/".$id)."\" title=\"View details\">Details</a>";
+			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/refresh/".$id)."\" title=\"Request Status Update\">Refresh</a>";
+			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/remove/".$id)."\" title=\"Remove a device\">Delete</a>";
 
 			if ($devices[$device]['Last Checkin'] == "0000-00-00 00:00:00") {
 				$devices[$device]['Last Checkin'] = "Checkin pending";
@@ -102,7 +102,16 @@ class Devices extends MY_Controller {
 	 */
 	public function details_get($id)
 	{
-		echo $id;
+		$this->twiggy->title()->prepend('Device Details');
+		$this->twiggy->display('devices/details');
+	}
+
+	public function log_test_get($value='')
+	{
+		echo "wrote to log";
+		log_message('error', $value+"message");
+		error_log("test");
+
 	}
 
 	public function refresh_get($id)
@@ -112,19 +121,28 @@ class Devices extends MY_Controller {
 			->where('device_id', $id)
 			->get();
 
-		$function = 'tempc';//'activate';
+		$function = 'activate';
 		$url = $this->config->item('core_url');
 
 		$url = str_replace('$(FUNCTION)', $function, $url);
 		$url = str_replace('$(COREID)', $devices['core_id'], $url);
 		$url = str_replace('$(ACCESS_TOKEN)', $devices['access_token'], $url);
 		$url = trim($url);
-		
+		die($url);
 		$response = curl_post($url);
 
 		$response = json_decode($response, true);
 		if (!is_null($response))
+		{
 			print_r($response);
+			if ($response['id'] == $devices['core_id']) {
+				if ($response['return_value'] == 0) {
+					//core subscription created
+				} else {
+					//set the core in an error state
+				}
+			}
+		}
 
 	}
 }

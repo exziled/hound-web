@@ -50,7 +50,7 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'srproj';
-$db['default']['password'] = 'houndplex';
+$db['default']['password'] = 'y4hcKeWDDez5Uc8Z';
 $db['default']['database'] = 'srproj';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';

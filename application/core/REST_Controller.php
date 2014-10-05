@@ -16,6 +16,28 @@
 abstract class REST_Controller extends CI_Controller
 {
 	/**
+	 * returns true if all the keys in the $keys array exist in $this->post()
+	 * @param  array $keys 	array of key strings to check
+	 * @return boolean		true if all keys exist in $where
+	 */
+	private function _input_exists($keys, $where)
+	{
+		$ret = TRUE;
+		foreach ($keys as $key) {
+			$ret = $ret && array_key_exists($key, $where);
+		}
+		return $ret;
+	}
+	protected function _post_input_exists($keys)
+	{
+		return $this->_input_exists($keys, $this->post());
+	}
+	protected function _get_input_exists($keys)
+	{
+		return $this->_input_exists($keys, $this->get());
+	}
+	
+	/**
 	 * This defines the rest format.
 	 *
 	 * Must be overridden it in a controller so that it is set.

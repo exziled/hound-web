@@ -60,4 +60,36 @@ class api extends MY_Controller {
 			$this->response($devicesingrp, 200);
 		}
 	}
+
+	public function samples_post()
+	{
+		if (!$this->_post_input_exists(array(
+				'socket_id',
+				'current',
+				'voltage',
+				'powerfactor',
+				'frequency',
+				'temperature',
+				'wifi_strength',
+				'apparent_power',
+				'useruuid',
+				'real_power'
+			))) {
+			$this->response(array("status"=>"error", "message"=>"malformed input"), 400);
+			return;
+		}
+		// print_r($this->post());
+		// $this->response(array("status"=>"error", "message"=>"malformed input"), 400);
+		if ($id = $this->samples->insert($this->post()))
+		{
+			$this->response(array("status"=>"success", "id"=>$id), 200);
+		} else {
+			$this->response(array("status"=>"error"), 400);
+		}
+	}
+
+	public function core_data_post()
+	{
+		error_log("Core Data:".print_r($this->post()));
+	}
 }
