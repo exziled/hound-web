@@ -18,7 +18,7 @@
 						</div>
 						<div class="col-xs-9 text-right">
 							<div class="huge">{{numNodes}}</div>
-							<div>Devices</div>
+							<div>Device{{numNodes==1?'':'s'}}</div>
 						</div>
 					</div>
 				</div>
@@ -32,45 +32,45 @@
 			</div>
 		</div>
 
-		<!-- <div class="col-lg-3 col-md-6">
-			<div class="panel panel-green">
-				<div class="panel-heading">
-					<div class="row">
-						<div class="col-xs-3">
-							<i class="fa fa-tasks fa-5x"></i>
-						</div>
-						<div class="col-xs-9 text-right">
-							<div class="huge">12</div>
-							<div>New Tasks!</div>
-						</div>
-					</div>
-				</div>
-				<a href="#">
-					<div class="panel-footer">
-						<span class="pull-left">View Details</span>
-						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-						<div class="clearfix"></div>
-					</div>
-				</a>
-			</div>
-		</div> -->
-
 		<div class="col-lg-3 col-md-6">
-			<div class="panel panel-yellow">
+			<div class="panel panel-red">
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-xs-3">
 							<i class="fa fa-power-off fa-5x"></i>
 						</div>
 						<div class="col-xs-9 text-right">
-							<div class="huge">7</div>
+							<div class="huge">{{numkWhUsed}}</div>
 							<div>kWh used yesterday</div>
 						</div>
 					</div>
 				</div>
 				<a href="{{site_url("devices")}}">
 					<div class="panel-footer">
-						<span class="pull-left">View Details</span>
+						<span class="pull-left">Inspect</span>
+						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+
+		<div class="col-lg-3 col-md-6">
+			<div class="panel panel-yellow">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-3">
+							<i class="fa fa-shopping-cart fa-5x"></i>
+						</div>
+						<div class="col-xs-9 text-right">
+							<div class="huge">{{numNewModels}}</div>
+							<div>New Hound Model{{numNewModels==1?'':'s'}}</div>
+						</div>
+					</div>
+				</div>
+				<a href="#">
+					<div class="panel-footer">
+						<span class="pull-left">Learn More</span>
 						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 						<div class="clearfix"></div>
 					</div>
@@ -93,7 +93,7 @@
 				</div>
 				<a href="{{site_url("devices")}}">
 					<div class="panel-footer">
-						<span class="pull-left">View Details</span>
+						<span class="pull-left">Configure</span>
 						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 						<div class="clearfix"></div>
 					</div>
@@ -129,7 +129,7 @@
         <!-- /.panel-body -->
     </div>
 
-	<div class="panel panel-default">
+{# 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">Nodes</h3>
 		</div>
@@ -138,28 +138,8 @@
 			{% if numNodes %}<a href="{{site_url("devices")}}">List them</a> |{% endif %}
 			<a href="{{site_url("devices/add")}}">Add some</a>
 		</div>
-	</div>
-	<!-- <div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">Account</h3>
-		</div>
-		<div class="panel-body">
-			<p>Waiting on email verification @todo</p>
-			<a>Resend the verification email</a>
-		</div>
-	</div> -->
-	{# <div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">Servers</h3>
-		</div>
-		<div class="panel-body">
-			<p>You have {{numservers|default('0')}} Servers.</p>
-			{% if numservers %}
-				<a>Search them</a> | 
-			{% endif %}
-				<a>Add some</a>
-		</div>
 	</div> #}
+
 {% endblock %}
 
 {% block foot %}
@@ -245,37 +225,6 @@
 		}
 		size(); // this kicks off the first drawing; note that the first call to size will animate the charts in.
 
-	// $(document).ready(function(){
-	// 	var data = {
-	// 	    labels: ["January", "February", "March", "April", "May", "June", "July"],
-	// 	    datasets: [
-	// 	        {
-	// 	            label: "My First dataset",
-	// 	            fillColor: "rgba(220,220,220,0.2)",
-	// 	            strokeColor: "rgba(220,220,220,1)",
-	// 	            pointColor: "rgba(220,220,220,1)",
-	// 	            pointStrokeColor: "#fff",
-	// 	            pointHighlightFill: "#fff",
-	// 	            pointHighlightStroke: "rgba(220,220,220,1)",
-	// 	            data: [65, 59, 80, 81, 56, 55, 40]
-	// 	        },
-	// 	        {
-	// 	            label: "My Second dataset",
-	// 	            fillColor: "rgba(151,187,205,0.2)",
-	// 	            strokeColor: "rgba(151,187,205,1)",
-	// 	            pointColor: "rgba(151,187,205,1)",
-	// 	            pointStrokeColor: "#fff",
-	// 	            pointHighlightFill: "#fff",
-	// 	            pointHighlightStroke: "rgba(151,187,205,1)",
-	// 	            data: [28, 48, 40, 19, 86, 27, 90]
-	// 	        }
-	// 	    ]
-	// 	};
-	// 	var ctx = $("#mychart").get(0).getContext("2d");
-	// 	var myLineChart = new Chart(ctx).Line(data, {
-	// 	    bezierCurve: false,
-	// 	    responsive: true
-	// 	});
 	});
 	</script>
 {% endblock %}

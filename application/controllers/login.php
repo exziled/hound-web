@@ -22,19 +22,8 @@ class Login extends MY_Controller {
 	{
 		$this->user->on_invalid_session('/');
 
-		// $key = $this->user->user_data->uuid;
-		// if (empty($key)) {
-		// 	$numtex = 0; //@todo really should be an error
-		// 	die("Fatal error: Key not set.");
-		// }
-		// else
-		// {
-		// 	$numtex = $this->texture
-		// 		->where("server",$key)
-		// 		//->limit($rows, $offset)
-		// 		->order_by('timestamp')
-		// 		->count_all_results();
-		// }
+		$this->twiggy->set('numkWhUsed', 7);
+		$this->twiggy->set('numNewModels', 1);
 		$this->twiggy->set('numNodes', $this->device_model->getDevicesForUser($this->user->user_data->id, true)); //@todo get this from database
 		$this->twiggy->title()->prepend('Dashboard');
 		$this->twiggy->display('dashboard');
