@@ -15,11 +15,11 @@ class MY_Session extends CI_Session {
 	{
 		if (array_key_exists($type, $this->message_types)) {
 			$ci =& get_instance();
-			$ci->session->set_flashdata('UI-'.strtoupper($type), $content);
+			$ci->session->set_flashdata('UI-'.strtoupper($type), $content); //@todo it would be nice if this could handle more than one message
 		}
 		else
 		{
-			die("Invalid type: ".$type);
+			die("Invalid type: ".$type); //this seems a bit extreme
 		}
 
 	}
