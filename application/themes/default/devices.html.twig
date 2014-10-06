@@ -4,15 +4,6 @@
 
 {% block head %}
 	{{ parent() }}
-	<script src="http://localhost:3000/socket.io/socket.io.js"></script>
-	<script>
-		var socket = io('http://localhost:3000');
-		socket.on('news', function (data) {
-			console.log(data);
-			// socket.emit('my other event', { my: 'data' });
-			$('#list').append($('<li>').text(JSON.stringify(data)));
-		});
-	</script>
 {% endblock %}
 
 {% block content %}
@@ -20,6 +11,14 @@
 		<a class="btn btn-primary pull-right" role="button" href="{{ site_url("/devices/add") }}">Add a {{ proj_name }}</a>
 		<h1>{{proj_name}} List <small>How many {{proj_name}}s do you have?</small></h1>
 	</div>
+	<ol class="breadcrumb">
+        <li>
+            <a href="/dashboard"><i class="fa fa-dashboard"></i>  Dashboard</a>
+        </li>
+        <li class="active">
+            <i class="fa fa-list"></i> Devices
+        </li>
+    </ol>
 	<div class="container">
 		<div class="row">
 		{% if devices %}
@@ -50,6 +49,4 @@
 
 {% block foot %}
 	{{ parent() }}
-	<h1>Heading</h1>
-	<ul id="list"></ul>
 {% endblock %}

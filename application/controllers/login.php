@@ -22,7 +22,9 @@ class Login extends MY_Controller {
 	{
 		$this->user->on_invalid_session('/');
 
-		$this->twiggy->set('newModels', 1);
+
+		$this->twiggy->set('numkWhUsed', 7);
+		$this->twiggy->set('numNewModels', 1);
 		$this->twiggy->set('numNodes', $this->device_model->getDevicesForUser($this->user->user_data->id, true)); //@todo get this from database
 		$this->twiggy->title()->prepend('Dashboard');
 		$this->twiggy->display('dashboard');

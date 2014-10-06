@@ -6,12 +6,129 @@
 
 {% block content %}
 	<div class="page-header">
-		<h1>{{proj_name}}  Details</h1>
+		<h1>'{{device.name}}' Details</h1>
 	</div>
+	<ol class="breadcrumb">
+        <li>
+            <a href="/dashboard"><i class="fa fa-dashboard"></i>  Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="/devices"><i class="fa fa-list"></i> Devices</a>
+        </li>
+        <li class="active">
+            <i class="fa fa-list"></i> Details
+        </li>
+    </ol>
 	<div class="container">
 		<div class="row">
-			
+
+			<div class="col-lg-2 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-bolt fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{vrms}}</div>
+								<div>Volt{{vrms==1?'':'s'}} RMS</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-2 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-bolt fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{irms}}</div>
+								<div>Amp{{irms==1?'':'s'}} RMS</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-2 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-bolt fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{real}}</div>
+								<div style="margin-left: -10px;">Real Power</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-2 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-bolt fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{powerfactor}}</div>
+								<div style="margin-left: -10px;">Power Factor</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-2 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-bolt fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{apparent}}</div>
+								<div style="margin-left: -10px;">Apparent Power</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-2 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-bolt fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{kWhToday}}</div>
+								<div style="margin-left: -10px;">kWh{{kWhToday==1?'':'s'}} today</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 		</div>
+		<div class="panel panel-default">
+	        <div class="panel-heading">
+	            <i class="fa fa-bar-chart-o fa-fw"></i> Historical Power Consumption for '{{device.name}}'
+	        </div>
+
+	        <div class="panel-body">
+	            <canvas id="powerHist" width="616" height="308"></canvas>
+	        </div>
+
+	    </div>
 	</div>
 {% endblock %}
 
