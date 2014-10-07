@@ -152,7 +152,7 @@
 							            <i class="fa fa-plug fa-fw"></i> Outlet 1
 							        </div>
 							        <div class="panel-body">
-							            <input class="switch" id="outlet1" type="checkbox" name="my-checkbox" checked>
+							            <input class="switch" id="outlet1" type="checkbox" name="my-checkbox">
 							        </div>
 							    </div>
 
@@ -161,7 +161,7 @@
 							            <i class="fa fa-plug fa-fw"></i> Outlet 2
 							        </div>
 							        <div class="panel-body">
-							            <input class="switch" id="outlet2" type="checkbox" name="my-checkbox" checked>
+							            <input class="switch" id="outlet2" type="checkbox" name="my-checkbox">
 							        </div>
 							    </div>
 						    </div>
@@ -183,7 +183,15 @@
 		// console.log($(".switch"));
 		$('input[name="my-checkbox"]').bootstrapSwitch({
 			onSwitchChange: function (event, state) {
-				console.log(event, state);
+				// console.log(event, event.target.id, state);
+				var url = 'https://api.spark.io/v1/devices/{{device.core_id}}/control?access_token={{device.access_token}}';
+				var arg = (event.target.id=='outlet1'?'D5':'D6')+' '+(state?'HIGH':'LOW');
+				console.log(url, arg);
+				$.post(
+					url,
+					{args:arg}, function (data) {
+						// console.log("success", data);
+					});
 			}
 		});
 		// .bootstrapSwitch();
