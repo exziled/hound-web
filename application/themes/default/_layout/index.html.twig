@@ -3,6 +3,7 @@
 		<title>{{title}}</title>
 		{% block head %}
 		<link rel="stylesheet" type="text/css" href="{{static}}/libs/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="{{static}}/libs/bootstrap-switch/css/bootstrap-switch.min.css">
 		<link rel="stylesheet" type="text/css" href="{{static}}/libs/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" type="text/css" href="{{static}}/css/sb-admin-2.css">
 		{% endblock %}
@@ -65,8 +66,9 @@
 		{% block foot %}
 		<script type="text/javascript" src="{{static}}/libs/jquery/js/jquery-1.11.0.min.js"></script>
 		<script type="text/javascript" src="{{static}}/libs/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="{{static}}/libs/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 
-		<script src="{{static}}/libs/chartjs/js/chart.min.js"></script>
+		<script type="text/javascript" src="{{static}}/libs/chartjs/js/chart.min.js"></script>
 		{% endblock %}
 	</body>
 </html>

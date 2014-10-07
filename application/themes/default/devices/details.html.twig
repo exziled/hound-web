@@ -119,6 +119,7 @@
 			</div>
 
 		</div>
+
 		<div class="panel panel-default">
 	        <div class="panel-heading">
 	            <i class="fa fa-bar-chart-o fa-fw"></i> Historical Power Consumption for '{{device.name}}'
@@ -129,9 +130,63 @@
 	        </div>
 
 	    </div>
+
+	    <div class="panel panel-default">
+	        <div class="panel-heading">
+	            <i class="fa fa-plug fa-fw"></i> Outlet control for '{{device.name}}'
+	        </div>
+
+	        <div class="panel-body">
+
+				<div style="display:inline-block">
+
+					<!-- <div class="container"> -->
+				        <div class="row">
+					        <div class="col-md-5">
+					        	<img src="{{static}}/img/outlet.svg" alt="Outlet" style="width:100%">
+					        </div>
+				            <div class="col-md-2">
+
+					            <div class="panel panel-default" style="display:inline-block">
+							        <div class="panel-heading">
+							            <i class="fa fa-plug fa-fw"></i> Outlet 1
+							        </div>
+							        <div class="panel-body">
+							            <input class="switch" id="outlet1" type="checkbox" name="my-checkbox" checked>
+							        </div>
+							    </div>
+
+							    <div class="panel panel-default" style="display:inline-block">
+							        <div class="panel-heading">
+							            <i class="fa fa-plug fa-fw"></i> Outlet 2
+							        </div>
+							        <div class="panel-body">
+							            <input class="switch" id="outlet2" type="checkbox" name="my-checkbox" checked>
+							        </div>
+							    </div>
+						    </div>
+						</div>
+					<!-- </div> -->
+			    </div>
+
+	        </div>
+
+	    </div>
+
 	</div>
 {% endblock %}
 
 {% block foot %}
 	{{ parent() }}
+	<script type="text/javascript">
+	$(document).ready(function(){
+		// console.log($(".switch"));
+		$('input[name="my-checkbox"]').bootstrapSwitch({
+			onSwitchChange: function (event, state) {
+				console.log(event, state);
+			}
+		});
+		// .bootstrapSwitch();
+	});
+	</script>
 {% endblock %}
