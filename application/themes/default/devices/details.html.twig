@@ -22,7 +22,7 @@
 	<div class="container">
 		<div class="row">
 
-			<div class="col-lg-2 col-md-6">
+			<div class="col-lg-3 col-md-6">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
 						<div class="row">
@@ -30,7 +30,7 @@
 								<i class="fa fa-bolt fa-5x"></i>
 							</div>
 							<div class="col-xs-9 text-right">
-								<div class="huge">{{vrms}}</div>
+								<div class="huge" id="vrms">{{vrms}}</div>
 								<div>Volt{{vrms==1?'':'s'}} RMS</div>
 							</div>
 						</div>
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 
-			<div class="col-lg-2 col-md-6">
+			<div class="col-lg-3 col-md-6">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
 						<div class="row">
@@ -46,7 +46,7 @@
 								<i class="fa fa-bolt fa-5x"></i>
 							</div>
 							<div class="col-xs-9 text-right">
-								<div class="huge">{{irms}}</div>
+								<div class="huge" id="irms">{{irms}}</div>
 								<div>Amp{{irms==1?'':'s'}} RMS</div>
 							</div>
 						</div>
@@ -62,7 +62,7 @@
 								<i class="fa fa-bolt fa-5x"></i>
 							</div>
 							<div class="col-xs-9 text-right">
-								<div class="huge">{{real}}</div>
+								<div class="huge" id="real">{{real}}</div>
 								<div style="margin-left: -10px;">Real Power</div>
 							</div>
 						</div>
@@ -78,7 +78,7 @@
 								<i class="fa fa-bolt fa-5x"></i>
 							</div>
 							<div class="col-xs-9 text-right">
-								<div class="huge">{{powerfactor}}</div>
+								<div class="huge" id="powerfactor">{{powerfactor}}</div>
 								<div style="margin-left: -10px;">Power Factor</div>
 							</div>
 						</div>
@@ -94,7 +94,7 @@
 								<i class="fa fa-bolt fa-5x"></i>
 							</div>
 							<div class="col-xs-9 text-right">
-								<div class="huge">{{apparent}}</div>
+								<div class="huge" id="apparent">{{apparent}}</div>
 								<div style="margin-left: -10px;">Apparent Power</div>
 							</div>
 						</div>
@@ -188,6 +188,16 @@
 	    socket.on('message', function (msg) {
 	    	$('ul.test').append($('<li>').text(msg));
 	    });
+
+	    socket.on('data', function (data) {
+	    	console.log(data);
+
+	    	$('#vrms').text(data.vrms);
+	    	$('#irms').text(data.irms);
+	    	$('#real').text(data.real);
+	    	$('#powerfactor').text(data.pf);
+	    	$('#apparent').text(data.apparent);
+	    });
 	  });
 	</script>
 {% endblock %}
@@ -202,7 +212,7 @@
 				// console.log(event, event.target.id, state);
 				var url = 'https://api.spark.io/v1/devices/{{device.core_id}}/control?access_token={{device.access_token}}';
 				var arg = (event.target.id=='outlet1'?'D5':'D6')+' '+(state?'HIGH':'LOW');
-				console.log(url, arg);
+				// console.log(url, arg);
 				$.post(
 					url,
 					{args:arg}, function (data) {
