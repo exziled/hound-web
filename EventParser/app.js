@@ -53,24 +53,36 @@ var wsServer = require('ws').Server
 console.log("Core Server Listening on port "+wsport);
 
 wss.on('connection', function(ws) {
-    console.log('Client Connected');
-    ws.on('message', function(message) {
-        // console.log('recieved: %s - size: %d', message, message.length);
-        console.log(message);
-    });
+	console.log('Client Connected');
+	ws.on('message', function(message) {
+		console.log('---\nrecieved: %s - size: %d', message, message.length);
+		try	{
+			message = JSON.parse(message);
+			// console.log(message.coreid);
+			var sockets = coresock[message.coreid];
+			for (var i = 0; sockets !== undefined && i < sockets.length; i++) {
+				sockets[i].emit('data', message);
+				// console.log("data");
+			};
 
-    ws.on('close', function() {
-        console.log('Client disconnected.');
-    });
-    ws.on('error', function() {
-        console.log('ERROR');
-    });
+		} catch(err) {
+			console.log(err, message);
+		}
+		// console.log("");
+	});
 
-    // ws.send('ohaidere');
+	ws.on('close', function() {
+		console.log('Client disconnected.');
+	});
+	ws.on('error', function() {
+		console.log('ERROR');
+	});
 
-    // setInterval(function() {
-    //    ws.send('delayed!');
-    // }, 2000);
+	// ws.send('ohaidere');
+
+	// setInterval(function() {
+	//    ws.send('delayed!');
+	// }, 2000);
 });
 
 var ioport = 2648;
@@ -83,26 +95,26 @@ io.on('connection', function(socket){
   // socket.emit('message', "fred");
 
   socket.on('who', function(coreid){
-  	console.log(coreid);
-  	socket['coreid'] = coreid;
-  	if (coresock[coreid] === undefined) {
-  		coresock[coreid] = [socket];
-  	} else {
-  		coresock[coreid].push(socket);
-  	}
+	// console.log(coreid);
+	socket['coreid'] = coreid;
+	if (coresock[coreid] === undefined) {
+		coresock[coreid] = [socket];
+	} else {
+		coresock[coreid].push(socket);
+	}
   })
 
   socket.on('disconnect', function(){
-  	var coreid = socket['coreid'];
-    console.log('web user disconnected', coreid);
-    var sockets = coresock[coreid];
-    for (var i = 0; i < sockets.length; i++) {
-    	if (sockets[i].id == socket.id) {
-    		sockets.splice(i,1); //remove the matching element
-    		break;
-    	}
-    };
-    coresock[coreid] = sockets;
+	var coreid = socket['coreid'];
+	console.log('web user disconnected', coreid);
+	var sockets = coresock[coreid];
+	for (var i = 0; i < sockets.length; i++) {
+		if (sockets[i].id == socket.id) {
+			sockets.splice(i,1); //remove the matching element
+			break;
+		}
+	};
+	coresock[coreid] = sockets;
   });
 
 });
