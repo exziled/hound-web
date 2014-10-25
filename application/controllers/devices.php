@@ -122,12 +122,12 @@ class Devices extends MY_Controller {
 		// )
 		// print_r($device); exit();
 
-		$this->twiggy->set('vrms', 7);
-		$this->twiggy->set('irms', 7);
-		$this->twiggy->set('real', 7);
-		$this->twiggy->set('powerfactor', 7);
-		$this->twiggy->set('apparent', 7);
-		$this->twiggy->set('kWhToday', 7);
+		$this->twiggy->set('vrms', "...");
+		$this->twiggy->set('irms', "...");
+		$this->twiggy->set('real', "...");
+		$this->twiggy->set('powerfactor', "...");
+		$this->twiggy->set('apparent', "...");
+		$this->twiggy->set('kWhToday', "...");
 
 		$this->twiggy->set('device', $device);
 		$this->twiggy->title()->prepend('Device Details');
