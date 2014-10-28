@@ -49,7 +49,7 @@ wss.on('connection', function(ws) {
 // Port to run socket.io on for web clients.
 var ioport = 2648;
 var io = require('socket.io')(ioport);
-console.log("Socket.IO Server Listening on port "+ioport);
+console.log("Socket.IO server listening on port "+ioport);
 io.on('connection', function(socket){
 
 	socket.on('who', function(coreid){
@@ -77,4 +77,49 @@ io.on('connection', function(socket){
 		coresock[coreid] = sockets;
 	});
 
+});
+
+// -----------------------------------------------------------------------------
+// Perodic data from the SparkCore using UDP
+// -----------------------------------------------------------------------------
+var dgram = require('dgram');
+var server = dgram.createSocket('udp4');
+var udpport = 8081;
+//messages
+var sub = new Buffer("020000", "hex"); //init a subscription
+
+server.on("error", function (err) {
+	console.log("server error:\n" + err.stack);
+	server.close();
+});
+
+server.on("listening", function () {
+	var address = server.address();
+	console.log("UDP server listening on port " + address.port);
+	console.log("");
+});
+
+server.on("message", function (msg, rinfo) {
+
+	//convert the buffer to a string
+	data = ""+msg;
+	//properly escape quotes and remove extra null characters
+	data = data.replace(/\"/g,'\"').replace(/\0/,'');
+	// var datagood = '{\"s_id\":\"0\",\"t\":[1414516577,1414516566,1414516555,1414516544,1414516533,1414516522],\"vrms\":[118.614,118.580,118.487,118.566,118.505,118.504],\"irms\":[0.140,0.146,0.146,0.146,0.140,0.140],\"app\":[16.705,17.315,17.302,17.313,16.690,16.689],}';
+	// console.log(data == datagood, data, datagood);
+	data = data.replace('],}',']}').trim();
+	try {
+		data = JSON.parse(data)
+		console.log(data);
+	} catch (e) {
+		console.log("Invalid JSON: "+e+" | \""+data+"\"",e);
+	}
+	console.log("");
+});
+
+server.bind(udpport)
+
+var client = dgram.createSocket("udp4");
+client.send(sub, 0, sub.length, 9080, "192.168.1.113", function(err, bytes) {
+	client.close();
 });
