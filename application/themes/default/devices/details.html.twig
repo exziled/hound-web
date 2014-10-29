@@ -181,16 +181,22 @@
 	<script>
 	  var socket = io('http://localhost:2648/');
 	  socket.on('connect', function () {
-	  	console.log("Connected");
+	  	// console.log("Connected");
+	  	socket.emit('who', '{{device.core_id}}'); //tell the server what core we are interested in live data for
 
-	  	socket.emit('who', '{{device.core_id}}');
+	  	socket.emit('status'); //request information about socket status
 
-	    socket.on('message', function (msg) {
-	    	$('ul.test').append($('<li>').text(msg));
+	  	//Handle the status reply
+	    socket.on('status', function (sockets) {
+	    	for (var id in sockets) {
+				var state = sockets[id];
+				$('input[name="my-checkbox"]#'+id).bootstrapSwitch('indeterminate',false); //clear the initial indeterminate state.
+				$('input[name="my-checkbox"]#'+id).bootstrapSwitch('state',state=="on", true);// set the accurate state based on data from the server.
+			}
 	    });
 
 	    socket.on('data', function (data) {
-	    	console.log(data);
+	    	// console.log(data);
 
 	    	$('#vrms').text(data.vrms);
 	    	$('#irms').text(data.irms);
