@@ -22,7 +22,7 @@ class Devices extends MY_Controller {
 			// $devices[$device]['Name'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">".$devices[$device]['Name']."</a>";
 			$devices[$device]['Operations'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">Edit</a>";
 			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/details/".$id)."\" title=\"View details\">Details</a>";
-			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/refresh/".$id)."\" title=\"Request Status Update\">Refresh</a>";
+			// $devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/refresh/".$id)."\" title=\"Request Status Update\">Refresh</a>";
 			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/remove/".$id)."\" title=\"Remove a device\">Delete</a>";
 
 			if ($devices[$device]['Last Checkin'] == "0000-00-00 00:00:00") {
