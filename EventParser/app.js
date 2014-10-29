@@ -1,6 +1,3 @@
-var request = require('request');
-var _ = require('underscore');
-
 // -----------------------------------------------------------------------------
 // High-Speed data from cores using websockets
 // -----------------------------------------------------------------------------
@@ -83,6 +80,8 @@ io.on('connection', function(socket){
 // Perodic data from the SparkCore using UDP
 // -----------------------------------------------------------------------------
 var dgram = require('dgram');
+var http = require('http');
+
 var server = dgram.createSocket('udp4');
 var udpport = 8081;
 //messages
@@ -100,7 +99,8 @@ server.on("listening", function () {
 });
 
 server.on("message", function (msg, rinfo) {
-
+	// console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
+	// 48ff6c065067555026311387
 	//convert the buffer to a string
 	data = ""+msg;
 	//properly escape quotes and remove extra null characters
@@ -109,12 +109,44 @@ server.on("message", function (msg, rinfo) {
 	// console.log(data == datagood, data, datagood);
 	data = data.replace('],}',']}').trim();
 	try {
-		data = JSON.parse(data)
+		data = JSON.parse(data);
+
+		if (rinfo.address == "192.168.1.113")
+			data.core_id = "48ff6c065067555026311387";
+		else if (rinfo.address == "192.168.1.111")
+			data.core_id = "53ff6d065067544847310187";
+		else
+			data.core_id = "";
 		console.log(data);
+
+		var options = {
+			host: 'hound',
+			path: '/api/samples',
+			method: 'POST'
+		};
+		callback = function(res) {
+			var str = ''
+			res.on('data', function (chunk) {
+				str += chunk;
+			});
+
+			res.on('end', function () {
+				if (res.statusCode != 201) {
+					console.log(res.statusCode, str);
+				}
+			});
+		}
+
+		var req = http.request(options, callback);
+		//This is the data we are posting, it needs to be a string or a buffer
+		req.write(JSON.stringify(data));
+		req.end();
+
+
+
 	} catch (e) {
-		console.log("Invalid JSON: "+e+" | \""+data+"\"",e);
+		console.log(e, data);
 	}
-	console.log("");
 });
 
 server.bind(udpport)

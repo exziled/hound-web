@@ -64,6 +64,63 @@ class api extends MY_Controller {
 	public function samples_post()
 	{
 		if (!$this->_post_input_exists(array(
+				's_id',
+				't',
+				'vrms',
+				'irms',
+				'app',
+				'core_id'
+			))) {
+			$this->response(array("status"=>"error", "message"=>"malformed input"), 400);
+			return;
+		}
+		$fields = array(
+			's_id'=>'socket_id',
+			'irms'=>'current',
+			'vrms'=>'voltage',
+			''=>'powerfactor',
+			''=>'frequency',
+			't'=>'temperature',
+			''=>'wifi_strength',
+			'app'=>'apparent_power',
+			''=>'real_power'
+		);
+
+		$device_id = $this->device_model->coreid2deviceid($this->post('core_id'));
+		$out = array();
+
+		$numsamp = count($this->post('t'));
+		for ($i=0; $i < $numsamp; $i++) {
+			$arr = array(
+				'socket'=>$this->post('s_id'),
+				'timestamp'=>date("Y-m-d H:i:s", $this->post('t')[$i]),
+				'device_id'=>$device_id,
+				'current'=>$this->post('irms')[$i],
+				'voltage'=>$this->post('vrms')[$i],
+				'powerfactor'=>0,
+				'frequency'=>0,
+				'temperature'=>0,
+				'wifi_strength'=>0,
+				'apparent_power'=>$this->post('app')[$i],
+				'real_power'=>0
+			);
+
+			$ret = $this->samples->insert($arr);
+			array_push($out, $ret);
+		}
+
+		if (count($out) == $numsamp) {
+			$this->response(array("status"=>"success", "id"=>$out), 201);
+		} else if (in_array(0, $out)) {
+			$this->response(array("status"=>"partial success", "id"=>$out), 201);
+		} else {
+			$this->response(array("status"=>"error"), 400);
+		}
+	}
+
+	public function samples2_post()
+	{
+		if (!$this->_post_input_exists(array(
 				'socket_id',
 				'current',
 				'voltage',

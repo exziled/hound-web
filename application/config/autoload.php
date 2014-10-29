@@ -116,7 +116,6 @@ $autoload['model'] = array(
 	'devices_device_group',
 	'form_factor',
 	'samples',
-	'sockets',
 	);
 
 

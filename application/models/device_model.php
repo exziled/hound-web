@@ -21,6 +21,16 @@ class Device_model extends MY_Model {
 		parent::__construct();
 	}
 
+	public function coreid2deviceid($core_id)
+	{
+		$id = $this
+			->where('core_id', $core_id)
+			->select('device_id')
+			->get();
+
+		return $id['device_id'];
+	}
+
 	public function getDevicesForUser($user_id, $count=false)
 	{
 		if ($count) {

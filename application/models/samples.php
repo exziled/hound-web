@@ -6,7 +6,9 @@ class Samples extends MY_Model {
 	protected $primary_key = "sample_id";
 	protected $fields = array(
 		'sample_id',
-		'socket_id',
+		'socket',
+		'timestamp',
+		'device_id',
 		'current',
 		'voltage',
 		'powerfactor',
