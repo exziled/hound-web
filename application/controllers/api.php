@@ -90,7 +90,7 @@ class api extends MY_Controller {
 		$out = array();
 
 		$numsamp = count($this->post('t'));
-		for ($i=0; $i < $numsamp; $i++) {
+		for ($i=$numsamp-1; $i>=0  ; $i--) {
 			$arr = array(
 				'socket'=>$this->post('s_id'),
 				'timestamp'=>date("Y-m-d H:i:s", $this->post('t')[$i]),
