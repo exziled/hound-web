@@ -214,16 +214,15 @@
 	$(document).ready(function(){
 		// console.log($(".switch"));
 		$('input[name="my-checkbox"]').bootstrapSwitch({
-			onSwitchChange: function (event, state) {
-				// console.log(event, event.target.id, state);
-				var url = 'https://api.spark.io/v1/devices/{{device.core_id}}/control?access_token={{device.access_token}}';
-				var arg = (event.target.id=='outlet1'?'D5':'D6')+' '+(state?'HIGH':'LOW');
-				// console.log(url, arg);
-				$.post(
-					url,
-					{args:arg}, function (data) {
-						// console.log("success", data);
-					});
+			indeterminate: true, //start the switch in the indeterminate state until we get word from the server.
+			onSwitchChange: function (event, state, test) {
+				//when the switch is clicked send the state information to the server.
+				var data = {
+					core: "{{device.core_id}}",
+					outlet: event.target.id,
+					state: (state?'on':'off')
+				};
+				socket.emit('control', data);
 			}
 		});
 		// .bootstrapSwitch();
