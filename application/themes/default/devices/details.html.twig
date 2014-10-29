@@ -181,7 +181,7 @@
 	<script>
 	  var socket = io('http://localhost:2648/');
 	  socket.on('connect', function () {
-	  	// console.log("Connected");
+	  	console.log("Connected to SocketIO Server");
 	  	socket.emit('who', '{{device.core_id}}'); //tell the server what core we are interested in live data for
 
 	  	socket.emit('status'); //request information about socket status
@@ -222,10 +222,87 @@
 					outlet: event.target.id,
 					state: (state?'on':'off')
 				};
-				socket.emit('control', data);
+				socket.emit('control', data); //Tell the server the state has changed
 			}
 		});
-		// .bootstrapSwitch();
+	});
+	</script>
+	<script>
+	$(document).ready(function(){
+		console.log("here1");
+		// set up the timeout variable
+		var t;
+		// setup the sizing function,
+		// with an argument that tells the chart to animate or not
+		function size(animate){
+		    // If we are resizing, we don't want the charts drawing on every resize event.
+		    // This clears the timeout so that we only run the sizing function
+		    // when we are done resizing the window
+		    clearTimeout(t);
+		    // This will reset the timeout right after clearing it.
+		    t = setTimeout(function(){
+		        $("canvas").each(function(i,el){
+		            // Set the canvas element's height and width to it's parent's height and width.
+		            // The parent element is the div.canvas-container
+		            $(el).attr({
+		                "width":$(el).parent().width(),
+		                "height":$(el).parent().outerHeight()
+		            });
+		        });
+		        // kickoff the redraw function, which builds all of the charts.
+		        redraw(animate);
+
+		        // loop through the widgets and find the tallest one, and set all of them to that height.
+		        var m = 0;
+		        // we have to remove any inline height setting first so that we get the automatic height.
+		        // $(".widget").height("");
+		        // $(".widget").each(function(i,el){ m = Math.max(m,$(el).height()); });
+		        // $(".widget").height(m);
+
+		    }, 100); // the timeout should run after 100 milliseconds
+		}
+		$(window).on('resize', size);
+		function redraw(animation){
+		    var options = {};
+		    if (!animation){
+		        options.animation = false;
+		    } else {
+		        options.animation = true;
+		    }
+		    // ....
+	        // the rest of our chart drawing will happen here
+	        var data = {
+			    labels: ["a","b","c"],
+			    datasets: [
+			        {
+			            label: "Current RMS",
+			            fillColor: "rgba(220,220,220,0.2)",
+			            strokeColor: "rgba(220,220,220,1)",
+			            pointColor: "rgba(220,220,220,1)",
+			            pointStrokeColor: "#fff",
+			            pointHighlightFill: "#fff",
+			            pointHighlightStroke: "rgba(220,220,220,1)",
+			            data: [0,0,0]
+			        }
+			    ]
+			};
+			var ctx = $("#powerHist").get(0).getContext("2d");
+			var myLineChart = new Chart(ctx).Line(data, {
+			    bezierCurve: false,
+			    showTooltips: true,
+			    tooltipEvents: ["mousemove", "touchstart", "touchmove"],
+			    // responsive: true
+			});
+			console.log("here");
+			socket.on('data', function (data){
+				myLineChart.addData([data.irms], "");
+			});
+		    // ....
+		}
+		size(); // this kicks off the first drawing; note that the first call to size will animate the charts in.
+
+
+
 	});
 	</script>
 {% endblock %}
