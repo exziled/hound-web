@@ -3,7 +3,9 @@
 // -----------------------------------------------------------------------------
 
 // port to run the web socket server on which to listen for new data from the core.
-var wsport = 8080;
+var spark_udp_port = 9080;
+var wsport = 9081;
+var status_port = 9082;
 
 var wsServer = require('ws').Server;
 var wss = new wsServer({port: wsport});
@@ -18,11 +20,15 @@ console.log("Core Server Listening on port "+wsport);
 wss.on('connection', function(ws) {
 	console.log('Client Connected');
 	ws.on('message', function(message) {
+		// console.log(message);
 		//When data is recieved from a sparkcore emit the data to any subscribed
 		//web clients. try/catch for malformated json data.
 		try	{
 			message = JSON.parse(message);
-			var sockets = coresock[message.coreid];
+			if (message['core_id'] === undefined) {
+				console.log("core_id is undefined");
+			}
+			var sockets = coresock[message.core_id];
 			for (var i = 0; sockets !== undefined && i < sockets.length; i++) {
 				sockets[i].emit('data', message);
 			}
@@ -55,10 +61,38 @@ io.on('connection', function(socket){
 		socket['coreid'] = coreid;
 		if (coresock[coreid] === undefined) {
 			coresock[coreid] = [socket];
+			//create a subscription with the core for high-speed data
+			var client = dgram.createSocket("udp4");
+			client.send(sub_fast, 0, sub_fast.length, spark_udp_port, "192.168.1.113", function(err, bytes) {
+				console.log("Websockets Subscription Created");
+				client.close();
+				client = null;
+			});
 		} else {
 			coresock[coreid].push(socket);
 		}
 	})
+	//send the current state of the outlets to the web client so they can accurately show the state.
+	socket.on('status', function(){
+
+		var read_state = new Buffer("01B102", "hex");
+		var client = dgram.createSocket("udp4")
+		client.send(sub_fast_close, 0, sub_fast_close.length, spark_udp_port, "192.168.1.113", function(err, bytes) {
+			client.close();
+			client = null;
+		});
+		// var server = dgram.createSocket("udp4")
+		// server.bind(status_port);
+		// server.on('message', function(msg) {
+		// 	console.log("Reply: ", msg)
+		// })
+
+		// var data = {
+		// 	outlet1: "on", //@todo
+		// 	outlet2: "off" //@todo
+		// };
+		// socket.emit('status', data)
+	});
 
 	socket.on('disconnect', function(){
 		var coreid = socket['coreid'];
@@ -72,12 +106,40 @@ io.on('connection', function(socket){
 			}
 		}
 		coresock[coreid] = sockets;
+		if (sockets.length == 0) {
+			//destroy the subscription for high-speed data
+			var client = dgram.createSocket("udp4")
+			client.send(sub_fast_close, 0, sub_fast_close.length, spark_udp_port, "192.168.1.113", function(err, bytes) {
+				client.close();
+				client = null;
+			});
+		};
+	});
+
+	socket.on('control', function(data){
+		console.log(data); //@todo send the control signal to the core via UDP
+		//@todo coreid to IP address
+		var address = "192.168.1.113";
+
+		//@todo need a better way to handle the core port/pin #'s
+
+		var message = cmd_set_off;
+		if (data.state == 'on') {
+			message = cmd_set_on;
+		}
+		var client = dgram.createSocket("udp4");
+		client.send(message, 0, message.length, spark_udp_port, address, function(err, bytes) {
+			client.close();
+			client = null;
+		});
+
+
 	});
 
 });
 
 // -----------------------------------------------------------------------------
-// Perodic data from the SparkCore using UDP
+// UDP server listening for perodic data from the SparkCore using UDP
 // -----------------------------------------------------------------------------
 var dgram = require('dgram');
 var http = require('http');
@@ -86,6 +148,13 @@ var server = dgram.createSocket('udp4');
 var udpport = 8081;
 //messages
 var sub = new Buffer("020000", "hex"); //init a subscription
+var sub_close = new Buffer("020000", "hex"); //close a subscription
+var sub_fast = new Buffer("04", "hex"); //init a high-speed subscription
+var sub_fast_close = new Buffer("020000", "hex"); //close a high-speed subscription
+
+var cmd_set_on = new Buffer("01B101", "hex");
+var cmd_set_off = new Buffer("01B100", "hex");
+
 
 server.on("error", function (err) {
 	console.log("server error:\n" + err.stack);
@@ -99,6 +168,7 @@ server.on("listening", function () {
 });
 
 server.on("message", function (msg, rinfo) {
+	// console.log("msg");
 	// console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
 	// 48ff6c065067555026311387
 	//convert the buffer to a string
@@ -111,9 +181,9 @@ server.on("message", function (msg, rinfo) {
 	try {
 		data = JSON.parse(data);
 
-		if (rinfo.address == "192.168.1.113")
+		if (rinfo.address == "192.168.1.111")
 			data.core_id = "48ff6c065067555026311387";
-		else if (rinfo.address == "192.168.1.111")
+		else if (rinfo.address == "192.168.1.113")
 			data.core_id = "53ff6d065067544847310187";
 		else
 			data.core_id = "";
@@ -122,7 +192,10 @@ server.on("message", function (msg, rinfo) {
 		var options = {
 			host: 'hound',
 			path: '/api/samples',
-			method: 'POST'
+			method: 'POST',
+			headers: {
+				"Content-Type":"application/json"
+			}
 		};
 		callback = function(res) {
 			var str = ''
@@ -139,6 +212,8 @@ server.on("message", function (msg, rinfo) {
 
 		var req = http.request(options, callback);
 		//This is the data we are posting, it needs to be a string or a buffer
+		// console.log(JSON.stringify(data));
+		// console.log("hit");
 		req.write(JSON.stringify(data));
 		req.end();
 
@@ -151,7 +226,10 @@ server.on("message", function (msg, rinfo) {
 
 server.bind(udpport)
 
+//create a subscription with the core
 var client = dgram.createSocket("udp4");
-client.send(sub, 0, sub.length, 9080, "192.168.1.113", function(err, bytes) {
+client.send(sub, 0, sub.length, spark_udp_port, "192.168.1.113", function(err, bytes) {
 	client.close();
+	client = null;
 });
+
