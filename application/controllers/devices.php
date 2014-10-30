@@ -34,6 +34,9 @@ class Devices extends MY_Controller {
 			$date = $devices[$device]['Date Added'];
 			$devices[$device]['Date Added'] = $newDate = date("g:ia M jS, Y", strtotime($date));
 
+			$devices[$device]['kWh Last 24hrs'] = $this->samples->getKWH24hrs($id);
+			
+
 			unset($devices[$device]['Form Factor']);
 			unset($devices[$device]['Sockets']);
 			unset($devices[$device]['Last Checkin']);
