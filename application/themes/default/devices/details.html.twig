@@ -30,7 +30,9 @@
 								<i class="fa fa-bolt fa-5x"></i>
 							</div>
 							<div class="col-xs-9 text-right">
-								<div class="huge" id="vrms">{{vrms}}</div>
+								<div class="huge">
+									<span id="vrms">{{vrms}}</span><span class="small">V</span>
+								</div>
 								<div>Volt{{vrms==1?'':'s'}} RMS</div>
 							</div>
 						</div>
@@ -46,7 +48,9 @@
 								<i class="fa fa-bolt fa-5x"></i>
 							</div>
 							<div class="col-xs-9 text-right">
-								<div class="huge" id="irms">{{irms}}</div>
+								<div class="huge">
+									<span id="irms">{{irms}}</span><span class="small">A</span>
+								</div>
 								<div>Amp{{irms==1?'':'s'}} RMS</div>
 							</div>
 						</div>
@@ -94,7 +98,9 @@
 								<i class="fa fa-bolt fa-5x"></i>
 							</div>
 							<div class="col-xs-9 text-right">
-								<div class="huge" id="apparent">{{apparent}}</div>
+								<div class="huge">
+									<span id="apparent">{{apparent}}</span><span class="small">VA</span>
+								</div>
 								<div style="margin-left: -10px;">Apparent Power</div>
 							</div>
 						</div>
