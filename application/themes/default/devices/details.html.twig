@@ -288,11 +288,12 @@
 		});
 
 		socket.on('data', function (datain){
-			$('#vrms').text(datain.v);
-			$('#irms').text(datain.i);
-			$('#real').text(datain.r);
-			$('#powerfactor').text(datain.pf);
-			$('#apparent').text(datain.a);
+			// console.log(datain);
+			$('#vrms').text(datain.v.toFixed(3));
+			$('#irms').text(datain.i.toFixed(3));
+			// $('#real').text(datain.r.toFixed(3));
+			// $('#powerfactor').text(datain.pf.toFixed(3));
+			$('#apparent').text(datain.a.toFixed(3));
 			datain.t = moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss');
 			// console.log(datain.t, moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss'));
 
