@@ -24,4 +24,40 @@ class Samples extends MY_Model {
 		// Call the Model constructor
 		parent::__construct();
 	}
+
+	public function getKWH24hrs($device_id)
+	{
+		$sql = "SELECT round((sum(apparent_power)*24)/1000,2) as kwh FROM `samples` WHERE device_id = $device_id AND TIMESTAMP > DATE_SUB( NOW( ) , INTERVAL 24 HOUR )";
+		// print $sql;
+		$query = $this->db->query($sql);
+		$data = $query->result_array();
+		// print_r($data);
+		return $data[0]['kwh'];
+	}
+
+	public function LastHourOfSamples($device_id)
+	{
+		// $device_id = $this->device_model->coreid2deviceid($coreid);
+		// return $device_id;
+		$sql = "SELECT voltage,current,apparent_power,timestamp FROM samples WHERE device_id = $device_id AND TIMESTAMP > DATE_SUB( NOW( ) , INTERVAL 30 MINUTE )";
+		// echo $sql;
+		$query = $this->db->query($sql);
+		$data = $query->result_array();
+
+		$data_fixed = array(
+			'voltage'=>array_map(function($el) {
+			    return $el["voltage"];
+			}, $data),
+			'current'=>array_map(function($el) {
+			    return $el["current"];
+			}, $data),
+			'apparent_power'=>array_map(function($el) {
+			    return $el["apparent_power"];
+			}, $data),
+			'timestamp'=>array_map(function($el) {
+			    return $el["timestamp"];
+			}, $data),
+		);
+		return $data_fixed;
+	}
 }
