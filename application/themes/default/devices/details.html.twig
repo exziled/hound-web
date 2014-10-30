@@ -9,16 +9,16 @@
 		<h1>'{{device.name}}' Details</h1>
 	</div>
 	<ol class="breadcrumb">
-        <li>
-            <a href="/dashboard"><i class="fa fa-dashboard"></i>  Dashboard</a>
-        </li>
-        <li class="active">
-            <a href="/devices"><i class="fa fa-list"></i> Devices</a>
-        </li>
-        <li class="active">
-            <i class="fa fa-area-chart"></i> Details
-        </li>
-    </ol>
+		<li>
+			<a href="/dashboard"><i class="fa fa-dashboard"></i>  Dashboard</a>
+		</li>
+		<li class="active">
+			<a href="/devices"><i class="fa fa-list"></i> Devices</a>
+		</li>
+		<li class="active">
+			<i class="fa fa-area-chart"></i> Details
+		</li>
+	</ol>
 	<div class="container">
 		<div class="row">
 
@@ -121,57 +121,57 @@
 		</div>
 
 		<div class="panel panel-default">
-	        <div class="panel-heading">
-	            <i class="fa fa-bar-chart-o fa-fw"></i> Historical Power Consumption for '{{device.name}}'
-	        </div>
+			<div class="panel-heading">
+				<i class="fa fa-bar-chart-o fa-fw"></i> Historical Power Consumption for '{{device.name}}'
+			</div>
 
-	        <div class="panel-body">
-	            <canvas id="powerHist" width="616" height="308"></canvas>
-	        </div>
+			<div class="panel-body">
+				<div id="chart" class="c3" style="max-height: 320px; position: relative;"></div>
+			</div>
 
-	    </div>
+		</div>
 
-	    <div class="panel panel-default">
-	        <div class="panel-heading">
-	            <i class="fa fa-plug fa-fw"></i> Outlet control for '{{device.name}}'
-	        </div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<i class="fa fa-plug fa-fw"></i> Outlet control for '{{device.name}}'
+			</div>
 
-	        <div class="panel-body">
+			<div class="panel-body">
 
 				<div style="display:inline-block">
 
 					<!-- <div class="container"> -->
-				        <div class="row">
-					        <div class="col-md-5">
-					        	<img src="{{static}}/img/outlet.svg" alt="Outlet" style="width:100%">
-					        </div>
-				            <div class="col-md-2">
+						<div class="row">
+							<div class="col-md-5">
+								<img src="{{static}}/img/outlet.svg" alt="Outlet" style="width:100%">
+							</div>
+							<div class="col-md-2">
 
-					            <div class="panel panel-default" style="display:inline-block">
-							        <div class="panel-heading">
-							            <i class="fa fa-plug fa-fw"></i> Outlet 1
-							        </div>
-							        <div class="panel-body">
-							            <input class="switch" id="outlet1" type="checkbox" name="my-checkbox">
-							        </div>
-							    </div>
+								<div class="panel panel-default" style="display:inline-block">
+									<div class="panel-heading">
+										<i class="fa fa-plug fa-fw"></i> Outlet 1
+									</div>
+									<div class="panel-body">
+										<input class="switch" id="outlet1" type="checkbox" name="my-checkbox">
+									</div>
+								</div>
 
-							    <div class="panel panel-default" style="display:inline-block">
-							        <div class="panel-heading">
-							            <i class="fa fa-plug fa-fw"></i> Outlet 2
-							        </div>
-							        <div class="panel-body">
-							            <input class="switch" id="outlet2" type="checkbox" name="my-checkbox">
-							        </div>
-							    </div>
-						    </div>
+								<div class="panel panel-default" style="display:inline-block">
+									<div class="panel-heading">
+										<i class="fa fa-plug fa-fw"></i> Outlet 2
+									</div>
+									<div class="panel-body">
+										<input class="switch" id="outlet2" type="checkbox" name="my-checkbox">
+									</div>
+								</div>
+							</div>
 						</div>
 					<!-- </div> -->
-			    </div>
+				</div>
 
-	        </div>
+			</div>
 
-	    </div>
+		</div>
 
 	</div>
 	<div>
@@ -179,37 +179,38 @@
 	</div>
 	<script src="http://localhost:2648/socket.io/socket.io.js"></script>
 	<script>
-	  var socket = io('http://localhost:2648/');
-	  socket.on('connect', function () {
-	  	console.log("Connected to SocketIO Server");
-	  	socket.emit('who', '{{device.core_id}}'); //tell the server what core we are interested in live data for
+		var socket = io('http://localhost:2648/');
+		socket.on('connect', function () {
+			console.log("Connected to SocketIO Server");
+			socket.emit('who', '{{device.core_id}}'); //tell the server what core we are interested in live data for
 
-	  	socket.emit('status'); //request information about socket status
+			socket.emit('status'); //request information about socket status
 
-	  	//Handle the status reply
-	    socket.on('status', function (sockets) {
-	    	for (var id in sockets) {
-				var state = sockets[id];
-				$('input[name="my-checkbox"]#'+id).bootstrapSwitch('indeterminate',false); //clear the initial indeterminate state.
-				$('input[name="my-checkbox"]#'+id).bootstrapSwitch('state',state=="on", true);// set the accurate state based on data from the server.
-			}
-	    });
+			//Handle the status reply
+			socket.on('status', function (sockets) {
+				for (var id in sockets) {
+					var state = sockets[id];
+					$('input[name="my-checkbox"]#'+id).bootstrapSwitch('indeterminate',false); //clear the initial indeterminate state.
+					$('input[name="my-checkbox"]#'+id).bootstrapSwitch('state',state=="on", true);// set the accurate state based on data from the server.
+				}
+			});
 
-	    socket.on('data', function (data) {
-	    	// console.log(data);
+			// socket.on('data', function (data) {
+			// 	// console.log(data);
 
-	    	$('#vrms').text(data.vrms);
-	    	$('#irms').text(data.irms);
-	    	$('#real').text(data.real);
-	    	$('#powerfactor').text(data.pf);
-	    	$('#apparent').text(data.apparent);
-	    });
-	  });
+			// 	$('#vrms').text(data.v);
+			// 	$('#irms').text(data.i);
+			// 	$('#real').text(data.r);
+			// 	$('#powerfactor').text(data.pf);
+			// 	$('#apparent').text(data.a);
+			// });
+		});
 	</script>
 {% endblock %}
 
 {% block foot %}
 	{{ parent() }}
+	<script type="text/javascript" src="{{static}}/libs/momentjs/js/moment.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
 		// console.log($(".switch"));
