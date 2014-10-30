@@ -112,18 +112,13 @@ class Devices extends MY_Controller {
 		$device = $this->device_model
 			->where('device_id', $id)
 			->get();
-		// $device = Array
-		// (
-		//     [device_id] => 7
-		//     [core_id] => 48ff6c065067555026311387
-		//     [name] => CorePlex
-		//     [access_token] => b122a221bf419da7491e4fca108f1835a2794451
-		//     [form_factor] => 0
-		//     [date_activated] => 2014-09-09 15:23:55
-		//     [user_id] => 4
-		//     [last_checkin] => 0000-00-00 00:00:00
-		// )
-		// print_r($device); exit();
+
+		$data = $this->samples->LastHourOfSamples($id);
+
+		$this->twiggy->set('data_vrms', substr(json_encode($data['voltage']), 1, -1));
+		$this->twiggy->set('data_irms', substr(json_encode($data['current']), 1, -1));
+		$this->twiggy->set('data_app', substr(json_encode($data['apparent_power']), 1, -1));
+		$this->twiggy->set('data_time', substr(json_encode($data['timestamp']), 1, -1));
 
 		$this->twiggy->set('vrms', "...");
 		$this->twiggy->set('irms', "...");
