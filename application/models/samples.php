@@ -27,12 +27,12 @@ class Samples extends MY_Model {
 
 	public function getKWH24hrs($device_id)
 	{
-		$sql = "SELECT round((sum(apparent_power)*24)/1000,2) as kwh FROM `samples` WHERE device_id = $device_id AND TIMESTAMP > DATE_SUB( NOW( ) , INTERVAL 24 HOUR )";
+		$sql = "SELECT round((sum(apparent_power)*24)/1000,2) as kwh,round((sum(apparent_power)/count(*))*24/1000,3) as VAh FROM `samples` WHERE device_id = $device_id AND TIMESTAMP > DATE_SUB( NOW( ) , INTERVAL 24 HOUR )";
 		// print $sql;
 		$query = $this->db->query($sql);
 		$data = $query->result_array();
 		// print_r($data);
-		return $data[0]['kwh'];
+		return $data[0]['VAh'];
 	}
 
 	public function LastHourOfSamples($device_id)
