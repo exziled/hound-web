@@ -18,17 +18,17 @@ var coresock = {};
 console.log("Core Server Listening on port "+wsport);
 
 wss.on('connection', function(ws) {
-	console.log('Client Connected');
+	console.log('WebSocket Core Client Connected');
 	ws.on('message', function(message) {
-		// console.log(message);
+		console.log(message);
 		//When data is recieved from a sparkcore emit the data to any subscribed
 		//web clients. try/catch for malformated json data.
 		try	{
 			message = JSON.parse(message);
-			if (message['core_id'] === undefined) {
-				console.log("core_id is undefined");
+			if (message['id'] === undefined) {
+				console.log("id is undefined");
 			}
-			var sockets = coresock[message.core_id];
+			var sockets = coresock[message.id];
 			for (var i = 0; sockets !== undefined && i < sockets.length; i++) {
 				sockets[i].emit('data', message);
 			}
