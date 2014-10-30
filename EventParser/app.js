@@ -75,23 +75,23 @@ io.on('connection', function(socket){
 	//send the current state of the outlets to the web client so they can accurately show the state.
 	socket.on('status', function(){
 
-		var read_state = new Buffer("01B102", "hex");
-		var client = dgram.createSocket("udp4")
-		client.send(sub_fast_close, 0, sub_fast_close.length, spark_udp_port, "192.168.1.113", function(err, bytes) {
-			client.close();
-			client = null;
-		});
+		// var read_state = new Buffer("01B102", "hex");
+		// var client = dgram.createSocket("udp4")
+		// client.send(sub_fast_close, 0, sub_fast_close.length, spark_udp_port, "192.168.1.113", function(err, bytes) {
+		// 	client.close();
+		// 	client = null;
+		// });
 		// var server = dgram.createSocket("udp4")
 		// server.bind(status_port);
 		// server.on('message', function(msg) {
 		// 	console.log("Reply: ", msg)
 		// })
 
-		// var data = {
-		// 	outlet1: "on", //@todo
-		// 	outlet2: "off" //@todo
-		// };
-		// socket.emit('status', data)
+		var data = {
+			outlet1: "off", //@todo
+			outlet2: "off" //@todo
+		};
+		socket.emit('status', data)
 	});
 
 	socket.on('disconnect', function(){
