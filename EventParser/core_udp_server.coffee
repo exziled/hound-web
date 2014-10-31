@@ -110,5 +110,3 @@ class UDP_Server
 
 
 module.exports = UDP_Server
-
-module.exports = UDP_Server

@@ -3,11 +3,14 @@
 settings =
 	listen_udp_port:8081
 	outgoing_udp_port:9080
-
+	socketio_port:2648
 
 http = require('http')
 UDP_Server = require('./core_udp_server.coffee')
 udp_server = new UDP_Server(settings)
+
+SocketIO = require('./socketio.coffee')
+socketio = new SocketIO(udp_server, settings)
 
 
 # console.log(udp_server)
