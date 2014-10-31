@@ -243,12 +243,12 @@
 			xFormat: '%Y-%m-%d %H:%M:%S',
 			columns: [ //DO NOT CHANGE THIS ORDER
 				['x', {{data_time}}],
-				['Voltage RMS', {{data_vrms}}],
-				['Current RMS', {{data_irms}}],
-				['Apparent Power', {{data_app}}],
+				['RMS Voltage [V]', {{data_vrms}}],
+				['RMS Current [A]', {{data_irms}}],
+				['Apparent Power [VA]', {{data_app}}],
 			],
 			axes: {
-				'Current RMS': 'y2'
+				'Current': 'y2'
 			}
 		};
 
@@ -258,14 +258,14 @@
 			axis: {
 				y: {
 					label: {
-						text: 'Voltage RMS',
+						text: 'Voltage and Power',
 						position: 'outer-middle'
 					}
 				},
 				y2: {
 					show: true,
 					label: {
-						text: 'Current RMS',
+						text: 'Current',
 						position: 'outer-middle'
 					},
 					max: 16,
