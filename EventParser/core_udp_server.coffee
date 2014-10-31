@@ -82,7 +82,9 @@ class UDP_Server
 		if @counter >= 255
 			@counter = 0;
 
-		cnt = @counter.toString(16) #convert to base 16
+		mycnt = @counter
+
+		cnt = mycnt.toString(16) #convert to base 16
 		if cnt.length %2 != 0
 			cnt = "0"+cnt;
 
@@ -95,15 +97,15 @@ class UDP_Server
 			client = null;
 			console.log("Sent: ",out);
 
-			timeoutID = delay 8000, ()=>
+			timeoutID = delay @settings.udp_timeout, ()=>
 				console.log("UDP Timed out");
-				@off @counter.toString()
+				@off mycnt.toString()
 				@send(buff, ip, callback);
 
-			@on @counter.toString(), (err, data) =>
+			@on mycnt.toString(), (err, data) =>
 				clearTimeout(timeoutID) #if we get a reply clear the timeout
 				callback(err, data);
-				@off @counter.toString()
+				@off mycnt.toString()
 
 
 
