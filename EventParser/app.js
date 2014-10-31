@@ -5,7 +5,7 @@
 // port to run the web socket server on which to listen for new data from the core.
 var spark_udp_port = 9080;
 var wsport = 9081;
-var status_port = 9082;
+// var status_port = 9082;
 
 var wsServer = require('ws').Server;
 var wss = new wsServer({port: wsport});

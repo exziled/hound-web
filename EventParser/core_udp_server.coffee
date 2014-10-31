@@ -64,7 +64,7 @@ class UDP_Server
 				return
 
 			if (callback == undefined)
-				console.log("Unable to remove handler")
+				console.log("Unable to remove handler", @event_map)
 				return
 
 			idx = @event_map[evt].indexOf(callback)
@@ -93,7 +93,7 @@ class UDP_Server
 		client.send out1, 0, out1.length, @settings.outgoing_udp_port, ip, (err, bytes) =>
 			client.close();
 			client = null;
-			console.log("Sub Req",out);
+			console.log("Sent: ",out);
 
 			timeoutID = delay 8000, ()=>
 				console.log("UDP Timed out");
