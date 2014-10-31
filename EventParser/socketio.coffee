@@ -16,6 +16,9 @@ class SocketIO
 
 		@coresock = {}
 
+		# -----------------------------------------------------------------------------
+		# High-Speed data from cores using websockets
+		# -----------------------------------------------------------------------------
 		wsServer = require('ws').Server;
 		wss = new wsServer({port: +@settings.websock_port});
 
@@ -45,6 +48,10 @@ class SocketIO
 			ws.on 'error', (err) ->
 				console.log('SparkERROR', err);
 
+		# -----------------------------------------------------------------------------
+		# High-Speed data and control pushed to socket.io web clients
+		# -----------------------------------------------------------------------------
+
 		@io = require('socket.io')(settings.socketio_port);
 		console.log("Socket.IO server listening on port "+settings.socketio_port);
 		@io.on 'connection', (socket) =>
@@ -58,7 +65,6 @@ class SocketIO
 
 					#create a subscription with the core for high-speed data
 					@udp_server.send 0x04, "192.168.1.113", (err, reply) ->
-						console.log("Websockets ",err, reply); #@todo test this
 						if not err and reply.result == 1
 							console.log("Websockets Subscription Created with", coreid);
 				else
