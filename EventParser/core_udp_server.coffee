@@ -36,7 +36,7 @@ class UDP_Server
 						return
 
 					for handler in handlers
-						handler(null, msg) #callbacks must be in the format err, data
+						handler(null, msg, rinfo) #callbacks must be in the format err, data
 				else
 					console.log("ERROR", err, result, data);
 
