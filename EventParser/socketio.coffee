@@ -104,26 +104,26 @@ class SocketIO
 
 			socket.on 'control', (data) =>
 
-				# top = 0x01B100
-				# bot = 0x01B000
+				top = 0x01B000 #b0
+				bot = 0x01B100 #b1
 
-				# if (data.outlet == "outlet1")
-				# 	msg = top
-				# else if (data.outlet == "outlet2")
-				# 	msg = bot
-				# else
-				# 	console.log("Unknown Outlet ", data.outlet);
-				# 	return;
+				if (data.outlet == "outlet1")
+					msg = top
+				else if (data.outlet == "outlet2")
+					msg = bot
+				else
+					console.log("Unknown Outlet ", data.outlet);
+					return;
 
-				# if (data.state == 'on')
-				# 	msg |= 0x01;
-				# else if (data.state == 'off')
-				# 	msg |= 0x00;
-				# else
-				# 	console.log("Unknown State ", data.state);
-				# 	return;
+				if (data.state == 'on')
+					msg |= 0x01;
+				else if (data.state == 'off')
+					msg |= 0x00;
+				else
+					console.log("Unknown State ", data.state);
+					return;
 
-				# @udp_server.send msg, "192.168.1.113", (err, reply) ->
-				# 	console.log("control ",err, reply); #@todo test this
+				@udp_server.send msg, "192.168.1.113", (err, reply) ->
+					console.log("control ",err, reply); #@todo test this
 
 module.exports = SocketIO
