@@ -74,14 +74,16 @@ class SocketIO
 			socket.on 'status', () =>
 
 				#read the current data from the core
-				# @udp_server.send 0x01B002, "192.168.1.113", (err, reply) -> #B102
-				# 	console.log("WS Status ",err, reply); #@todo test this
+				@udp_server.send 0x01B102B002, "192.168.1.113", (err, reply) -> #B102
+					console.log("reply",err, reply); #@todo test this
 
-				# 	data = {
-				# 		outlet1: "off" #@todo
-				# 		outlet2: "off" #@todo
-				# 	}
-				# 	socket.emit('status', data)
+					console.log(reply, reply.result, reply.result[0], reply.result[0].state);
+					data = {
+						outlet1: if reply.result[1].state then "on" else "false"
+						outlet2: if reply.result[0].state then "on" else "false"
+					}
+					console.log(data);
+					socket.emit('status', data)
 
 
 			socket.on 'disconnect', () =>
