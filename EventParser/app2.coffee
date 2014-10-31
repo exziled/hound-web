@@ -17,16 +17,16 @@ sub = new Buffer("01020000", "hex"); #init a subscription
 # sub_close = new Buffer("020000", "hex"); #close a subscription
 
 #create a subscription with the core
-udp_server.send sub, "192.168.1.113", (err, reply) ->
-	console.log(error, reply) #currently there is no reply to a subscription request
+udp_server.send 0x2, "192.168.1.113", (err, reply) ->
+	if not err and reply.result == 1
+		console.log("Subscription created");
+
 
 udp_server.on 'samp', (err, data, rinfo) ->
 	if (err)
 		console.log("sample error", err);
 	else
 		try
-			# data = JSON.parse(data);
-
 			#@todo replaceme
 			if (rinfo.address == "192.168.1.111")
 				data.core_id = "48ff6c065067555026311387";
@@ -66,8 +66,9 @@ udp_server.on 'samp', (err, data, rinfo) ->
 udp_server.on 'ws', (err, data) ->
 	console.log(err, data)
 
-# client = dgram.createSocket("udp4");
-# client.send(sub, 0, sub.length, settings.outgoing_udp_port, "192.168.1.113", function(err, bytes) {
-# 	client.close();
-# 	client = null;
-# });
+#happens when core comes online
+udp_server.on 'broadcast', (err, data, rinfo) ->
+	console.log("Core "+data.id+" Online at IP "+rinfo.address);
+	udp_server.send 0x2, rinfo.address, (err, reply) ->
+		if not err and reply.result == 1
+			console.log("Subscription created");

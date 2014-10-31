@@ -9,7 +9,8 @@ class UDP_Server
 		@event_map = {}
 		@counter = 0;
 		server = dgram.createSocket('udp4');
-		server.bind(@settings.listen_udp_port);
+		server.bind @settings.listen_udp_port, ()=>
+			server.addMembership("224.111.112.113")
 
 		server.on "error", (err) =>
 			console.log("server error:\n" + err.stack)
