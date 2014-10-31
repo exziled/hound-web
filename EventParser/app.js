@@ -123,9 +123,16 @@ io.on('connection', function(socket){
 
 		//@todo need a better way to handle the core port/pin #'s
 
-		var message = cmd_set_off;
+		var message = cmd_set_top_off;
 		if (data.state == 'on') {
-			message = cmd_set_on;
+			message = cmd_set_top_on;
+		}
+
+		if (data.outlet == "outlet1") {
+			message = cmd_set_bottom_off;
+			if (data.state == 'on') {
+				message = cmd_set_bottom_on;
+			}
 		}
 		var client = dgram.createSocket("udp4");
 		client.send(message, 0, message.length, spark_udp_port, address, function(err, bytes) {
@@ -152,8 +159,11 @@ var sub_close = new Buffer("020000", "hex"); //close a subscription
 var sub_fast = new Buffer("04", "hex"); //init a high-speed subscription
 var sub_fast_close = new Buffer("020000", "hex"); //close a high-speed subscription
 
-var cmd_set_on = new Buffer("01B101", "hex");
-var cmd_set_off = new Buffer("01B100", "hex");
+var cmd_set_top_on  = new Buffer("01B101", "hex");
+var cmd_set_top_off = new Buffer("01B100", "hex");
+
+var cmd_set_bottom_on  = new Buffer("01B001", "hex");
+var cmd_set_bottom_off = new Buffer("01B000", "hex");
 
 
 server.on("error", function (err) {
@@ -233,3 +243,8 @@ client.send(sub, 0, sub.length, spark_udp_port, "192.168.1.113", function(err, b
 	client = null;
 });
 
+// var client1 = dgram.createSocket("udp4");
+// client1.send(sub, 0, sub.length, spark_udp_port, "192.168.1.111", function(err, bytes) {
+// 	client1.close();
+// 	client1 = null;
+// });
