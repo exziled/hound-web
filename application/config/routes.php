@@ -43,7 +43,7 @@ $route['404_override'] = '';
 
 $route['logout'] = 'login/logout';
 $route['user'] = 'login/user';
-$route['dashboard'] = 'login/user';
+$route['dashboard'] = 'devices';
 $route['register'] = 'login/register';
 $route['register/:any'] = 'login/register';
 $route['start'] = 'login/register';
