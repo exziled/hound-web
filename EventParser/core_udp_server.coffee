@@ -1,10 +1,13 @@
 dgram = require('dgram')
 json_sanitizer = require('json_sanitizer')
 
-class UDP_Server
-	# @event_map = {}
-	constructor: (@settings, @event_map={}) ->
+delay = (ms, func) -> setTimeout func, ms
 
+class UDP_Server
+
+	constructor: (@settings) ->
+		@event_map = {}
+		@counter = 0;
 		server = dgram.createSocket('udp4');
 		server.bind(@settings.listen_udp_port);
 
@@ -25,6 +28,7 @@ class UDP_Server
 			json_sanitizer data, (err, result) =>
 				if (!err)
 					msg = JSON.parse(result)
+					# console.log(msg);
 
 					if (!msg.hasOwnProperty('e'))
 						console.log("msg does not have an e property", msg);
@@ -32,7 +36,7 @@ class UDP_Server
 
 					handlers = @event_map[msg.e]
 					if handlers == undefined
-						console.log("no handlers defined for", msg.e)
+						console.log("no handlers defined for", msg.e, msg)
 						return
 
 					for handler in handlers
@@ -42,6 +46,7 @@ class UDP_Server
 
 	#callbacks must be in the format err, data
 	on: (evt, callback) ->
+		console.log("on", evt);
 		if (not (evt of @event_map))
 			@event_map[evt] = [callback]
 		else
@@ -49,6 +54,7 @@ class UDP_Server
 
 	#pass the same callback to remove
 	off: (evt, callback) ->
+		console.log("off", evt);
 		if (not (evt of @event_map))
 			return
 		else
@@ -65,17 +71,43 @@ class UDP_Server
 
 	#callback is in the format (err, data)
 	send: (buff, ip, callback) ->
-		#@todo generate random packetID & send
+		# pad the buffer to ensure that it is an even number of digits representing
+		# a multiple of 8 bits
+		out = buff.toString(16) #convert to base 16
+		if out.length %2 != 0
+			out = "0"+out;
+
+		@counter += 1;
+		if @counter >= 255
+			@counter = 0;
+
+		cnt = @counter.toString(16) #convert to base 16
+		if cnt.length %2 != 0
+			cnt = "0"+cnt;
+
+		out = cnt+out;
+
+		out1 = new Buffer(out, "hex");
 		client = dgram.createSocket("udp4")
-		client.send buff, 0, buff.length, @settings.outgoing_udp_port, ip, (err, bytes) ->
+		client.send out1, 0, out1.length, @settings.outgoing_udp_port, ip, (err, bytes) =>
 			client.close();
 			client = null;
-			#@todo on('reply_packetID', function(err, data){
-			#callback(err, data);
-			#off('reply_packetID');
-			#});
+			console.log("Sub Req",out);
+
+			timeoutID = delay 8000, ()=>
+				console.log("UDP Timed out");
+				@off @counter.toString()
+				@send(buff, ip, callback);
+
+			@on @counter.toString(), (err, data) =>
+				clearTimeout(timeoutID) #if we get a reply clear the timeout
+				callback(err, data);
+				@off @counter.toString()
 
 
 
+
+
+module.exports = UDP_Server
 
 module.exports = UDP_Server
