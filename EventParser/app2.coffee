@@ -5,6 +5,7 @@ settings =
 	outgoing_udp_port:9080
 	socketio_port:2648
 	websock_port:9081
+	udp_timeout:3000
 
 http = require('http')
 UDP_Server = require('./core_udp_server.coffee')
