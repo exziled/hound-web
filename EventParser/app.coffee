@@ -59,4 +59,4 @@ udp_server.on 'broadcast', (err, data, rinfo) ->
 	#automatically create subscription when a core comes online
 	udp_server.send 0x2, rinfo.address, (err, reply) ->
 		if not err and reply.result == 1
-			console.log("Subscription created");
+			console.log("Subscription created with core",data.id);
