@@ -19,13 +19,6 @@ coremap = {} # {"coreid":"ipaddress"}
 SocketIO = require('./socketio.coffee')
 socketio = new SocketIO(udp_server, settings, coremap)
 
-
-
-#create a subscription with the core
-udp_server.send 0x2, "192.168.1.113", (err, reply) ->
-	if not err and reply.result == 1
-		console.log("Subscription created");
-
 #triggered on new sample set
 udp_server.on 'samp', (err, data, rinfo) ->
 	if (err)

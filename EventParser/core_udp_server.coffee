@@ -107,8 +107,4 @@ class UDP_Server
 				callback(err, data);
 				@off mycnt.toString()
 
-
-
-
-
 module.exports = UDP_Server
