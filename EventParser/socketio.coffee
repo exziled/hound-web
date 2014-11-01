@@ -60,18 +60,19 @@ class SocketIO
 
 				console.log('socket.io web user connected', coreid);
 				socket['coreid'] = coreid;
-				if (@coresock[coreid] == undefined)
-					@coresock[coreid] = [socket];
+				if (@coresock[coreid] == undefined) # no web users are subscribed to data from this fore
 
 					if @coremap[coreid] == undefined
 						console.log("unable to create socketio sub with core b/c its not registered in the coremap", coreid);
 						return;
 
+					@coresock[coreid] = [socket];
+
 					#create a subscription with the core for high-speed data
 					@udp_server.send 0x04, @coremap[coreid], (err, reply) ->
 						if not err and reply.result == 1
 							console.log("Websockets Subscription Created with", coreid);
-				else
+				else #others are already subscribed so lets just add us to the list of interested clients
 					@coresock[coreid].push(socket);
 
 			#send the current state of the outlets to the web client so they can accurately show the state.
@@ -99,19 +100,21 @@ class SocketIO
 				console.log('socket.io web user disconnected', coreid);
 
 				sockets = @coresock[coreid];
-				for sock in sockets
-					if (sock.id == socket.id)
-						sockets.splice(sockets.indexOf(sock),1); #remove the matching element
-						break;
-				@coresock[coreid] = sockets;
+				if sockets != undefined
+					#remove the sockets of the leaving clients from our coresock map
+					for sock in sockets
+						if (sock.id == socket.id)
+							sockets.splice(sockets.indexOf(sock),1); #remove the matching element
+							break;
+					@coresock[coreid] = sockets;
 
-				if (sockets.length == 0) #last socket removed
-					if @coremap[coreid] == undefined
-						console.log("unable to destroy websocket sub core b/c its not registered in the coremap", coreid);
-						return
-					#destroy the subscription for high-speed data
-					@udp_server.send 0x0401, @coremap[coreid], (err, reply) ->
-						console.log("WS Destroy ",err, reply); #@todo test this
+					if (sockets.length == 0) #last socket removed
+						if @coremap[coreid] == undefined
+							console.log("unable to destroy websocket sub core b/c its not registered in the coremap", coreid);
+							return
+						#destroy the subscription for high-speed data
+						@udp_server.send 0x0401, @coremap[coreid], (err, reply) ->
+							console.log("WS Destroy ",err, reply); #@todo test this
 
 			socket.on 'control', (data) =>
 
