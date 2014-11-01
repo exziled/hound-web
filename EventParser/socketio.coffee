@@ -12,7 +12,7 @@
 
 class SocketIO
 
-	constructor: (@udp_server, @settings)->
+	constructor: (@udp_server, @settings, @coremap)->
 
 		@coresock = {}
 
@@ -63,8 +63,12 @@ class SocketIO
 				if (@coresock[coreid] == undefined)
 					@coresock[coreid] = [socket];
 
+					if @coremap[coreid] == undefined
+						console.log("unable to create socketio sub with core b/c its not registered in the coremap", coreid);
+						return;
+
 					#create a subscription with the core for high-speed data
-					@udp_server.send 0x04, "192.168.1.113", (err, reply) ->
+					@udp_server.send 0x04, @coremap[coreid], (err, reply) ->
 						if not err and reply.result == 1
 							console.log("Websockets Subscription Created with", coreid);
 				else
@@ -72,9 +76,13 @@ class SocketIO
 
 			#send the current state of the outlets to the web client so they can accurately show the state.
 			socket.on 'status', () =>
+				coreid = socket['coreid'];
+				if @coremap[coreid] == undefined
+					console.log("unable to get status of core b/c its not registered in the coremap", coreid);
+					return
 
 				#read the current data from the core
-				@udp_server.send 0x01B102B002, "192.168.1.113", (err, reply) -> #B102
+				@udp_server.send 0x01B102B002, @coremap[coreid], (err, reply) -> #B102
 					console.log("reply",err, reply); #@todo test this
 
 					console.log(reply, reply.result, reply.result[0], reply.result[0].state);
@@ -95,14 +103,22 @@ class SocketIO
 					if (sock.id == socket.id)
 						sockets.splice(sockets.indexOf(sock),1); #remove the matching element
 						break;
-
 				@coresock[coreid] = sockets;
+
 				if (sockets.length == 0) #last socket removed
+					if @coremap[coreid] == undefined
+						console.log("unable to destroy websocket sub core b/c its not registered in the coremap", coreid);
+						return
 					#destroy the subscription for high-speed data
 					@udp_server.send 0x05, "192.168.1.113", (err, reply) ->
 						console.log("WS Destroy ",err, reply); #@todo test this
 
 			socket.on 'control', (data) =>
+
+				coreid = socket['coreid'];
+				if @coremap[coreid] == undefined
+					console.log("unable to set outlet status b/c the core is not registered in the coremap", coreid);
+					return
 
 				top = 0x01B000 #b0
 				bot = 0x01B100 #b1

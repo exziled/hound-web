@@ -11,8 +11,13 @@ http = require('http')
 UDP_Server = require('./core_udp_server.coffee')
 udp_server = new UDP_Server(settings)
 
+# Holds the relation between cores and their ipaddresses
+# http://stackoverflow.com/questions/518000
+coremap = {} # {"coreid":"ipaddress"}
+
 SocketIO = require('./socketio.coffee')
-socketio = new SocketIO(udp_server, settings)
+socketio = new SocketIO(udp_server, settings, coremap)
+
 
 
 #create a subscription with the core
@@ -64,7 +69,8 @@ udp_server.on 'samp', (err, data, rinfo) ->
 
 #triggered when core comes online
 udp_server.on 'broadcast', (err, data, rinfo) ->
-	#automatically create subscription
+	coremap[data.id] = rinfo.address
+	#automatically create subscription when a core comes online
 	udp_server.send 0x2, rinfo.address, (err, reply) ->
 		if not err and reply.result == 1
 			console.log("Subscription created");
