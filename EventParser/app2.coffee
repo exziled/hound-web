@@ -32,14 +32,6 @@ udp_server.on 'samp', (err, data, rinfo) ->
 		console.log("sample error", err);
 	else
 		try
-			#@todo replaceme
-			if (rinfo.address == "192.168.1.111")
-				data.core_id = "48ff6c065067555026311387";
-			else if (rinfo.address == "192.168.1.113")
-				data.core_id = "53ff6d065067544847310187";
-			else
-				data.core_id = "";
-			#@end
 			console.log(data);
 
 			options = {
