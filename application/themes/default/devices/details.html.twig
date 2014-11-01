@@ -183,9 +183,9 @@
 	<div>
 		<ul class="test"></ul>
 	</div>
-	<script src="http://localhost:2648/socket.io/socket.io.js"></script>
+	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 	<script>
-		var socket = io('http://localhost:2648/');
+		var socket = io('http://'+window.location.host+':2648/');
 		socket.on('connect', function () {
 			console.log("Connected to SocketIO Server");
 			socket.emit('who', '{{device.core_id}}'); //tell the server what core we are interested in live data for
