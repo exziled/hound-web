@@ -10,7 +10,7 @@ class UDP_Server
 		@counter = 0;
 		server = dgram.createSocket('udp4');
 		server.bind @settings.listen_udp_port, ()=>
-			server.addMembership("224.111.112.113")
+			server.addMembership(@settings.udp_multicast)
 
 		server.on "error", (err) =>
 			console.log("server error:\n" + err.stack)
