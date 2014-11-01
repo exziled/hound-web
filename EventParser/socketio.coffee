@@ -110,7 +110,7 @@ class SocketIO
 						console.log("unable to destroy websocket sub core b/c its not registered in the coremap", coreid);
 						return
 					#destroy the subscription for high-speed data
-					@udp_server.send 0x05, "192.168.1.113", (err, reply) ->
+					@udp_server.send 0x0401, @coremap[coreid], (err, reply) ->
 						console.log("WS Destroy ",err, reply); #@todo test this
 
 			socket.on 'control', (data) =>
@@ -139,7 +139,7 @@ class SocketIO
 					console.log("Unknown State ", data.state);
 					return;
 
-				@udp_server.send msg, "192.168.1.113", (err, reply) ->
+				@udp_server.send msg, @coremap[coreid], (err, reply) ->
 					console.log("control ",err, reply); #@todo test this
 
 module.exports = SocketIO
