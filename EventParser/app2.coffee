@@ -1,11 +1,12 @@
 
 #settings
 settings =
-	listen_udp_port:8081
-	outgoing_udp_port:9080
-	socketio_port:2648
-	websock_port:9081
-	udp_timeout:3000
+	listen_udp_port:8081			# listen fro replies from the core on this port
+	outgoing_udp_port:9080			# send messages to the core on this port
+	socketio_port:2648				# port that socketio web communication uses
+	websock_port:9081				# high speed data from the core
+	udp_timeout:3000				# how long to wait after sending a packet before resend
+	udp_multicast:"224.111.112.113"	# port to listen on fro broadasts from cores
 
 http = require('http')
 UDP_Server = require('./core_udp_server.coffee')
