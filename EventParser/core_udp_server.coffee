@@ -47,7 +47,7 @@ class UDP_Server
 
 	#callbacks must be in the format err, data
 	on: (evt, callback) ->
-		console.log("on", evt);
+		# console.log("on", evt);
 		if (not (evt of @event_map))
 			@event_map[evt] = [callback]
 		else
@@ -55,7 +55,7 @@ class UDP_Server
 
 	#pass the same callback to remove
 	off: (evt, callback) ->
-		console.log("off", evt);
+		# console.log("off", evt);
 		if (not (evt of @event_map))
 			return
 		else
@@ -64,7 +64,7 @@ class UDP_Server
 				return
 
 			if (callback == undefined)
-				console.log("Unable to remove handler", @event_map)
+				console.error("Unable to remove handler", @event_map)
 				return
 
 			idx = @event_map[evt].indexOf(callback)

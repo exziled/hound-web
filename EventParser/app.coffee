@@ -25,7 +25,7 @@ udp_server.on 'samp', (err, data, rinfo) ->
 		console.log("sample error", err);
 	else
 		try
-			console.log(data);
+			# console.log(data);
 
 			options = {
 				host: 'hound',
@@ -42,8 +42,10 @@ udp_server.on 'samp', (err, data, rinfo) ->
 
 
 				res.on 'end', () ->
-					if (res.statusCode != 201)
-						console.log(res.statusCode, str);
+					if (res.statusCode == 201)
+						console.log("%s Data Logged to server from core", new Date().getTime(), data.core_id);
+					else
+						console.error(res.statusCode, str);
 
 			req = http.request(options, callback);
 			# This is the data we are posting, it needs to be a string or a buffer
@@ -52,6 +54,7 @@ udp_server.on 'samp', (err, data, rinfo) ->
 
 		catch e
 			console.log("udp_server.on 'samp'", e, data);
+
 
 #triggered when core comes online
 udp_server.on 'broadcast', (err, data, rinfo) ->

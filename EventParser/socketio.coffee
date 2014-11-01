@@ -22,12 +22,12 @@ class SocketIO
 		wsServer = require('ws').Server;
 		wss = new wsServer({port: +@settings.websock_port});
 
-		console.log("Core Server Listening on port "+@settings.websock_port);
+		console.info("Core Server Listening on port "+@settings.websock_port);
 
 		wss.on 'connection', (ws) =>
-			console.log('WebSocket Core Client Connected');
+			console.info('WebSocket Core Client Connected');
 			ws.on 'message', (message) =>
-				console.log(message);
+				# console.log(message);
 				#When data is recieved from a sparkcore emit the data to any subscribed
 				#web clients. try/catch for malformated json data.
 				try
@@ -38,7 +38,7 @@ class SocketIO
 					sockets = @coresock[message.id];
 					for sock in sockets
 						sock.emit('data', message);
-
+					console.info("%s Live data sent to web client for core %s", new Date().getTime(), message.id);
 				catch err
 					console.log(err, message);
 
@@ -46,7 +46,7 @@ class SocketIO
 				console.log('SparkCore disconnected.');
 
 			ws.on 'error', (err) ->
-				console.log('SparkERROR', err);
+				console.error('SparkERROR', err);
 
 		# -----------------------------------------------------------------------------
 		# High-Speed data and control pushed to socket.io web clients
@@ -57,47 +57,51 @@ class SocketIO
 		@io.on 'connection', (socket) =>
 
 			socket.on 'who', (coreid) =>
+				console.log("coresock",@coresock);
 
-				console.log('socket.io web user connected', coreid);
+				console.info('socket.io web user connected', coreid);
 				socket['coreid'] = coreid;
-				if (@coresock[coreid] == undefined) # no web users are subscribed to data from this fore
+				console.log("subscribers: ",@coresock[coreid]);
+				if (@coresock[coreid] == undefined || @coresock[coreid].length == 0) # no web users are subscribed to data from this core
+					console.log("Undefined!");
 
 					if @coremap[coreid] == undefined
-						console.log("unable to create socketio sub with core b/c its not registered in the coremap", coreid);
+						console.log("FAIL: socketio sub create. %s not registered in coremap", coreid);
 						return;
 
 					@coresock[coreid] = [socket];
 
 					#create a subscription with the core for high-speed data
-					@udp_server.send 0x04, @coremap[coreid], (err, reply) ->
+					@udp_server.send 0x0400, @coremap[coreid], (err, reply) ->
 						if not err and reply.result == 1
-							console.log("Websockets Subscription Created with", coreid);
+							console.info("Websockets Subscription Created with", coreid);
 				else #others are already subscribed so lets just add us to the list of interested clients
+					# console.log("Added to list");
 					@coresock[coreid].push(socket);
 
 			#send the current state of the outlets to the web client so they can accurately show the state.
 			socket.on 'status', () =>
 				coreid = socket['coreid'];
 				if @coremap[coreid] == undefined
-					console.log("unable to get status of core b/c its not registered in the coremap", coreid);
+					console.log("FAIL: get outlet status. %s not registered in coremap", coreid);
 					return
 
 				#read the current data from the core
 				@udp_server.send 0x01B102B002, @coremap[coreid], (err, reply) -> #B102
-					console.log("reply",err, reply); #@todo test this
+					# console.log("reply",err, reply);
 
-					console.log(reply, reply.result, reply.result[0], reply.result[0].state);
+					# console.log(reply, reply.result, reply.result[0], reply.result[0].state);
 					data = {
 						outlet1: if reply.result[1].state then "on" else "false"
 						outlet2: if reply.result[0].state then "on" else "false"
 					}
-					console.log(data);
+					# console.log(data);
 					socket.emit('status', data)
 
 
 			socket.on 'disconnect', () =>
 				coreid = socket['coreid'];
-				console.log('socket.io web user disconnected', coreid);
+				console.info('socket.io web user disconnected', coreid);
 
 				sockets = @coresock[coreid];
 				if sockets != undefined
@@ -110,17 +114,19 @@ class SocketIO
 
 					if (sockets.length == 0) #last socket removed
 						if @coremap[coreid] == undefined
-							console.log("unable to destroy websocket sub core b/c its not registered in the coremap", coreid);
+							console.error("FAIL: destroy websocket sub. %s not registered in coremap", coreid);
 							return
 						#destroy the subscription for high-speed data
 						@udp_server.send 0x0401, @coremap[coreid], (err, reply) ->
-							console.log("WS Destroy ",err, reply); #@todo test this
+							console.info("WS Destroy ",err, reply); #@todo test this
+
+				console.info("coresock disconnect", @coresock);
 
 			socket.on 'control', (data) =>
 
 				coreid = socket['coreid'];
 				if @coremap[coreid] == undefined
-					console.log("unable to set outlet status b/c the core is not registered in the coremap", coreid);
+					console.error("FAIL: set outlet status. %s not registered in coremap", coreid);
 					return
 
 				top = 0x01B000 #b0
@@ -131,7 +137,7 @@ class SocketIO
 				else if (data.outlet == "outlet2")
 					msg = bot
 				else
-					console.log("Unknown Outlet ", data.outlet);
+					console.error("Unknown Outlet ", data.outlet);
 					return;
 
 				if (data.state == 'on')
@@ -139,10 +145,10 @@ class SocketIO
 				else if (data.state == 'off')
 					msg |= 0x00;
 				else
-					console.log("Unknown State ", data.state);
+					console.error("Unknown State ", data.state);
 					return;
 
 				@udp_server.send msg, @coremap[coreid], (err, reply) ->
-					console.log("control ",err, reply); #@todo test this
+					console.error("control ",err, reply); #@todo test this
 
 module.exports = SocketIO
