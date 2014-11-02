@@ -6,8 +6,19 @@
 
 {% block content %}
 	<div class="page-header">
-		<h1>Add a {{proj_name}} <small>What are we monitoring today?</small></h1>
+		<h1>{{action_name}} a {{proj_name}} <small>{{slogan}}</small></h1>
 	</div>
+	<ol class="breadcrumb">
+		<li>
+			<a href="/dashboard"><i class="fa fa-dashboard"></i>  Dashboard</a>
+		</li>
+		<li class="active">
+			<a href="/devices"><i class="fa fa-list"></i> Devices</a>
+		</li>
+		<li class="active">
+			<i class="fa fa-edit"></i> {{action_name}}
+		</li>
+	</ol>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-4 col-md-offset-4">
@@ -20,18 +31,19 @@
 							<fieldset>
 								<div class="form-group">
 									<label for="name">{{proj_name}} Node Name</label>
-									<input class="form-control" placeholder="Living Room Entertainment Center" name="name" type="text">
+									<input class="form-control" value="{{device.name}}" placeholder="Living Room Entertainment Center" name="name" type="text">
 								</div>
 								<div class="form-group">
 									<label for="core_id">{{proj_name}} Core ID</label>
-									<input class="form-control" placeholder="..." name="core_id" type="text">
+									<input class="form-control" value="{{device.core_id}}" placeholder="..." name="core_id" type="text">
 								</div>
 								<div class="form-group">
 									<label for="access_token">{{proj_name}} Access Token</label>
-									<input class="form-control" placeholder="..." name="access_token" type="text">
+									<input class="form-control" value="{{device.access_token}}" placeholder="..." name="access_token" type="text">
 								</div>
 								<input class="btn btn-lg btn-success btn-block" type="submit" value="Go">
 							</fieldset>
+							<input type="hidden" name="device_id" value="{{device.device_id}}">
 						</form>
 					</div>
 				</div>

@@ -56,7 +56,9 @@ class Devices extends MY_Controller {
 	public function add_get()
 	{
 		$this->twiggy->title()->prepend('Add Devices');
-		$this->twiggy->display('devices_add');
+		$this->twiggy->set('action_name', 'Add');
+		$this->twiggy->set('slogan', 'What are we monitoring today?');
+		$this->twiggy->display('devices_add_edit');
 	}
 
 	/**
@@ -75,8 +77,6 @@ class Devices extends MY_Controller {
 		{
 			$this->session->set_message("Success",'New device successfully added.');
 			//@todo send post to spark core
-
-
 		}
 		else
 		{
@@ -91,7 +91,16 @@ class Devices extends MY_Controller {
 	 */
 	public function edit_get($id)
 	{
-		echo "here";
+		$device = $this->device_model->where('device_id', $id)->get();
+		// print_r($device);
+		// return;
+
+
+		$this->twiggy->title()->prepend('Edit a Device');
+		$this->twiggy->set('action_name', 'Edit');
+		$this->twiggy->set('slogan', 'What needs changing?');
+		$this->twiggy->set('device', $device);
+		$this->twiggy->display('devices_add_edit');
 	}
 
 	/**
@@ -99,7 +108,27 @@ class Devices extends MY_Controller {
 	 */
 	public function edit_post()
 	{
-		echo "so you want to change that device do you?";
+		// echo "so you want to change that device do you?";
+		$data = $this->input->post();
+		// print_r($data);
+		// return;
+		$data['user_id'] = $this->user->user_data->id;
+
+		$ret = $this->device_model
+
+		->update($data['device_id'], $data);
+
+		// echo $ret;
+		if ($ret)
+		{
+			$this->session->set_message("Success",'Device changes saved.');
+		}
+		else
+		{
+			//@todo add better error message
+			$this->session->set_message("Danger",'Unable to change device.');
+		}
+		redirect("/devices");
 	}
 
 	/**
@@ -163,8 +192,9 @@ class Devices extends MY_Controller {
 	}
 	public function remove_get($id)
 	{
+		$this->samples->delete(array('device_id' => $id));
 		//@todo handle foreign key constraints
-		//@todo Confimr the deletion with the user.
+		//@todo Confirm the deletion with the user.
 		if (!$this->device_model->delete(array('device_id' => $id)))
 		{
 			$this->session->set_message("Danger",'Unable to delete device.');
