@@ -57,7 +57,7 @@ class SocketIO
 		@io.on 'connection', (socket) =>
 
 			socket.on 'who', (coreid) =>
-				console.log("coresock",@coresock);
+				# console.log("coresock",@coresock);
 
 				console.info('socket.io web user connected', coreid);
 				socket['coreid'] = coreid;
@@ -73,8 +73,11 @@ class SocketIO
 
 					#create a subscription with the core for high-speed data
 					@udp_server.send 0x0400, @coremap[coreid], (err, reply) ->
-						if not err and reply.result == 1
+						if not err and reply.result == 0
 							console.info("Websockets Subscription Created with", coreid);
+							socket.emit('who');
+						else
+							console.error("%s unable to create websockets subsription", coreid, reply);
 				else #others are already subscribed so lets just add us to the list of interested clients
 					# console.log("Added to list");
 					@coresock[coreid].push(socket);
@@ -83,7 +86,7 @@ class SocketIO
 			socket.on 'status', () =>
 				coreid = socket['coreid'];
 				if @coremap[coreid] == undefined
-					console.log("FAIL: get outlet status. %s not registered in coremap", coreid);
+					console.error("FAIL: get outlet status. %s not registered in coremap", coreid);
 					return
 
 				#read the current data from the core
@@ -142,13 +145,18 @@ class SocketIO
 
 				if (data.state == 'on')
 					msg |= 0x01;
+					expect = 1
 				else if (data.state == 'off')
 					msg |= 0x00;
+					expect = 0
 				else
 					console.error("Unknown State ", data.state);
 					return;
 
 				@udp_server.send msg, @coremap[coreid], (err, reply) ->
-					console.error("control ",err, reply); #@todo test this
+					if not err and reply.result[0].state == expect
+						console.info ("%s set to %s",data.outlet, data.state)
+					else
+						console.error("FAIL: could not set %s to %s", data.outlet, data.state);
 
 module.exports = SocketIO
