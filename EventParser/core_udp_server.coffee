@@ -11,15 +11,16 @@ class UDP_Server
 		server = dgram.createSocket('udp4');
 		server.bind @settings.listen_udp_port, ()=>
 			server.addMembership(@settings.udp_multicast)
+			console.info("UDP Multicast listening on ip %s",@settings.udp_multicast);
 
 		server.on "error", (err) =>
-			console.log("server error:\n" + err.stack)
+			console.error("server error:\n" + err.stack)
 			server.close()
 
 
 		server.on "listening", () =>
 			address = server.address();
-			console.log("UDP server listening on port " + address.port);
+			console.info("UDP server listening on port " + address.port);
 			console.log(""); #add a blank line
 
 		server.on "message",  (data, rinfo) =>
