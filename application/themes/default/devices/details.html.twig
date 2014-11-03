@@ -126,9 +126,6 @@
 
 		</div>
 
-		
-
-
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<i class="fa fa-bar-chart-o fa-fw"></i> Historical Power Consumption for '{{device.name}}'
@@ -186,36 +183,40 @@
 					<!-- /.panel-heading -->
 					<div class="panel-body">
 						<div class="row">
-							<div class="col-lg-4">
+							<div style="padding: 0 15px">
 								<div class="table-responsive">
 									<table class="table table-bordered table-hover table-striped">
-										<thead>
+										{# <thead>
 											<tr>
 												<th>Metric</th>
 												<th>Value</th>
 											</tr>
 										</thead>
 										<tbody>
+											{% for metric, value in stats %}
 											<tr>
-												<td>3326</td>
-												<td>10/21/2013</td>
+												<td>{{metric}}</td>
+												<td>{{value}}</td>
 											</tr>
+											{% endfor %}
+										</tbody> #}
+										<thead>
 											<tr>
-												<td>3325</td>
-												<td>10/21/2013</td>
+												<th>Metric</th>
+												<th>Current</th>
+												<th>Voltage</th>
+												<th>Apparent Power</th>
 											</tr>
+										</thead>
+										<tbody>
+											{% for metric, value in stats %}
 											<tr>
-												<td>3324</td>
-												<td>10/21/2013</td>
+												<td>{{metric}}</td>
+												<td>{{value.i}}</td>
+												<td>{{value.v}}</td>
+												<td>{{value.a}}</td>
 											</tr>
-											<tr>
-												<td>3323</td>
-												<td>10/21/2013</td>
-											</tr>
-											<tr>
-												<td>3322</td>
-												<td>10/21/2013</td>
-											</tr>
+											{% endfor %}
 										</tbody>
 									</table>
 								</div>
@@ -228,12 +229,9 @@
 				</div>
 
 			</div>
-			</div>
 		</div>
+	</div>
 
-		
-
-		
 	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 	<script>
 		var socket = io('http://'+window.location.host+':2648/');

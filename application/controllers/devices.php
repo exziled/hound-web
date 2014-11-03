@@ -142,6 +142,16 @@ class Devices extends MY_Controller {
 			->get();
 
 		$data = $this->samples->LastHourOfSamples($id);
+		$stats = array();
+		// $stats['kVA in past 24 hrs']= $this->samples->getKWH24hrs($id);
+		// $stats['kVA in past 1 hr']= $this->samples->getKVA1hr($id);
+		// $stats['kVA in past 30 min']= $this->samples->getKVA30min($id);
+		$stats['Max in past 24hrs']= $this->samples->getMaxIVA24hr($id);
+		$stats['Min in past 24hrs']= $this->samples->getMinIVA24hr($id);
+		$stats['Avg in past 24hrs']= $this->samples->getAvgIVA24hr($id);
+		// print_r($stats);
+		// exit();
+		$this->twiggy->set('stats', $stats);
 
 		$this->twiggy->set('data_vrms', substr(json_encode($data['voltage']), 1, -1));
 		$this->twiggy->set('data_irms', substr(json_encode($data['current']), 1, -1));
