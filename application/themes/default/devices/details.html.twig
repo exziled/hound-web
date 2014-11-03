@@ -283,12 +283,13 @@
 		});
 
 		socket.on('data', function (datain){
-			// console.log(datain);
-			$('#vrms').text(datain.v.toFixed(1));
-			$('#irms').text(datain.i.toFixed(2));
+			console.log(datain);
+			// return;
+			$('#vrms').text(datain.vrms[0].toFixed(1));
+			$('#irms').text(datain.irms[0].toFixed(2));
 			// $('#real').text(datain.r.toFixed(3));
 			// $('#powerfactor').text(datain.pf.toFixed(3));
-			$('#apparent').text(datain.a.toFixed(1));
+			$('#apparent').text(datain.app[0].toFixed(1));
 			datain.t = moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss');
 			// console.log(datain.t, moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss'));
 
@@ -298,11 +299,11 @@
 				data.columns[0].splice(1, 1);
 				data.columns[0].push(datain.t);
 				data.columns[1].splice(1, 1);
-				data.columns[1].push(datain.v);
+				data.columns[1].push(datain.vrms[0]);
 				data.columns[2].splice(1, 1);
-				data.columns[2].push(datain.i);
+				data.columns[2].push(datain.irms[0]);
 				data.columns[3].splice(1, 1);
-				data.columns[3].push(datain.a);
+				data.columns[3].push(datain.app[0]);
 				// console.log(data.columns);
 			// // };
 			chart.load(data);

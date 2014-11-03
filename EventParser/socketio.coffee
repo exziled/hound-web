@@ -16,37 +16,35 @@ class SocketIO
 
 		@coresock = {}
 
-		# -----------------------------------------------------------------------------
-		# High-Speed data from cores using websockets
-		# -----------------------------------------------------------------------------
-		wsServer = require('ws').Server;
-		wss = new wsServer({port: +@settings.websock_port});
+		udp_server.on 'ws', (err, data, rinfo) =>
+			# console.log('ws',data);
 
-		console.info("Core Server Listening on port "+@settings.websock_port);
+			if (data['core_id'] == undefined)
+				console.log("id is undefined");
 
-		wss.on 'connection', (ws) =>
-			console.info('WebSocket Core Client Connected');
-			ws.on 'message', (message) =>
-				# console.log(message);
-				#When data is recieved from a sparkcore emit the data to any subscribed
-				#web clients. try/catch for malformated json data.
-				try
-					message = JSON.parse(message);
-					if (message['id'] == undefined)
-						console.log("id is undefined");
+			sockets = @coresock[data['core_id']];
+			if sockets != undefined
+				for sock in sockets
+					sock.emit('data', data);
+				console.info("%s Live data sent to web client for core %s", new Date().getTime(), data['core_id']);
+			else
+				console.log("I'm getting data from %s but there are no subscribers", data['core_id']);
 
-					sockets = @coresock[message.id];
-					for sock in sockets
-						sock.emit('data', message);
-					console.info("%s Live data sent to web client for core %s", new Date().getTime(), message.id);
-				catch err
-					console.log(err, message);
 
-			ws.on 'close', () ->
-				console.log('SparkCore disconnected.');
+			# message = data
+			# #When data is recieved from a sparkcore emit the data to any subscribed
+			# #web clients. try/catch for malformated json data.
+			# try
+			# 	# message = JSON.parse(message);
+			# 	if (message['id'] == undefined)
+			# 		console.log("id is undefined");
 
-			ws.on 'error', (err) ->
-				console.error('SparkERROR', err);
+			# 	sockets = @coresock[message.id];
+			# 	for sock in sockets
+			# 		sock.emit('data', message);
+			# 	console.info("%s Live data sent to web client for core %s", new Date().getTime(), message.id);
+			# catch err
+			# 	console.log(err, message);
 
 		# -----------------------------------------------------------------------------
 		# High-Speed data and control pushed to socket.io web clients
@@ -155,7 +153,7 @@ class SocketIO
 
 				@udp_server.send msg, @coremap[coreid], (err, reply) ->
 					if not err and reply.result[0].state == expect
-						console.info ("%s set to %s",data.outlet, data.state)
+						console.log("%s set to %s",data.outlet, data.state)
 					else
 						console.error("FAIL: could not set %s to %s", data.outlet, data.state);
 
