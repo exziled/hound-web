@@ -21,6 +21,7 @@ socketio = new SocketIO(udp_server, settings, coremap)
 
 #triggered on new sample set
 udp_server.on 'samp', (err, data, rinfo) ->
+	coremap[data.id] = rinfo.address #update the coremap
 	if (err)
 		console.log("sample error", err);
 	else
