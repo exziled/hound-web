@@ -212,9 +212,9 @@
 											{% for metric, value in stats %}
 											<tr>
 												<td>{{metric}}</td>
-												<td>{{value.i}}</td>
-												<td>{{value.v}}</td>
-												<td>{{value.a}}</td>
+												<td>{{value.i}} A<sub>RMS</sub></td>
+												<td>{{value.v}} V<sub>RMS</sub></td>
+												<td>{{value.a}} VA</td>
 											</tr>
 											{% endfor %}
 										</tbody>
