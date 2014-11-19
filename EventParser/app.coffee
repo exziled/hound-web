@@ -21,7 +21,7 @@ socketio = new SocketIO(udp_server, settings, coremap)
 
 #triggered on new sample set
 udp_server.on 'samp', (err, data, rinfo) ->
-	coremap[data.id] = rinfo.address #update the coremap
+	coremap[data.core_id] = rinfo.address #update the coremap
 	if (err)
 		console.log("sample error", err);
 	else
@@ -59,7 +59,7 @@ udp_server.on 'samp', (err, data, rinfo) ->
 
 #triggered when core comes online
 udp_server.on 'broadcast', (err, data, rinfo) ->
-	coremap[data.id] = rinfo.address
+	coremap[data.id] = rinfo.address  #update the coremap
 	#automatically create subscription when a core comes online
 	udp_server.send 0x2, rinfo.address, (err, reply) ->
 		if not err and reply.result == 1
