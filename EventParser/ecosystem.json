@@ -16,7 +16,7 @@
       "repo" : "git@git.benjaminjcarlson.com:senior-project/web.git",
       "ref"  : "origin/master",
       "path" : "/var/www/hound",
-      "post-deploy" : "npm install && pm2 startOrRestart ecosystem.json --env production"
+      "post-deploy" : "cd EventParser; npm install; pm2 startOrRestart ecosystem.json --env production"
     }
   }
 }
