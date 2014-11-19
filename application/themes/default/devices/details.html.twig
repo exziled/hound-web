@@ -340,21 +340,25 @@
 			// $('#powerfactor').text(datain.pf.toFixed(3));
 			$('#apparent').text(datain.app[0].toFixed(1));
 			datain.t = moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss');
-			// console.log(datain.t, moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss'));
 
-			// console.log(datain);
-			// // for (var i = 0; i < data.columns.length; i++) {
-			// 	//remove the first data element and append a new data element at the end
-				data.columns[0].splice(1, 1);
-				data.columns[0].push(datain.t);
-				data.columns[1].splice(1, 1);
-				data.columns[1].push(datain.vrms[0]);
-				data.columns[2].splice(1, 1);
-				data.columns[2].push(datain.irms[0]);
-				data.columns[3].splice(1, 1);
-				data.columns[3].push(datain.app[0]);
-				// console.log(data.columns);
-			// // };
+			// remove the label, remove the old data element, readd the label, add the new data
+			label = data.columns[0].shift();
+			data.columns[0].shift();
+			data.columns[0].unshift(label);
+			data.columns[0].push(datain.t);
+			label = data.columns[1].shift();
+			data.columns[1].shift();
+			data.columns[1].unshift(label);
+			data.columns[1].push(datain.vrms[0]);
+			label = data.columns[2].shift();
+			data.columns[2].shift();
+			data.columns[2].unshift(label);
+			data.columns[2].push(datain.irms[0]);
+			label = data.columns[3].shift();
+			data.columns[3].shift();
+			data.columns[3].unshift(label);
+			data.columns[3].push(datain.app[0]);
+
 			chart.load(data);
 
 		});
