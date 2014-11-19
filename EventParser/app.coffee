@@ -39,8 +39,8 @@ udp_server.on 'samp', (err, data, rinfo) ->
 					"Content-Type":"application/json"
 				}
 			}
-			# if env == "production"
-				# options.host = "houndplex.plextex.com"
+			if env == "production"
+				options.host = "houndplex.plextex.com"
 			callback = (res) ->
 				str = ''
 				res.on 'data', (chunk) ->
@@ -52,10 +52,11 @@ udp_server.on 'samp', (err, data, rinfo) ->
 						console.log("%s Data Logged to server from core", new Date().getTime(), data.core_id);
 					else
 						console.error(res.statusCode, str);
-			try
-				req = http.request(options, callback);
-			catch e
-				console.log("ERROR: Sending HTTP request ", e);
+
+			req = http.request(options, callback).on 'error',  (err) ->
+				console.log(err);
+
+
 
 			# This is the data we are posting, it needs to be a string or a buffer
 			req.write(JSON.stringify(data));
