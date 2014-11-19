@@ -28,7 +28,10 @@ class Device_model extends MY_Model {
 			->select('device_id')
 			->get();
 
-		return $id['device_id'];
+		if (array_key_exists('device_id', $id))
+			return $id['device_id'];
+		else
+			return null;
 	}
 
 	public function getDevicesForUser($user_id, $count=false)

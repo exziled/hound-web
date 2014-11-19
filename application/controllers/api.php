@@ -87,6 +87,10 @@ class api extends MY_Controller {
 		);
 
 		$device_id = $this->device_model->coreid2deviceid($this->post('core_id'));
+		if ($device_id == null) {
+			$this->response(array("status"=>"error", "message"=>"Core is currently unregistered", "core_id"=>$this->post('core_id')), 400);
+			return;
+		}
 		$out = array();
 
 		$numsamp = count($this->post('t'));
