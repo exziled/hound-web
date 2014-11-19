@@ -4,7 +4,7 @@ settings =
 	listen_udp_port:8081			# listen fro replies from the core on this port
 	outgoing_udp_port:9080			# send messages to the core on this port
 	socketio_port:2648				# port that socketio web communication uses
-	websock_port:9081				# high speed data from the core
+	# websock_port:9081				# high speed data from the core
 	udp_timeout:3000				# how long to wait after sending a packet before resend
 	udp_multicast:"224.111.112.113"	# port to listen on fro broadasts from cores
 
@@ -18,6 +18,9 @@ coremap = {} # {"coreid":"ipaddress"}
 
 SocketIO = require('./socketio.coffee')
 socketio = new SocketIO(udp_server, settings, coremap)
+
+env = process.env.NODE_ENV || 'dev';
+console.log("Server running in %s mode", env);
 
 #triggered on new sample set
 udp_server.on 'samp', (err, data, rinfo) ->
