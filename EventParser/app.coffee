@@ -39,6 +39,8 @@ udp_server.on 'samp', (err, data, rinfo) ->
 					"Content-Type":"application/json"
 				}
 			}
+			if env == "production"
+				options.host = "houndplex.plextex.com"
 			callback = (res) ->
 				str = ''
 				res.on 'data', (chunk) ->
