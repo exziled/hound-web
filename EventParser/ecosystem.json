@@ -1,0 +1,22 @@
+{
+  "apps" : [{
+    "name"      : "API",
+    "script"    : "app.coffee",
+    "env": {
+      "COMMON_ENV_VAR": "true"
+    },
+    "env_production": {
+      "NODE_ENV": "production",
+    }
+  }],
+  "deploy" : {
+    "production" : {
+      "user" : "hounduser",
+      "host" : "houndplex.plextex.com",
+      "repo" : "git@git.benjaminjcarlson.com:senior-project/web.git",
+      "ref"  : "origin/master",
+      "path" : "/var/www/hound",
+      "post-deploy" : "npm install && pm2 startOrRestart ecosystem.json --env production"
+    }
+  }
+}
