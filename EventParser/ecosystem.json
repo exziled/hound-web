@@ -10,7 +10,7 @@
     }
   }],
   "deploy" : {
-    "production" : {
+    "prod" : {
       "user" : "hounduser",
       "host" : "houndplex.plextex.com",
       "repo" : "git@git.benjaminjcarlson.com:senior-project/web.git",
