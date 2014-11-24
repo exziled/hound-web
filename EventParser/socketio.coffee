@@ -130,8 +130,8 @@ class SocketIO
 					console.error("FAIL: set outlet status. %s not registered in coremap", coreid);
 					return
 
-				top = 0x01B000 #b0
-				bot = 0x01B100 #b1
+				top = 0x010000 #b0
+				bot = 0x010100 #b1
 
 				if (data.outlet == "outlet1")
 					msg = top
