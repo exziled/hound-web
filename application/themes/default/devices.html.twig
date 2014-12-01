@@ -19,32 +19,34 @@
             <i class="fa fa-list"></i> Devices
         </li>
     </ol>
-	<div class="container">
+	<!-- <div class="container"> -->
 		<div class="row">
-		{% if devices %}
-			<table class="table">
-				<thead>
-					<tr>
-						{% for key in devices[0]|keys %}
-							<th>{{ key }}</th>
-						{% endfor %}
-					</tr>
-				</thead>
-				<tbody>
-					{% for device in devices %}
+			<div class="col-sm-12">
+			{% if devices %}
+				<table class="table">
+					<thead>
 						<tr>
-							{% for property in device %}
-								<td>{{ property }}</td>
+							{% for key in devices[0]|keys %}
+								<th>{{ key }}</th>
 							{% endfor %}
 						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{% for device in devices %}
+							<tr>
+								{% for property in device %}
+									<td>{{ property }}</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
 			{% else %}
-			No Devices
+				No Devices
 			{% endif %}
+			</div>
 		</div>
-	</div>
+	<!-- </div> -->
 {% endblock %}
 
 {% block foot %}
