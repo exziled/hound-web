@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+
+					<script type="text/javascript" src="./blockly_compressed.js"></script>
+			<script type="text/javascript" src="./blocks_compressed.js"></script>
+			<script type="text/javascript" src="./javascript_compressed.js"></script>
+			<script type="text/javascript" src="./custom_blocks_compressed.js"></script>
+			<script type="text/javascript" src="./en.js"></script>
+  		
+
+		<style>
+			html, body {
+				background-color: #fff;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				height: 100%;
+			}
+			.blocklySvg {
+				height: 100%;
+				width: 100%;
+			}
+			/* really shouldn't need this!  Hides extra arrow icon in toolbox*/
+			span[type="expand"]{
+				display:none !important;
+			}
+		</style>
+		<script>
+			function init() {
+				Blockly.inject(document.body, {
+					path: './',
+					toolbox: document.getElementById('toolbox')
+				});
+
+
+				Blockly.mainWorkspace.reset = function() {
+					// Remove all blocks
+					Blockly.mainWorkspace.clear();
+					//Load the starting blocks
+					var startingBlocks = document.getElementById('startingblocks').innerHTML;
+					var xml = Blockly.Xml.textToDom(startingBlocks);
+					Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
+				}
+
+				Blockly.mainWorkspace.reset();
+				window.parent.blocklyLoaded(Blockly);
+			}
+
+		</script>
+	</head>
+	<body onload="init()">
+
+		<div class="xml" class="display:none;">
+			<xml id="toolbox" style="display: none">
+	<category name="Logic">
+		<block type="controls_if"></block>
+		<block type="logic_compare"></block>
+		<block type="logic_operation"></block>
+		<block type="logic_negate"></block>
+		<block type="logic_boolean"></block>
+	</category>
+	<category name="Math">
+		<block type="math_number"></block>
+		<block type="math_arithmetic"></block>
+		<block type="math_single"></block>
+	</category>
+
+	<category name="Data">
+		<block type="data_temp"></block>
+		<block type="data_irms"></block>
+		<block type="data_vrms"></block>
+	</category>
+	<category name="Control">
+		<block type="control_outlet"></block>
+		<!-- <block type="math_arithmetic"></block>
+		<block type="math_single"></block> -->
+	</category>
+	<category name="Scheduling">
+		<block type="schedule_recurring_event"></block>
+		<!-- <block type="math_arithmetic"></block>
+		<block type="math_single"></block> -->
+	</category>
+	<category name="Communication">
+		<block type="text"></block>
+		<block type="text_join"></block>
+		<block type="comm_sms"></block>
+		<block type="comm_email"></block>
+	</category>
+	<category name="Variables" custom="VARIABLE"></category>
+</xml>		<div id="startingblocks"  class="display:none;">
+			<xml>
+
+</xml>		</div>
+		</div>
+	</body>
+</html>

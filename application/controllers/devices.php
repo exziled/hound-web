@@ -19,10 +19,11 @@ class Devices extends MY_Controller {
 			// echo $devices[$device]['ID'];
 			$id = $devices[$device]['ID'];
 			unset($devices[$device]['ID']);
-			// $devices[$device]['Name'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">".$devices[$device]['Name']."</a>";
+			$devices[$device]['Name'] = "<abbr title=\"".$devices[$device]['core_id']."\">".$devices[$device]['Name']."</abbr>";
+			unset($devices[$device]['core_id']);
 			$devices[$device]['Operations'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">Edit</a>";
 			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/details/".$id)."\" title=\"View details\">Details</a>";
-			// $devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/refresh/".$id)."\" title=\"Request Status Update\">Refresh</a>";
+			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/program/".$id)."\" title=\"Create/Update program\">Program</a>";
 			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/remove/".$id)."\" title=\"Remove a device\">Delete</a>";
 
 			if ($devices[$device]['Last Checkin'] == "0000-00-00 00:00:00") {
@@ -210,5 +211,19 @@ class Devices extends MY_Controller {
 			$this->session->set_message("Danger",'Unable to delete device.');
 		}
 		redirect('/devices');
+	}
+
+	public function program_get($id)
+	{
+		$device = $this->device_model->where('device_id', $id)->get();
+
+		$this->twiggy->set('device', $device);
+		$this->twiggy->title()->prepend('Device Programming');
+		$this->twiggy->display('devices/program');
+	}
+
+	public function program_post()
+	{
+		echo "TODO";
 	}
 }

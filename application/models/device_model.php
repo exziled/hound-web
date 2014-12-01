@@ -44,7 +44,7 @@ class Device_model extends MY_Model {
 		} else {
 			$devices = $this
 				->select("device_id as ID")
-				// ->select("Core_id as 'Core ID'")
+				->select("core_id as 'core_id'")
 				->select("devices.name as Name")
 				//->select("CONCAT(`form_factor`.`name`, ' (', `form_factor`.`socket_count`,')') as `Form Factor`",false)
 				->select("`form_factor`.`name` as `Form Factor`")
