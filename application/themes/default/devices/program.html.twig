@@ -22,23 +22,27 @@
 	<!-- <div class="container"> -->
 		<div class="row">
 			<div class="col-sm-12">
-			<script>
-				function blocklyLoaded(blockly) {
-					// Called once Blockly is fully loaded.
-					window.Blockly = blockly;
-					console.log("Blockly Loaded!");
-				}
-			</script>
-			<style>
-			.blockly {
-				width: 100%;
-				height: 100%;
-				border-style: solid;
-				border-color: #ddd;
-				border-width: 0 1px 1px 0;
-			}
-			</style>
-			<iframe class="blockly" src="{{static}}/blockly/index.html"></iframe>
+
+				<style>
+					.blockly {
+						width: 100%;
+						/*height: 100%;*/
+						border-style: solid;
+						border-color: #ddd;
+						border-width: 0 1px 1px 0;
+						margin-bottom: 10px;
+					}
+				</style>
+				<div id="content">
+					<iframe class="blockly" id="blockly" src="{{static}}/blockly/index.html"></iframe>
+				</div>
+
+			</div>
+		</div>
+		<div class="row text-right" style="margin-top: 10px;">
+			<div class="col-sm-12">
+				<button class="btn btn-danger">Discard</button>
+				<button class="btn btn-success">Save</button>
 			</div>
 		</div>
 	<!-- </div> -->
@@ -46,5 +50,30 @@
 
 {% block foot %}
 	{{ parent() }}
+	<script>
+		function blocklyLoaded(blockly) {
+			// Called once Blockly is fully loaded.
+			window.Blockly = blockly;
+			console.log("Blockly Loaded!");
+		}
+		/**
+		 * Make the #content element fill the remaining horizontal space
+		 * @param  {int} fudge fudge factor
+		 */
+		function adjContentHeight (fudge) {
+			if (typeof fudge == 'undefined') {
+				fudge = 0;
+			};
+			var content = $('#content');
+			// content.height(500); //This seems to fix a resize glitch
+			var newheight = $(window).height() - content.offset().top - $('footer').height();
+			newheight = newheight - parseInt(content.css('padding-top')) - parseInt(content.css('padding-bottom')) + fudge;
+			content.height(newheight);
+			$('#blockly').height(0).height("100%"); //This seems to fix a resize glitch
+		}
+		$(window).resize(function() {
+			adjContentHeight(-110);
+		}).resize();
+	</script>
 
 {% endblock %}
