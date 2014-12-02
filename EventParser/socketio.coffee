@@ -88,8 +88,8 @@ class SocketIO
 					return
 
 				#read the current data from the core
-				@udp_server.send 0x01B102B002, @coremap[coreid], (err, reply) -> #B102
-					# console.log("reply",err, reply);
+				@udp_server.send 0x010212, @coremap[coreid], (err, reply) -> #B102
+					console.log("reply", err, reply);
 
 					# console.log(reply, reply.result, reply.result[0], reply.result[0].state);
 					data = {
