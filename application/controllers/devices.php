@@ -216,7 +216,9 @@ class Devices extends MY_Controller {
 	public function program_get($id)
 	{
 		$device = $this->device_model->where('device_id', $id)->get();
+		$code = $this->program->where('device_id', $id)->get();
 
+		$this->twiggy->set('code', $code);
 		$this->twiggy->set('device', $device);
 		$this->twiggy->title()->prepend('Device Programming');
 		$this->twiggy->display('devices/program');
@@ -224,6 +226,16 @@ class Devices extends MY_Controller {
 
 	public function program_post()
 	{
-		echo "TODO";
+		print_r($this->post());
+
+		$success = $this->program->insertOrUpdate($this->post());
+
+		if ($success){
+			$this->session->set_message("Success",'Program Updated!');
+			redirect('/devices');
+		}else{
+			$this->session->set_message("Danger",'Unable to update program.');
+			redirect('/devices');
+		}
 	}
 }

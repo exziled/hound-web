@@ -207,6 +207,8 @@ class MY_Model extends CI_Model {
         if (!is_array(@$info[0]))
             $info = array($info);
 
+        $results = array();
+
         foreach ($info as $data) {
             //Removes submit
             //$data = $this->stripSubmit($data);
@@ -217,8 +219,8 @@ class MY_Model extends CI_Model {
             if (!is_array($data))
                 die("Not Array: " . $data);
             foreach ($data as $key => $val) {
-                $fields .= "`" . mysql_real_escape_string($key) . "`, ";
-                $values .= "'" . mysql_real_escape_string($val) . "', ";
+                $fields .= "`" . ($key) . "`, ";
+                $values .= "'" . ($val) . "', ";
             }
 
             $fields = substr($fields, 0, -2); //cuts off the space and comma at the end
@@ -226,7 +228,7 @@ class MY_Model extends CI_Model {
             //Write the update portion of the query
             $update = "";
             foreach ($data as $key => $val) {
-                $update .= "`" . mysql_real_escape_string($key) . "` = '" . mysql_real_escape_string($val) . "', ";
+                $update .= "`" . ($key) . "` = '" . ($val) . "', ";
             }
             $update = substr($update, 0, -2); //cuts off the space and comma at the end
 
@@ -235,18 +237,13 @@ class MY_Model extends CI_Model {
 
             //Prevent Database Injection //@todo
             //Run query
-            $qry = mysql_query($sql); // or die(mysql_error());
+            $success = $this->db->simple_query($sql); // or die(mysql_error());
+
+            array_push($results, $success);
         }
-        if (mysql_error())
-        {
-            echo $sql . "<br>\n" . mysql_error();
-            return FALSE;
-        }
-        else
-        {
-            return TRUE;
-        }
-        //echo $sql;
+        //return array_search(FALSE, $results);
+        //if $results contains false return false
+        return !in_array(FALSE, $results);
     }
 
     /**

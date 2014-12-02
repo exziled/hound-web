@@ -41,11 +41,22 @@
 		</div>
 		<div class="row text-right" style="margin-top: 10px;">
 			<div class="col-sm-12">
-				<button class="btn btn-danger">Discard</button>
-				<button class="btn btn-success">Save</button>
+				<form action="/devices/program" method="POST" class="dataform">
+
+					<!-- <input name="xml" type="hidden" value=""> -->
+					<input name="device_id" type="hidden" value="{{device.device_id}}">
+					<textarea name="xml" style="display:none;"></textarea>
+					<textarea name="javascript" style="display:none;"></textarea>
+
+					<button class="btn btn-danger discard">Discard</button>
+					<button class="btn btn-success save">Save</button>
+				</form>
 			</div>
 		</div>
 	<!-- </div> -->
+	<div id="program_to_load" class="hidden" style="display:none;">
+		{{code.xml}}
+	</div>
 {% endblock %}
 
 {% block foot %}
@@ -55,6 +66,12 @@
 			// Called once Blockly is fully loaded.
 			window.Blockly = blockly;
 			console.log("Blockly Loaded!");
+
+			//load the saved program
+			if ($('#program_to_load xml').length >= 1) {
+				Blockly.Xml.domToWorkspace(Blockly.mainWorkspace,
+        		$('#program_to_load xml')[0]);
+			}
 		}
 		/**
 		 * Make the #content element fill the remaining horizontal space
@@ -74,6 +91,22 @@
 		$(window).resize(function() {
 			adjContentHeight(-110);
 		}).resize();
+	</script>
+	<script>
+		$(document).ready(function(){
+			$('.btn.save').click(function(evt){
+				evt.preventDefault();
+				var xmlDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+				var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+				// console.log(xmlText);
+				$('.dataform textarea[name="xml"]').val(xmlText);
+				var jsCode = Blockly.JavaScript.workspaceToCode(Blockly.mainWorkspace)
+
+				$('.dataform textarea[name="javascript"]').val(jsCode);
+
+				$('.dataform').submit();
+			})
+		});
 	</script>
 
 {% endblock %}
