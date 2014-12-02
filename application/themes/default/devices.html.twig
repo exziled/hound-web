@@ -51,4 +51,17 @@
 
 {% block foot %}
 	{{ parent() }}
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$('.delbtn').click(function (evt) {
+			evt.preventDefault();
+
+			bootbox.confirm("<h3>Are you sure you want to delete '"+$(evt.target).data('devname')+"'?</h3> <br>This means that your programs and all sample data will be permanently and irrevocabley deleted.", function(doDelete) {
+				if (doDelete) {
+					window.location.href = $(evt.target).attr('href');
+				}
+			});
+		})
+	});
+	</script>
 {% endblock %}

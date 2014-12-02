@@ -22,15 +22,13 @@ socketio = new SocketIO(udp_server, settings, coremap)
 env = process.env.NODE_ENV || 'dev';
 console.log("Server running in %s mode", env);
 
-#triggered on new sample set
+#triggered on new sample sent from core
 udp_server.on 'samp', (err, data, rinfo) ->
 	coremap[data.core_id] = rinfo.address #update the coremap
 	if (err)
 		console.log("sample error", err);
 	else
 		try
-			# console.log(data);
-
 			options = {
 				host: 'hound',
 				path: '/api/samples',
@@ -41,7 +39,8 @@ udp_server.on 'samp', (err, data, rinfo) ->
 			}
 			if env == "production"
 				options.host = "houndplex.plextex.com"
-			callback = (res) ->
+
+			req_callback = (res) ->
 				str = ''
 				res.on 'data', (chunk) ->
 					str += chunk;
@@ -53,9 +52,8 @@ udp_server.on 'samp', (err, data, rinfo) ->
 					else
 						console.error(res.statusCode, str);
 
-			req = http.request(options, callback).on 'error',  (err) ->
+			req = http.request(options, req_callback).on 'error',  (err) ->
 				console.log(err);
-
 
 
 			# This is the data we are posting, it needs to be a string or a buffer

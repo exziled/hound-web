@@ -19,12 +19,13 @@ class Devices extends MY_Controller {
 			// echo $devices[$device]['ID'];
 			$id = $devices[$device]['ID'];
 			unset($devices[$device]['ID']);
+			$name = $devices[$device]['Name'];
 			$devices[$device]['Name'] = "<abbr title=\"".$devices[$device]['core_id']."\">".$devices[$device]['Name']."</abbr>";
 			unset($devices[$device]['core_id']);
 			$devices[$device]['Operations'] = "<a href=\"".site_url("/devices/edit/".$id)."\" title=\"Click to edit\">Edit</a>";
 			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/details/".$id)."\" title=\"View details\">Details</a>";
 			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/program/".$id)."\" title=\"Create/Update program\">Program</a>";
-			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/remove/".$id)."\" title=\"Remove a device\">Delete</a>";
+			$devices[$device]['Operations'] .= " | <a href=\"".site_url("/devices/remove/".$id)."\" title=\"Remove a device\" class=\"delbtn\" data-devname=\"$name\">Delete</a>"; //
 
 			if ($devices[$device]['Last Checkin'] == "0000-00-00 00:00:00") {
 				$devices[$device]['Last Checkin'] = "Checkin pending";
