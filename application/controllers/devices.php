@@ -221,6 +221,7 @@ class Devices extends MY_Controller {
 
 		$this->twiggy->set('code', $code);
 		$this->twiggy->set('device', $device);
+		$this->twiggy->set('program_form_attrs', array('class' => 'dataform'));
 		$this->twiggy->title()->prepend('Device Programming');
 		$this->twiggy->display('devices/program');
 	}

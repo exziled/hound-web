@@ -41,9 +41,7 @@
 		</div>
 		<div class="row text-right" style="margin-top: 10px;">
 			<div class="col-sm-12">
-				<form action="/devices/program" method="POST" class="dataform">
-
-					<!-- <input name="xml" type="hidden" value=""> -->
+				{{form_open('/devices/program', program_form_attrs)}}
 					<input name="device_id" type="hidden" value="{{device.device_id}}">
 					<textarea name="xml" style="display:none;"></textarea>
 					<textarea name="javascript" style="display:none;"></textarea>

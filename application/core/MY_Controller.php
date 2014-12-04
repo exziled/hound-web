@@ -16,6 +16,7 @@ abstract class MY_Controller extends REST_Controller  {
 		$this->twiggy->set('proj_tagline', "Home Online Utility iNformaton Dashboard", TRUE);
 		$this->twiggy->set('proj_company', "Techplex Labs", TRUE);
 		$this->twiggy->set('page_login', site_url("login/validate"), TRUE);
+		$this->twiggy->set('login_attrs', array('class' => 'navbar-form navbar-right', 'role' => 'form'), TRUE);
 		$this->twiggy->set('messages', $this->session->render_messages(), TRUE);
 
 
@@ -30,6 +31,7 @@ abstract class MY_Controller extends REST_Controller  {
 		}
 
 		$this->twiggy->register_function('site_url');
+		$this->twiggy->register_function('form_open');
 
 		//from: print_r($temp); above
 		// Array
