@@ -28,6 +28,10 @@ class api extends MY_Controller {
 
 		$this->response($device, 200);
 	}
+	public function devices_get($id=null)
+	{
+		$this->device_get($id);
+	}
 
 	public function device_group_get($id=null)
 	{
@@ -152,5 +156,85 @@ class api extends MY_Controller {
 	public function core_data_post()
 	{
 		error_log("Core Data:".print_r($this->post()));
+	}
+	public function getKWH24hrs_get ($device_id=null)
+	{
+		if (is_null($device_id)){
+			$this->response(array('status'=>'error', 'msg'=>'ID required'), 400);
+		}
+		$data = $this->samples->getKWH24hrs($device_id);
+		$this->response($data, 200);
+	}
+	public function getKVA1hr_get ($device_id=null)
+	{
+		if (is_null($device_id)){
+			$this->response(array('status'=>'error', 'msg'=>'ID required'), 400);
+		}
+		$data = $this->samples->getKVA1hr($device_id);
+		$this->response($data, 200);
+	}
+	public function getKVA30min_get ($device_id=null)
+	{
+		if (is_null($device_id)){
+			$this->response(array('status'=>'error', 'msg'=>'ID required'), 400);
+		}
+		$data = $this->samples->getKVA30min($device_id);
+		$this->response($data, 200);
+	}
+	public function getMaxIVA24hr_get ($device_id=null)
+	{
+		if (is_null($device_id)){
+			$this->response(array('status'=>'error', 'msg'=>'ID required'), 400);
+		}
+		$data = $this->samples->getMaxIVA24hr($device_id);
+		$this->response($data, 200);
+	}
+	public function getMinIVA24hr_get ($device_id=null)
+	{
+		if (is_null($device_id)){
+			$this->response(array('status'=>'error', 'msg'=>'ID required'), 400);
+		}
+		$data = $this->samples->getMinIVA24hr($device_id);
+		$this->response($data, 200);
+	}
+	public function getAvgIVA24hr_get ($device_id=null)
+	{
+		if (is_null($device_id)){
+			$this->response(array('status'=>'error', 'msg'=>'ID required'), 400);
+		}
+		$data = $this->samples->getAvgIVA24hr($device_id);
+		$this->response($data, 200);
+	}
+	public function LastHourOfSamples_get ($device_id=null)
+	{
+		if (is_null($device_id)){
+			$this->response(array('status'=>'error', 'msg'=>'ID required'), 400);
+		}
+		$data = $this->samples->LastHourOfSamples($device_id);
+		$this->response($data, 200);
+	}
+
+	public function control_post()
+	{
+		if ($this->_post_input_exists(array(
+				'socket',
+				'status',
+			))) {
+			if ($this->_post_input_exists(array('device_id')) || $this->_post_input_exists(array('core_id'))) {
+				// we have device_id or core_id and {socket, status}
+				$core_id = $this->post('core_id');
+				if ($this->_post_input_exists(array('device_id'))) {
+					$core_id = $this->device_model->deviceid2coreid($this->post('device_id'));
+				}
+				$action = array(
+					'core_id'=>$core_id,
+					'socket'=>$this->post('socket'),
+					'status'=>$this->post('status'),
+				);
+				curl_post(); //@todo
+				$this->response(array('status'=>'success'), 200);
+			}
+		}
+		$this->response(array("status"=>"error", "message"=>"malformed input"), 400);
 	}
 }

@@ -34,6 +34,19 @@ class Device_model extends MY_Model {
 			return null;
 	}
 
+	public function deviceid2coreid($device_id)
+	{
+		$id = $this
+			->where('device_id', $device_id)
+			->select('core_id')
+			->get();
+
+		if (array_key_exists('core_id', $id))
+			return $id['core_id'];
+		else
+			return null;
+	}
+
 	public function getDevicesForUser($user_id, $count=false)
 	{
 		if ($count) {
