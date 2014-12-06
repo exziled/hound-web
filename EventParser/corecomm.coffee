@@ -3,10 +3,12 @@ json_sanitizer = require('json_sanitizer')
 
 delay = (ms, func) -> setTimeout func, ms
 
-class UDP_Server
+class CoreComm
+	@core_map = {}
 
 	constructor: (@settings) ->
 		@event_map = {}
+
 		@counter = 0;
 		server = dgram.createSocket('udp4');
 		server.bind @settings.listen_udp_port, ()=>
@@ -35,6 +37,10 @@ class UDP_Server
 					if (!msg.hasOwnProperty('e'))
 						console.log("msg does not have an e property", msg);
 						return;
+
+					if (!msg.hasOwnProperty('core_id'))
+						coremap[msg.core_id] = rinfo.address #update the coremap
+						console.log("Coremap Updated %s = %s", msg.core_id, rinfo.address);
 
 					handlers = @event_map[msg.e]
 					if handlers == undefined
@@ -107,5 +113,68 @@ class UDP_Server
 				clearTimeout(timeoutID) #if we get a reply clear the timeout
 				callback(err, data);
 				@off mycnt.toString()
+
+	# create a data subscripton
+	createSub: (ip, cb) ->
+		@send 0x2, ip, (err, reply) ->
+			if not err and reply.result == 1
+				console.log("Subscription created with core",data.id)
+			else
+				console.log("Unable to create subscription")
+
+	# destroy a data subscripton
+	destroySub: (core_id) ->
+		console.log("Its not currently possible to destroy a subscripton")
+
+	#create a subscription with the core for high-speed data
+	createFastSub: (core_id) ->
+		@send 0x0400, @coremap[core_id], (err, reply) ->
+			if not err and reply.result == 0
+				console.info("Fast-Data Subscription Created with", core_id);
+				socket.emit('who');
+			else
+				console.error("%s unable to create websockets subsription", core_id, reply);
+
+	#destroy the subscription for high-speed data
+	destroyFastSub: (core_id) ->
+		@send 0x0401, @coremap[core_id], (err, reply) ->
+			console.info("Fast-Data Subscription Destroyed ",err, reply);
+
+	# set the state of the outlets
+	control: (outlet, state, core_id) ->
+		top = 0x0100 #top outlet
+		bot = 0x0110 #bottom outlet
+
+		if (outlet == "outlet1")
+			msg = top
+		else if (outlet == "outlet2")
+			msg = bot
+		else
+			console.error("Unknown Outlet ", data.outlet);
+			return;
+
+		if (state == 'on')
+			msg |= 0x0001;
+			expect = 1
+		else if (state == 'off')
+			msg |= 0x0000;
+			expect = 0
+		else
+			console.error("Unknown State ", data.state);
+			return;
+
+		@send msg, @coremap[core_id], (err, reply) ->
+			if not err and reply.result[0].state == expect
+				console.log("%s set to %s",outlet, state)
+			else
+				console.error("FAIL: could not set %s to %s", outlet, state);
+
+	# get measuement data
+	getData: () ->
+
+	# read the state of the outlets
+	getState: (core_id) ->
+		@send 0x010212, @coremap[core_id], (err, reply) ->
+			console.log("reply", err, reply);
 
 module.exports = UDP_Server

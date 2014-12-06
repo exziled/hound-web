@@ -4,13 +4,13 @@ settings =
 	listen_udp_port:8081			# listen fro replies from the core on this port
 	outgoing_udp_port:9080			# send messages to the core on this port
 	socketio_port:2648				# port that socketio web communication uses
-	# websock_port:9081				# high speed data from the core
+	listen_http_port:8082			# high speed data from the core
 	udp_timeout:3000				# how long to wait after sending a packet before resend
-	udp_multicast:"224.111.112.113"	# port to listen on fro broadasts from cores
+	udp_multicast:"224.111.112.113"	# addr to listen on for broadasts from cores
 
 http = require('http')
-UDP_Server = require('./core_udp_server.coffee')
-udp_server = new UDP_Server(settings)
+CoreComm = require('./corecomm.coffee')
+udp_server = new CoreComm(settings)
 
 # Holds the relation between cores and their ipaddresses
 # http://stackoverflow.com/questions/518000

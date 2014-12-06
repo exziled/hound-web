@@ -20,7 +20,8 @@ class SocketIO
 			# console.log('ws',data);
 
 			if (data['core_id'] == undefined)
-				console.log("id is undefined");
+				console.log("ws core_id is undefined");
+				return;
 
 			sockets = @coresock[data['core_id']];
 			if sockets != undefined
