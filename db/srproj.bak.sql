@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.0.6deb1
+-- version 4.0.10deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 29, 2014 at 12:42 AM
--- Server version: 5.5.37-0ubuntu0.13.10.1
--- PHP Version: 5.5.3-1ubuntu2.6
+-- Generation Time: Sep 30, 2014 at 12:47 PM
+-- Server version: 5.5.38-0ubuntu0.14.04.1
+-- PHP Version: 5.5.9-1ubuntu4.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `devices` (
   PRIMARY KEY (`device_id`),
   KEY `fk_devices_users1_idx` (`user_id`),
   KEY `fk_devices_form_factor1_idx` (`form_factor`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data for table `devices`
@@ -46,8 +46,11 @@ CREATE TABLE IF NOT EXISTS `devices` (
 
 INSERT INTO `devices` (`device_id`, `core_id`, `name`, `access_token`, `form_factor`, `date_activated`, `user_id`, `last_checkin`) VALUES
 (2, '', 'Fred', '', 1, '2014-07-13 18:05:01', 1, '0000-00-00 00:00:00'),
-(7, '48ff6c065067555026311387', 'CorePlex', 'b122a221bf419da7491e4fca108f1835a2794451', 0, '2014-09-09 19:23:55', 4, '0000-00-00 00:00:00'),
-(9, '53ff6d065067544847310187', 'Korati', 'e96d0e4094cde195f7bdbac1945d4a4c04a1d481', 0, '2014-10-07 13:57:32', 4, '0000-00-00 00:00:00');
+(3, '', 'Nope', '', 2, '2014-07-13 18:23:27', 4, '0000-00-00 00:00:00'),
+(4, 'dd', 'dd', 'dd', 0, '2014-07-13 21:16:19', 4, '0000-00-00 00:00:00'),
+(5, '', 'test', '', 0, '2014-07-19 15:17:33', 4, '0000-00-00 00:00:00'),
+(6, '', 'ted', '', 0, '2014-07-20 15:44:02', 4, '0000-00-00 00:00:00'),
+(7, '48ff6c065067555026311387', 'CorePlex', 'b122a221bf419da7491e4fca108f1835a2794451', 0, '2014-09-09 19:23:55', 4, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -139,9 +142,7 @@ CREATE TABLE IF NOT EXISTS `permissions` (
 
 CREATE TABLE IF NOT EXISTS `samples` (
   `sample_id` int(11) NOT NULL AUTO_INCREMENT,
-  `socket` int(11) NOT NULL,
-  `timestamp` datetime NOT NULL,
-  `device_id` int(11) NOT NULL,
+  `socket_id` int(11) NOT NULL,
   `current` double NOT NULL,
   `voltage` double NOT NULL,
   `powerfactor` float NOT NULL,
@@ -151,8 +152,37 @@ CREATE TABLE IF NOT EXISTS `samples` (
   `apparent_power` double NOT NULL,
   `real_power` double NOT NULL,
   PRIMARY KEY (`sample_id`),
-  KEY `fk_samples_sockets1_idx` (`device_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  KEY `fk_samples_sockets1_idx` (`socket_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Dumping data for table `samples`
+--
+
+INSERT INTO `samples` (`sample_id`, `socket_id`, `current`, `voltage`, `powerfactor`, `frequency`, `temperature`, `wifi_strength`, `apparent_power`, `real_power`) VALUES
+(2, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+(3, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sockets`
+--
+
+CREATE TABLE IF NOT EXISTS `sockets` (
+  `socket_id` int(11) NOT NULL AUTO_INCREMENT,
+  `device_id` int(11) NOT NULL,
+  `state` tinyint(1) NOT NULL,
+  PRIMARY KEY (`socket_id`),
+  KEY `fk_sockets_devices1_idx` (`device_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `sockets`
+--
+
+INSERT INTO `sockets` (`socket_id`, `device_id`, `state`) VALUES
+(1, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -177,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `login`, `password`, `last_login`, `active`) VALUES
 (1, 'Administrator', 'admin@localhost', 'admin', '$2a$12$SR04o2/JNV5ZoVGZNgPiiezqM2f5D0eVDXsSDoWcfQqg/mST6O6Ye', '2014-09-23', 1),
-(4, '', '', 'techplex', '$2a$12$x0swrPtQ3g1BRwyu8VuK9.4nQC95tHj6BsDFLKcKjYwT79AJrHOOa', '2014-10-28', 1),
+(4, '', '', 'techplex', '$2a$12$x0swrPtQ3g1BRwyu8VuK9.4nQC95tHj6BsDFLKcKjYwT79AJrHOOa', '2014-09-30', 1),
 (5, '', '', 'blake', '$2a$12$bciy5TOZYEyP3pGyjwgH7eOVMA7Mu.PHBKrCCuHjqnH8AvRm9VPvi', '2014-09-29', 1),
 (6, '', '', 'dickandballs', '$2a$12$6xMBLTsEW9KFEryVsjnXmu23zBeOq2w/ug6gp96G09T7BEEddMEB.', '2014-09-30', 1);
 
@@ -236,7 +266,13 @@ ALTER TABLE `permissions`
 -- Constraints for table `samples`
 --
 ALTER TABLE `samples`
-  ADD CONSTRAINT `samples_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`device_id`);
+  ADD CONSTRAINT `samples_ibfk_1` FOREIGN KEY (`socket_id`) REFERENCES `sockets` (`socket_id`);
+
+--
+-- Constraints for table `sockets`
+--
+ALTER TABLE `sockets`
+  ADD CONSTRAINT `sockets_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`device_id`);
 
 --
 -- Constraints for table `users_meta`
