@@ -27,7 +27,7 @@ abstract class MY_Controller extends REST_Controller  {
 			unset($temp["password"]);
 			//print_r($temp);
 			$this->twiggy->set('user_data', $temp, TRUE);
-			$this->twiggy->set('user_permission', $this->user->user_permission, TRUE);
+			// $this->twiggy->set('user_permission', $this->user->user_permission, TRUE);
 		}
 
 		$this->twiggy->register_function('site_url');

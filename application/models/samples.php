@@ -85,12 +85,16 @@ class Samples extends MY_Model {
 		return $data[0];
 	}
 
-	public function LastHourOfSamples($device_id)
+	public function LastHourOfSamples($id)
 	{
+		$device_id = $id;
+		if (!is_numeric($id)) {
+			$device_id = $this->device_model->coreid2deviceid($id);
+		}
 		// $device_id = $this->device_model->coreid2deviceid($coreid);
 		// return $device_id;
 		$sql = "SELECT voltage,current,apparent_power,timestamp FROM samples WHERE device_id = $device_id AND TIMESTAMP > DATE_SUB( NOW( ) , INTERVAL 30 MINUTE )";
-		// echo $sql;
+		echo $sql;
 		$query = $this->db->query($sql);
 		$data = $query->result_array();
 

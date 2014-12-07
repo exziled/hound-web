@@ -75,7 +75,7 @@ class api extends MY_Controller {
 				'app',
 				'core_id'
 			))) {
-			$this->response(array("status"=>"error", "message"=>"malformed input"), 400);
+			$this->response(array("status"=>"error", "message"=>"malformed input", "debug"=>$this->input->post()), 400);
 			return;
 		}
 		$fields = array(
@@ -153,10 +153,6 @@ class api extends MY_Controller {
 		}
 	}
 
-	public function core_data_post()
-	{
-		error_log("Core Data:".print_r($this->post()));
-	}
 	public function getKWH24hrs_get ($device_id=null)
 	{
 		if (is_null($device_id)){

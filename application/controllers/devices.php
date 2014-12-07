@@ -38,7 +38,7 @@ class Devices extends MY_Controller {
 
 			$devices[$device]['kVAh Last 24hrs'] = $this->samples->getKWH24hrs($id);
 
-			unset($devices[$device]['Form Factor']);
+			// unset($devices[$device]['Form Factor']);
 			unset($devices[$device]['Sockets']);
 			unset($devices[$device]['Last Checkin']);
 
