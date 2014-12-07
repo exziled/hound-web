@@ -10,7 +10,6 @@ class Device_model extends MY_Model {
 		'core_id',
 		'name',
 		'access_token',
-		'form_factor',
 		'date_activated',
 		'last_checkin'
 	);
@@ -60,12 +59,12 @@ class Device_model extends MY_Model {
 				->select("core_id as 'core_id'")
 				->select("devices.name as Name")
 				//->select("CONCAT(`form_factor`.`name`, ' (', `form_factor`.`socket_count`,')') as `Form Factor`",false)
-				->select("`form_factor`.`name` as `Form Factor`")
-				->select("`form_factor`.`socket_count` as `Sockets`")
+				// ->select("`form_factor`.`name` as `Form Factor`")
+				// ->select("`form_factor`.`socket_count` as `Sockets`")
 				->select("date_activated as `Date Added`")
 				->select("last_checkin as `Last Checkin`")
 				->where('user_id',$user_id)
-				->join('form_factor','devices.form_factor=form_factor.form_factor_id')
+				// ->join('form_factor','devices.form_factor=form_factor.form_factor_id')
 				->get_all();
 
 			// echo $this->db->last_query();
