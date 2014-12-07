@@ -73,77 +73,77 @@ class User_manager {
 		return sizeof($exists) != 0;
 	}
 
-	// Checks if user already has the permission on database
-	function user_has_permission($user_id, $permission_id){
-		$result = $this->CI->db->get_where('users_permissions', array('user_id' => $user_id, 'permission_id' =>$permission_id));
-		return ( $result->num_rows() == 1 );
-	}
+	// // Checks if user already has the permission on database
+	// function user_has_permission($user_id, $permission_id){
+	// 	$result = $this->CI->db->get_where('users_permissions', array('user_id' => $user_id, 'permission_id' =>$permission_id));
+	// 	return ( $result->num_rows() == 1 );
+	// }
 
-	// Links a permission with a user
-	function add_permission($user_id, $permissions) {
-		// If array received we must call this recursively
-		if(is_array($permissions)) {
-			if(sizeof($permissions) == 0) {
-				return FALSE;
-			}
-			// Foreach permission in the array call this function recursively
-			foreach($permissions as $permission) {
-				$this->add_permission($user_id, $permission);
-			}
-		} else {
-			// Check if user already has this permission
-			if( ! $this->user_has_permission($user_id, $permissions) ) {
-				return $this->CI->db->insert('users_permissions', array('user_id'=>$user_id, 'permission_id'=>$permissions));
-			} else {
-				// User already has this permission
-				return TRUE;
-			}
-		}
-	}
+	// // Links a permission with a user
+	// function add_permission($user_id, $permissions) {
+	// 	// If array received we must call this recursively
+	// 	if(is_array($permissions)) {
+	// 		if(sizeof($permissions) == 0) {
+	// 			return FALSE;
+	// 		}
+	// 		// Foreach permission in the array call this function recursively
+	// 		foreach($permissions as $permission) {
+	// 			$this->add_permission($user_id, $permission);
+	// 		}
+	// 	} else {
+	// 		// Check if user already has this permission
+	// 		if( ! $this->user_has_permission($user_id, $permissions) ) {
+	// 			return $this->CI->db->insert('users_permissions', array('user_id'=>$user_id, 'permission_id'=>$permissions));
+	// 		} else {
+	// 			// User already has this permission
+	// 			return TRUE;
+	// 		}
+	// 	}
+	// }
 
-	// Creates a new permission
-	function save_permission($permission_name, $permission_description){
-		$exists = $this->CI->db->get_where('permissions', array('name'=>$permission_name));
-		if( $exists->num_rows() >= 1 ) {
-			return $exists->row()->id;
-		} else { 
-			$insert = $this->CI->db->insert('permissions', array('name'=>$permission_name, 'description'=>$permission_description));
-			if( $insert ) {
-				return $this->CI->db->insert_id();
-			} else {
-				return FALSE;
-			}
-		}
-	}
+	// // Creates a new permission
+	// function save_permission($permission_name, $permission_description){
+	// 	$exists = $this->CI->db->get_where('permissions', array('name'=>$permission_name));
+	// 	if( $exists->num_rows() >= 1 ) {
+	// 		return $exists->row()->id;
+	// 	} else { 
+	// 		$insert = $this->CI->db->insert('permissions', array('name'=>$permission_name, 'description'=>$permission_description));
+	// 		if( $insert ) {
+	// 			return $this->CI->db->insert_id();
+	// 		} else {
+	// 			return FALSE;
+	// 		}
+	// 	}
+	// }
 
-	// Gets all users with a selected permission
-	function get_users_with_permission($permission_name){
-		$permission = $this->CI->db->get_where('permissions', array('name'=>$permission_name))->row();
-		if(sizeof($permission) == 0) {
-			return FALSE;
-		} else {
-			return $this->CI->db->get_where('users_permissions', array('permission_id'=>$permission->id))->result();
-		}
-	}
+	// // Gets all users with a selected permission
+	// function get_users_with_permission($permission_name){
+	// 	$permission = $this->CI->db->get_where('permissions', array('name'=>$permission_name))->row();
+	// 	if(sizeof($permission) == 0) {
+	// 		return FALSE;
+	// 	} else {
+	// 		return $this->CI->db->get_where('users_permissions', array('permission_id'=>$permission->id))->result();
+	// 	}
+	// }
 
-	// Add (and saves to database) a custom user information
-	function set_custom_field($user_id, $name, $value){
-		$field = $this->CI->db->get_where('users_meta', array('user_id'=>$user_id, 'name'=>$name));
-		if($field->num_rows() == 0){
-			return $this->db->insert('users_meta', array('user_id'=>$user_id, 'name'=>$name, 'value'=>$value));
-		} else {
-			return $this->db->update('users_meta', array('user_id'=>$user_id, 'name'=>$name, 'value'=>$value), array('user_id'=>$user_id));
-		}
-	}
+	// // Add (and saves to database) a custom user information
+	// function set_custom_field($user_id, $name, $value){
+	// 	$field = $this->CI->db->get_where('users_meta', array('user_id'=>$user_id, 'name'=>$name));
+	// 	if($field->num_rows() == 0){
+	// 		return $this->db->insert('users_meta', array('user_id'=>$user_id, 'name'=>$name, 'value'=>$value));
+	// 	} else {
+	// 		return $this->db->update('users_meta', array('user_id'=>$user_id, 'name'=>$name, 'value'=>$value), array('user_id'=>$user_id));
+	// 	}
+	// }
 	
-	// Add (and saves to database) a custom user information
-	function get_custom_field($user_id, $name, $value){
-		$field = $this->CI->db->get_where('users_meta', array('user_id'=>$user_id, 'name'=>$name));
-		if($field->num_rows() == 0){
-			return FALSE;
-		} else {
-			return $field->row()->value;
-		}
-	}
+	// // Add (and saves to database) a custom user information
+	// function get_custom_field($user_id, $name, $value){
+	// 	$field = $this->CI->db->get_where('users_meta', array('user_id'=>$user_id, 'name'=>$name));
+	// 	if($field->num_rows() == 0){
+	// 		return FALSE;
+	// 	} else {
+	// 		return $field->row()->value;
+	// 	}
+	// }
 
 }

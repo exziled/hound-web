@@ -174,7 +174,7 @@ class User {
 				$this->user_data = $user_query;
 
 				//loads the user permissions
-				$this->_load_permission($this->user_data->id);
+				// $this->_load_permission($this->user_data->id);
 
 				// create the user session
 				$this->_create_session($login, $user_query->password);
@@ -217,22 +217,22 @@ class User {
 		return $this->CI->db->update('users', array('last_login' => date('Y-m-d')));
 	}
 
-	/**
-	* Has Permission - returns true if the user has the received
-	* permission. Simply pass the name of the permission.
-	* 
-	* @param string $permission_name - The name of the permission
-	* @return boolean
-	*/
-	function has_permission($permission_name){
-		if( ! $this->CI->session->userdata('logged')){
-			return false;
-		} else if (in_array($permission_name, $this->user_permission)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+	// /**
+	// * Has Permission - returns true if the user has the received
+	// * permission. Simply pass the name of the permission.
+	// * 
+	// * @param string $permission_name - The name of the permission
+	// * @return boolean
+	// */
+	// function has_permission($permission_name){
+	// 	if( ! $this->CI->session->userdata('logged')){
+	// 		return false;
+	// 	} else if (in_array($permission_name, $this->user_permission)) {
+	// 		return true;
+	// 	} else {
+	// 		return false;
+	// 	}
+	// }
 	
 	/**
 	* Update Login - update the login where it is needed.
@@ -287,24 +287,24 @@ class User {
 	
 
 
-	/**
-	* Load Permission - Aux function to load the user permissions
-	* 
-	* @return array
-	*/
-	private function _load_permission(){
-		$permissions = $this->CI->db
-		->join('users_permissions', 'users_permissions.permission_id = permissions.id')
-		->get_where('permissions', array('users_permissions.user_id'=>$this->get_id()))
-		->result();
+	// /**
+	// * Load Permission - Aux function to load the user permissions
+	// * 
+	// * @return array
+	// */
+	// private function _load_permission(){
+	// 	$permissions = $this->CI->db
+	// 	->join('users_permissions', 'users_permissions.permission_id = permissions.id')
+	// 	->get_where('permissions', array('users_permissions.user_id'=>$this->get_id()))
+	// 	->result();
 		
-		$user_permissions = array();
+	// 	$user_permissions = array();
 		
-		foreach($permissions as $permission){
-			$user_permissions[] = $permission->name;
-		}
-		$this->user_permission = $user_permissions;
-	}
+	// 	foreach($permissions as $permission){
+	// 		$user_permissions[] = $permission->name;
+	// 	}
+	// 	$this->user_permission = $user_permissions;
+	// }
 
 	/**
 	* Create session - creates the session with valid data
