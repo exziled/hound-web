@@ -60,9 +60,9 @@ class SocketIO
 
 				console.info('socket.io web user connected', coreid);
 				socket['coreid'] = coreid;
-				console.log("subscribers: ",@coresock[coreid]);
+				# console.log("subscribers: ",@coresock[coreid]);
 				if (@coresock[coreid] == undefined || @coresock[coreid].length == 0) # no web users are subscribed to data from this core
-					console.log("Undefined!");
+					# console.log("Undefined!");
 
 					if @coremap[coreid] == undefined
 						console.log("FAIL: socketio sub create. %s not registered in coremap", coreid);
@@ -71,12 +71,13 @@ class SocketIO
 					@coresock[coreid] = [socket];
 
 					#create a subscription with the core for high-speed data
-					@udp_server.send 0x0400, @coremap[coreid], (err, reply) ->
-						if not err and reply.result == 0
-							console.info("Websockets Subscription Created with", coreid);
-							socket.emit('who');
-						else
-							console.error("%s unable to create websockets subsription", coreid, reply);
+					# @udp_server.send 0x0400, @coremap[coreid], (err, reply) ->
+					# 	if not err and reply.result == 0
+					# 		console.info("Websockets Subscription Created with", coreid);
+					socket.emit('who');
+					# 	else
+					# 		console.error("%s unable to create websockets subsription", coreid, reply);
+
 				else #others are already subscribed so lets just add us to the list of interested clients
 					# console.log("Added to list");
 					@coresock[coreid].push(socket);

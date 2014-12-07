@@ -1,0 +1,36 @@
+doctype html
+
+head
+	title EventManager API Docs
+
+	style(type='text/css').
+		div.indented {
+			margin-left:10px; //- do the indent
+		}
+		li.space {
+			padding-bottom:15px; //- make nice space between endpoints
+		}
+		p {
+			margin:2px;
+		}
+body
+	h1 API Doc
+
+	ul
+		each route in routes
+			li.space
+				strong
+					=route.method.toUpperCase()
+					| &nbsp;
+					= route.re
+				div.indented
+					p=doc[route.name].text
+					if doc[route.name].ex
+						strong
+							| Examples:
+						ul
+							each ex in doc[route.name].ex
+								li
+									a(href=ex)=ex
+
+

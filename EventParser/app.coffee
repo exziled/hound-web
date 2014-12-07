@@ -10,7 +10,10 @@ settings =
 
 http = require('http')
 CoreComm = require('./corecomm.coffee')
-udp_server = new CoreComm(settings)
+corecomm = udp_server = new CoreComm(settings)
+
+HttpAPI = require('./httpapi.coffee')
+api = new HttpAPI(settings, corecomm)
 
 # Holds the relation between cores and their ipaddresses
 # http://stackoverflow.com/questions/518000
@@ -67,7 +70,10 @@ udp_server.on 'samp', (err, data, rinfo) ->
 #triggered when core comes online
 udp_server.on 'broadcast', (err, data, rinfo) ->
 	coremap[data.id] = rinfo.address  #update the coremap
+
 	#automatically create subscription when a core comes online
-	udp_server.send 0x2, rinfo.address, (err, reply) ->
-		if not err and reply.result == 1
+	corecomm.createSub rinfo.address, (err, reply) ->
+		if not err
 			console.log("Subscription created with core",data.id);
+	#automatically create subscription when a core comes online
+
