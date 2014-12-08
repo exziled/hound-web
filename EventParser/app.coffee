@@ -3,6 +3,7 @@
 settings =
 	listen_udp_port:8081			# listen fro replies from the core on this port
 	outgoing_udp_port:9080			# send messages to the core on this port
+	max_udp_retry:4					# number of retries to send UDP before Failing
 	socketio_port:2648				# port that socketio web communication uses
 	listen_http_port:8082			# high speed data from the core
 	udp_timeout:3000				# how long to wait after sending a packet before resend

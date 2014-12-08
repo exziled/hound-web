@@ -77,7 +77,11 @@ class CoreComm
 			@event_map[evt].splice(idx, 1) #remove from array
 
 	#callback is in the format (err, data)
-	send: (buff, core_id, callback) ->
+	send: (buff, core_id, retrycount, callback) ->
+
+		if typeof retrycount == 'function'
+			callback = retrycount
+			retrycount = 0
 
 		ip = core_id
 		if not (/^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/.test(core_id)) #not is_ip
@@ -112,25 +116,28 @@ class CoreComm
 			client = null;
 			# console.log("Sent: ",out); #debug.printAllOutgoingUDPmessages
 
+			if retrycount >= @settings.max_udp_retry
+				callback('UDP Permanently failed sending '+out+' after '+retrycount+' retries', null)
+				return
+
 			timeoutID = delay @settings.udp_timeout, ()=>
-				console.log("UDP Timed out");
+				retrycount++
+				console.error("UDP Timed out", retrycount)
 				@off mycnt.toString()
-				@send(buff, ip, callback);
+				@send(buff, ip, retrycount, callback)
 
 			@on mycnt.toString(), (err, data) =>
 				clearTimeout(timeoutID) #if we get a reply clear the timeout
-				callback(err, data);
+				callback(err, data)
 				@off mycnt.toString()
 
 	# create a data subscripton
 	createSub: (ip, callback) ->
 		@send 0x2, ip, (err, reply) ->
-			console.log(reply); # figure out what this reply.core_id should be @todo
+			console.log("need core_id here", reply); # figure out what this reply.core_id should be to update core_map @todo
 			if not err and reply.result == 1
-				# console.log("Subscription created with core",reply.core_id)
-				callback(null, reply)
+				callback(null, reply) # Subscription created
 			else
-				# console.log("Unable to create subscription")
 				callback(err||"Unable to create subscription", reply)
 
 	# destroy a data subscripton
