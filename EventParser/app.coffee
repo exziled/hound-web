@@ -40,11 +40,11 @@ udp_server.on 'samp', (err, data, rinfo) ->
 			if env == "production"
 				options.host = "houndplex.plextex.com"
 
-			req_callback = (res) ->
+
+			req = http.request options, (res) ->
 				str = ''
 				res.on 'data', (chunk) ->
 					str += chunk;
-
 
 				res.on 'end', () ->
 					if (res.statusCode == 201)
@@ -52,8 +52,8 @@ udp_server.on 'samp', (err, data, rinfo) ->
 					else
 						console.error(res.statusCode, str);
 
-			req = http.request(options, req_callback).on 'error',  (err) ->
-				console.log(err);
+			req.on 'error',  (err) ->
+				console.log("HTTP ERROR: ",err);
 
 
 			# This is the data we are posting, it needs to be a string or a buffer
@@ -66,11 +66,8 @@ udp_server.on 'samp', (err, data, rinfo) ->
 
 #triggered when core comes online
 udp_server.on 'broadcast', (err, data, rinfo) ->
-	coremap[data.id] = rinfo.address  #update the coremap
 
 	#automatically create subscription when a core comes online
 	corecomm.createSub rinfo.address, (err, reply) ->
 		if not err
 			console.log("Subscription created with core",data.id);
-	#automatically create subscription when a core comes online
-
