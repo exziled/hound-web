@@ -1,13 +1,21 @@
 dgram = require('dgram')
 json_sanitizer = require('json_sanitizer')
 
+# Let's change the order of the parameters to setTimeout for clairity
 delay = (ms, func) -> setTimeout func, ms
+
+# Note: ALL callbacks must be in the format err, data
 
 class CoreComm
 
 	constructor: (@settings) ->
+
+		# Holds the relation between UDP "events" and the callbacks to call when those events occur
 		@event_map = {}
-		@core_map = {}
+
+		# Holds the relation between cores and their ipaddresses
+		# http://stackoverflow.com/questions/518000
+		@core_map = {} # {"coreid":"ipaddress"}
 
 		@counter = 0;
 		server = dgram.createSocket('udp4');
@@ -16,7 +24,7 @@ class CoreComm
 			console.info("UDP Multicast listening on ip %s",@settings.udp_multicast)
 
 		server.on "error", (err) =>
-			console.error("server error:\n" + err.stack)
+			console.error("UDP server error:\n" + err.stack)
 			server.close()
 
 
@@ -34,16 +42,17 @@ class CoreComm
 					# console.log(msg); #debug.printAllincommingUDPmessages
 
 					if (!msg.hasOwnProperty('e'))
-						console.log("msg does not have an e property", msg)
+						console.error("msg does not have an e property", msg)
 						return;
 
-					if (msg.hasOwnProperty('core_id'))
-						@core_map[msg.core_id] = rinfo.address #update the core_map
-						console.log("core_map Updated %s = %s", msg.core_id, rinfo.address)
+					if (msg.hasOwnProperty('core_id') || msg.hasOwnProperty('id'))
+						id = msg['core_id']||msg['id']
+						@core_map[id] = rinfo.address #update the core_map
+						console.info("core_map updated %s = %s", id, rinfo.address)
 
 					handlers = @event_map[msg.e]
 					if handlers == undefined
-						console.log("no handlers defined for", msg.e, msg)
+						console.warn("no handlers defined for", msg.e, msg)
 						return
 
 					for handler in handlers
@@ -97,6 +106,8 @@ class CoreComm
 		if out.length %2 != 0
 			out = "0"+out;
 
+		# packets in communication with the core will have a monotonically increasing
+		# number, so we can identify the reply.
 		@counter += 1;
 		if @counter >= 255
 			@counter = 0;
@@ -104,7 +115,7 @@ class CoreComm
 		mycnt = @counter
 
 		cnt = mycnt.toString(16) #convert to base 16
-		if cnt.length %2 != 0
+		if cnt.length %2 != 0 # pad with zero
 			cnt = "0"+cnt;
 
 		out = cnt+out;
@@ -145,18 +156,22 @@ class CoreComm
 		console.log("Its not currently possible to destroy a subscripton")
 
 	#create a subscription with the core for high-speed data
-	createFastSub: (core_id) ->
+	createSubFast: (core_id, callback) ->
 		@send 0x0400, core_id, (err, reply) ->
 			if not err and reply.result == 0
-				console.info("Fast-Data Subscription Created with", core_id)
-				socket.emit('who')
+				callback(null, reply) # Fast-Data Subscription Created
 			else
-				console.error("%s unable to create websockets subsription", core_id, reply)
+				callback(err||(core_id+" unable to create FastSub"), null)
+
 
 	#destroy the subscription for high-speed data
-	destroyFastSub: (core_id) ->
+	destroySubFast: (core_id, callback) ->
 		@send 0x0401, @core_map[core_id], (err, reply) ->
-			console.info("Fast-Data Subscription Destroyed ",err, reply)
+			if not err
+				callback(null, reply) # Fast-Data Subscription Destroyed
+			else
+				callback(err||("unable to destroy FastSub"), null)
+
 
 	# set the state of the outlets
 	control: (core_id, outlet, state, callback) ->
@@ -168,9 +183,8 @@ class CoreComm
 		else if (outlet == "outlet2")
 			msg = bot
 		else
-			console.error("Unknown Outlet ", outlet)
 			callback('Unknown Outlet '+outlet, null)
-			return;
+			return
 
 		if (state == 'on')
 			msg |= 0x0001;
@@ -179,17 +193,16 @@ class CoreComm
 			msg |= 0x0000;
 			expect = 0
 		else
-			console.error("Unknown State ", state)
 			callback('Unknown State '+state, null)
-			return;
+			return
 
 		@send msg, core_id, (err, reply) ->
 			if not err and reply.result[0].state == expect
-				console.log("%s set to %s",outlet, state)
-				callback(null, reply)
+				# console.info("%s set to %s",outlet, state)
+				callback(null, reply) #success changin state
 			else
-				console.error("FAIL: could not set %s to %s", outlet, state)
-				callback(err||"No state change", reply)
+				# console.error("FAIL: could not set %s to %s", outlet, state)
+				callback(err||"Could not set "+outlet+" to "+state, reply)
 
 	# get measuement data
 	getData: (core_id) ->
@@ -198,7 +211,10 @@ class CoreComm
 	# read the state of the outlets
 	getState: (core_id, callback) ->
 		@send 0x010212, core_id, (err, reply) ->
-			console.log("reply", err, reply)
+			# console.log("reply", err, reply)
 			callback(err, reply)
+
+	getCoreMap: ()->
+		return @core_map
 
 module.exports = CoreComm

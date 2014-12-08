@@ -75,6 +75,9 @@ class HttpAPI
 			@corecomm.getState req.params['core_id'], (err, reply) ->
 				res.send({'err':err, 'reply':reply})
 
+				# createFastSub @todo
+				# destroyFastSub @todo
+
 		# add the routes to the app
 		routes.applyRoutes(app);
 
