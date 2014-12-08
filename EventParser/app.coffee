@@ -10,20 +10,21 @@ settings =
 	udp_multicast:"224.111.112.113"	# addr to listen on for broadasts from cores
 
 http = require('http')
+
 CoreComm = require('./corecomm.coffee')
-corecomm = udp_server = new CoreComm(settings)
+corecomm = new CoreComm(settings)
 
 HttpAPI = require('./httpapi.coffee')
 api = new HttpAPI(settings, corecomm)
 
 SocketIO = require('./socketio.coffee')
-socketio = new SocketIO(udp_server, settings)
+socketio = new SocketIO(corecomm, settings)
 
 env = process.env.NODE_ENV || 'dev';
 console.log("Server running in %s mode", env);
 
 #triggered on new sample sent from core
-udp_server.on 'samp', (err, data, rinfo) ->
+corecomm.on 'samp', (err, data, rinfo) ->
 
 	if (err)
 		console.log("sample error", err);
@@ -61,11 +62,11 @@ udp_server.on 'samp', (err, data, rinfo) ->
 			req.end();
 
 		catch e
-			console.log("udp_server.on 'samp'", e, data);
+			console.log("corecomm.on 'samp'", e, data);
 
 
 #triggered when core comes online
-udp_server.on 'broadcast', (err, data, rinfo) ->
+corecomm.on 'broadcast', (err, data, rinfo) ->
 
 	#automatically create subscription when a core comes online
 	corecomm.createSub rinfo.address, (err, reply) ->
