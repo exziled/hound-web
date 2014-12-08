@@ -16,19 +16,15 @@ corecomm = udp_server = new CoreComm(settings)
 HttpAPI = require('./httpapi.coffee')
 api = new HttpAPI(settings, corecomm)
 
-# Holds the relation between cores and their ipaddresses
-# http://stackoverflow.com/questions/518000
-coremap = {} # {"coreid":"ipaddress"}
-
 SocketIO = require('./socketio.coffee')
-socketio = new SocketIO(udp_server, settings, coremap)
+socketio = new SocketIO(udp_server, settings)
 
 env = process.env.NODE_ENV || 'dev';
 console.log("Server running in %s mode", env);
 
 #triggered on new sample sent from core
 udp_server.on 'samp', (err, data, rinfo) ->
-	coremap[data.core_id] = rinfo.address #update the coremap
+
 	if (err)
 		console.log("sample error", err);
 	else
