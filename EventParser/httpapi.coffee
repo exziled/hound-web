@@ -62,7 +62,8 @@ class HttpAPI
 				res.send({'err':err, 'reply':reply})
 
 		routes.get {name: 'destroySub', re:'/destroySub/:core_id'}, (req, res) =>
-			res.send("Not currently implimented!")
+			@corecomm.control req.params['core_id'], (err, reply) ->
+				res.send({'err':err, 'reply':reply})
 
 		routes.get {name: 'control', re:'/control/:core_id/:outlet/:state'}, (req, res) =>
 			@corecomm.control req.params['core_id'], 'outlet'+req.params['outlet'], req.params['state'], (err, reply) ->
