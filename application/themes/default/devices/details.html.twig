@@ -233,16 +233,30 @@
 	<script>
 		var socket = io('http://'+window.location.host+':2648/');
 		socket.on('connect', function () {
+
 			console.log("Connected to SocketIO Server");
+
+			var RETRY_MS = 2000;
+			timeoutHandle = setInterval(function(){
+				console.log("Attempting subscription create");
+				socket.emit('who', '{{device.core_id}}'); //tell the server what core we are interested in live data for
+			}, RETRY_MS);
 
 			//lets wait for the server to reply to our request before sending another to the core
 			socket.on('who', function () {
-				console.log("Rec Who");
-				socket.emit('status'); //request information about socket status
+				clearInterval(timeoutHandle);
+
+				console.log("Rec'd who");
+				timeoutHandle = setInterval(function(){
+					console.log("Attempting status retrival");
+					socket.emit('status'); //request information about socket status
+				}, RETRY_MS);
 
 				//Handle the status reply
 				socket.on('status', function (sockets) {
-					console.log("rec status");
+					clearInterval(timeoutHandle);
+
+					console.log("Rec'd status");
 					for (var id in sockets) {
 						var state = sockets[id];
 						$('input[name="my-checkbox"]#'+id).bootstrapSwitch('indeterminate',false); //clear the initial indeterminate state.
@@ -250,7 +264,6 @@
 					}
 				});
 			});
-			socket.emit('who', '{{device.core_id}}'); //tell the server what core we are interested in live data for
 		});
 	</script>
 {% endblock %}
