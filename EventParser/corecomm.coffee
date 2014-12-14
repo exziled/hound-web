@@ -152,8 +152,7 @@ class CoreComm
 
 	# create a data subscripton
 	createSub: (ip, callback) ->
-		@send 0x040FFF1FFF, ip, (err, reply) ->
-			console.log("need core_id here", reply); # figure out what this reply.core_id should be to update core_map @todo
+		@send 0x020FFF1FFF, ip, (err, reply) ->
 			if not err and reply.result == 1
 				callback(null, reply) # Subscription created
 			else
@@ -161,7 +160,7 @@ class CoreComm
 
 	# destroy a data subscripton
 	destroySub: (core_id, callback) ->
-		@send 0x0804, ip, (err, reply) ->
+		@send 0x0802, ip, (err, reply) ->
 			console.log("destroy", reply);
 			if not err and reply.result == 1
 				callback(null, reply) # Subscription destroyed
@@ -171,8 +170,8 @@ class CoreComm
 
 	#create a subscription with the core for high-speed data
 	createSubFast: (core_id, callback) ->
-		@send 0x0200FF10FF, core_id, (err, reply) ->
-			if not err and reply.result == 0
+		@send 0x0400FF10FF, core_id, (err, reply) ->
+			if not err and reply.result == 1
 				callback(null, reply) # Fast-Data Subscription Created
 			else
 				callback(err||(core_id+" unable to create FastSub"), null)
@@ -180,7 +179,7 @@ class CoreComm
 
 	#destroy the subscription for high-speed data
 	destroySubFast: (core_id, callback) ->
-		@send 0x0802, @core_map[core_id], (err, reply) ->
+		@send 0x0804, @core_map[core_id], (err, reply) ->
 			if not err
 				callback(null, reply) # Fast-Data Subscription Destroyed
 			else
