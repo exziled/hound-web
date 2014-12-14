@@ -137,6 +137,39 @@ class Devices extends MY_Controller {
 			->get();
 
 		$data = $this->samples->LastHourOfSamples($id);
+		$vrms1 = array();
+		$vrms2 = array();
+		$irms1 = array();
+		$irms2 = array();
+		$app1 = array();
+		$app2 = array();
+		$time = array();
+		// $time2 = array();
+		foreach ($data as $idx => $el) {
+			// print_r($el);
+			if ($el['socket'] == 0) {
+				array_push($vrms1, $el['voltage']);
+				array_push($irms1, $el['current']);
+				array_push($app1, $el['apparent_power']);
+			} else {
+				array_push($vrms2, $el['voltage']);
+				array_push($irms2, $el['current']);
+				array_push($app2, $el['apparent_power']);
+			}
+			array_push($time, $el['timestamp']);
+		}
+		// exit();
+
+		// the substring removes the [] so that the json can be embedded in a js array
+		$this->twiggy->set('data_vrms1', substr(json_encode($vrms1), 1, -1));
+		$this->twiggy->set('data_vrms2', substr(json_encode($vrms2), 1, -1));
+		$this->twiggy->set('data_irms1', substr(json_encode($irms1), 1, -1));
+		$this->twiggy->set('data_irms2', substr(json_encode($irms2), 1, -1));
+		$this->twiggy->set('data_app1', substr(json_encode($app1), 1, -1));
+		$this->twiggy->set('data_app2', substr(json_encode($app2), 1, -1));
+		$this->twiggy->set('data_time', substr(json_encode($time), 1, -1));
+		// $this->twiggy->set('data_time2', substr(json_encode($time2), 1. -1)));
+
 		$stats = array();
 		// $stats['kVA in past 24 hrs']= $this->samples->getKWH24hrs($id);
 		// $stats['kVA in past 1 hr']= $this->samples->getKVA1hr($id);
@@ -144,14 +177,13 @@ class Devices extends MY_Controller {
 		$stats['Max in past 24hrs']= $this->samples->getMaxIVA24hr($id);
 		$stats['Min in past 24hrs']= $this->samples->getMinIVA24hr($id);
 		$stats['Avg in past 24hrs']= $this->samples->getAvgIVA24hr($id);
-		// print_r($stats);
-		// exit();
+
 		$this->twiggy->set('stats', $stats);
 
-		$this->twiggy->set('data_vrms', substr(json_encode($data['voltage']), 1, -1));
-		$this->twiggy->set('data_irms', substr(json_encode($data['current']), 1, -1));
-		$this->twiggy->set('data_app', substr(json_encode($data['apparent_power']), 1, -1));
-		$this->twiggy->set('data_time', substr(json_encode($data['timestamp']), 1, -1));
+		// $this->twiggy->set('data_vrms', substr(json_encode($data['voltage']), 1, -1));
+		// $this->twiggy->set('data_irms', substr(json_encode($data['current']), 1, -1));
+		// $this->twiggy->set('data_app', substr(json_encode($data['apparent_power']), 1, -1));
+		// $this->twiggy->set('data_time', substr(json_encode($data['timestamp']), 1, -1));
 
 		$this->twiggy->set('vrms', "...");
 		$this->twiggy->set('irms', "...");

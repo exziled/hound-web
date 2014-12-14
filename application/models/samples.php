@@ -93,25 +93,11 @@ class Samples extends MY_Model {
 		}
 		// $device_id = $this->device_model->coreid2deviceid($coreid);
 		// return $device_id;
-		$sql = "SELECT voltage,current,apparent_power,timestamp FROM samples WHERE device_id = $device_id AND TIMESTAMP > DATE_SUB( NOW( ) , INTERVAL 30 MINUTE )";
-		echo $sql;
+		$sql = "SELECT socket,voltage,current,apparent_power,timestamp FROM samples WHERE device_id = $device_id AND TIMESTAMP > DATE_SUB( NOW( ) , INTERVAL 30 MINUTE )";
+		// echo $sql;
 		$query = $this->db->query($sql);
 		$data = $query->result_array();
 
-		$data_fixed = array(
-			'voltage'=>array_map(function($el) {
-			    return $el["voltage"];
-			}, $data),
-			'current'=>array_map(function($el) {
-			    return $el["current"];
-			}, $data),
-			'apparent_power'=>array_map(function($el) {
-			    return $el["apparent_power"];
-			}, $data),
-			'timestamp'=>array_map(function($el) {
-			    return $el["timestamp"];
-			}, $data),
-		);
-		return $data_fixed;
+		return $data;
 	}
 }
