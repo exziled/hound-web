@@ -124,11 +124,11 @@ class SocketIO
 					socket.emit('control_fail', coreid+" not registered in coremap")
 					return
 
-				@corecomm.control coreid, data.outlet, data.state, (err, data) ->
+				@corecomm.control coreid, data.outlet, data.state, (err, data) =>
 					console.log("corecom.control ",err,data);
 					if not err
 						socket.emit('control_success', data)
-						@io.sockets.emit('status', data);
+						@io.emit('status', data);
 					else
 						socket.emit('control_fail', err)
 
