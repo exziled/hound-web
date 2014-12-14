@@ -94,9 +94,6 @@ class Devices extends MY_Controller {
 	public function edit_get($id)
 	{
 		$device = $this->device_model->where('device_id', $id)->get();
-		// print_r($device);
-		// return;
-
 
 		$this->twiggy->title()->prepend('Edit a Device');
 		$this->twiggy->set('action_name', 'Edit');
@@ -110,17 +107,13 @@ class Devices extends MY_Controller {
 	 */
 	public function edit_post()
 	{
-		// echo "so you want to change that device do you?";
 		$data = $this->input->post();
-		// print_r($data);
-		// return;
+
 		$data['user_id'] = $this->user->user_data->id;
 
 		$ret = $this->device_model
+					->update($data['device_id'], $data);
 
-		->update($data['device_id'], $data);
-
-		// echo $ret;
 		if ($ret)
 		{
 			$this->session->set_message("Success",'Device changes saved.');
