@@ -21,36 +21,33 @@
 
 			<div class="col-lg-4 col-md-6">
 				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<div class="row">
-							<div class="col-xs-3">
-								<i class="fa fa-bolt fa-5x"></i>
-							</div>
-							<div class="col-xs-9 text-right">
-								<div class="huge">
-									<span id="vrms">{{vrms}}</span><span class="small"> V<sub>RMS</sub></span>
-								</div>
-								<div>RMS Voltage</div>
-							</div>
+					<div class="panel-heading text-right">
+						<div class="huge">
+							<span id="vrms_1">{{vrms}}</span> | <span id="vrms_2">{{vrms}}</span><span class="small"> V<sub>RMS</sub></span>
 						</div>
+						<div>RMS Voltage</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="col-lg-4 col-md-6">
 				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<div class="row">
-							<div class="col-xs-3">
-								<i class="fa fa-bolt fa-5x"></i>
-							</div>
-							<div class="col-xs-9 text-right">
-								<div class="huge">
-									<span id="irms">{{irms}}</span><span class="small"> A<sub>RMS</sub></span>
-								</div>
-								<div>RMS Current</div>
-							</div>
+					<div class="panel-heading text-right">
+						<div class="huge">
+							<span id="irms_1">{{irms}}</span> | <span id="irms_2">{{irms}}</span><span class="small"> A<sub>RMS</sub></span>
 						</div>
+						<div>RMS Current</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-3 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading text-right">
+						<div class="huge">
+							<span id="app_1">{{irms}}</span> | <span id="app_2">{{irms}}</span><span class="small"> VA</span>
+						</div>
+						<div>Apparent Power</div>
 					</div>
 				</div>
 			</div>
@@ -87,14 +84,14 @@
 				</div>
 			</div> -->
 
-			<div class="col-lg-4 col-md-6">
+			<!-- <div class="col-lg-4 col-md-6">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<div class="row">
-							<div class="col-xs-3">
+						<div class="row"> -->
+							<!-- <div class="col-xs-3">
 								<i class="fa fa-bolt fa-5x"></i>
-							</div>
-							<div class="col-xs-9 text-right">
+							</div> -->
+							<!-- <div class="col-xs-9 text-right">
 								<div class="huge">
 									<span id="apparent">{{apparent}}</span><span class="small"> VA</span>
 								</div>
@@ -103,7 +100,7 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- <div class="col-lg-2 col-md-6">
 				<div class="panel panel-primary">
@@ -142,33 +139,31 @@
 						<i class="fa fa-plug fa-fw"></i> Outlet control for '{{device.name}}'
 					</div>
 					<div class="panel-body"  style="display:inline-block">
-						<!-- <div class="container"> -->
-							<div class="row">
-								<div class="col-md-5 col-lg-5 col-xs-5 col-sm-5">
-									<img src="{{static}}/img/outlet.svg" alt="Outlet" style="width:100%">
-								</div>
-								<div class="col-md-2">
+						<div class="row">
+							<div class="col-md-5 col-lg-5 col-xs-5 col-sm-5">
+								<img src="{{static}}/img/outlet.svg" alt="Outlet" style="width:100%">
+							</div>
+							<div class="col-md-2">
 
-									<div class="panel panel-default" style="display:inline-block">
-										<div class="panel-heading">
-											<i class="fa fa-plug fa-fw"></i> Outlet 1
-										</div>
-										<div class="panel-body">
-											<input class="switch" id="outlet1" type="checkbox" name="my-checkbox">
-										</div>
+								<div class="panel panel-default" style="display:inline-block">
+									<div class="panel-heading">
+										<i class="fa fa-plug fa-fw"></i> Outlet 1
 									</div>
+									<div class="panel-body">
+										<input class="switch" id="outlet1" type="checkbox" name="my-checkbox">
+									</div>
+								</div>
 
-									<div class="panel panel-default" style="display:inline-block">
-										<div class="panel-heading">
-											<i class="fa fa-plug fa-fw"></i> Outlet 2
-										</div>
-										<div class="panel-body">
-											<input class="switch" id="outlet2" type="checkbox" name="my-checkbox">
-										</div>
+								<div class="panel panel-default" style="display:inline-block">
+									<div class="panel-heading">
+										<i class="fa fa-plug fa-fw"></i> Outlet 2
+									</div>
+									<div class="panel-body">
+										<input class="switch" id="outlet2" type="checkbox" name="my-checkbox">
 									</div>
 								</div>
 							</div>
-						<!-- </div> -->
+						</div>
 					</div>
 				</div>
 			</div>
@@ -183,20 +178,6 @@
 							<div style="padding: 0 15px">
 								<div class="table-responsive">
 									<table class="table table-bordered table-hover table-striped">
-										{# <thead>
-											<tr>
-												<th>Metric</th>
-												<th>Value</th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for metric, value in stats %}
-											<tr>
-												<td>{{metric}}</td>
-												<td>{{value}}</td>
-											</tr>
-											{% endfor %}
-										</tbody> #}
 										<thead>
 											<tr>
 												<th>Metric</th>
@@ -256,9 +237,10 @@
 				socket.on('status', function (sockets) {
 					clearInterval(timeoutHandle);
 
-					console.log("Rec'd status");
+					console.log("Rec'd status", sockets);
 					for (var id in sockets) {
 						var state = sockets[id];
+						console.log(id, state);
 						$('input[name="my-checkbox"]#'+id).bootstrapSwitch('indeterminate',false); //clear the initial indeterminate state.
 						$('input[name="my-checkbox"]#'+id).bootstrapSwitch('state',state=="on", true);// set the accurate state based on data from the server.
 					}
@@ -279,7 +261,6 @@
 			onSwitchChange: function (event, state, test) {
 				//when the switch is clicked send the state information to the server.
 				var data = {
-					core: "{{device.core_id}}",
 					outlet: event.target.id,
 					state: (state?'on':'off')
 				};
