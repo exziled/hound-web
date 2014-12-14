@@ -18,21 +18,28 @@ class CoreComm
 		# http://stackoverflow.com/questions/518000
 		@core_map = {} # {"coreid":"ipaddress"}
 
+		# the message counter, use to identify responses
 		@counter = 0;
-		server = dgram.createSocket('udp4');
-		server.bind @settings.listen_udp_port, ()=>
-			server.addMembership(@settings.udp_multicast)
-			console.info("UDP Multicast listening on ip %s",@settings.udp_multicast)
 
+		server = dgram.createSocket('udp4')
+
+		# listen on udp multicast for broadcasts
+		if @settings.listen_udp_port
+			server.bind @settings.listen_udp_port, ()=>
+				server.addMembership(@settings.udp_multicast)
+				console.info("UDP Multicast listening on ip %s",@settings.udp_multicast)
+
+		# triggered on a UDP error
 		server.on "error", (err) =>
 			console.error("UDP server error:\n" + err.stack)
 			server.close()
 
-
+		# triggered when the UDP server begins listening
 		server.on "listening", () =>
 			address = server.address();
 			console.info("UDP server listening on port " + address.port)
 
+		# triggered when a UDP message is recieved
 		server.on "message",  (data, rinfo) =>
 			data = ""+data; #convert the buffer to a string
 			data = data.replace(/\0/,''); #@todo shouldn't need this
