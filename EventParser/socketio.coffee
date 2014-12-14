@@ -25,7 +25,13 @@ class SocketIO
 					sock.emit('data', data);
 				console.info("%s Live data sent to web client for core %s", new Date().getTime(), data['core_id']);
 			else
-				console.log("I'm getting data from %s but there are no subscribers", data['core_id']);
+				console.warn("I'm getting data from %s but there are no subscribers", data['core_id']);
+				# We can't destroy the subscription, becasue it can't be cancelled before the next set of data comes in
+				# @corecomm.destroySubFast data['core_id'], (err, reply)->
+				# 	if not err
+				# 		console.warn("Fast Sub destroyed")
+				# 	else
+				# 		console.warn("Unable to destroy fast sub")
 
 
 		# -----------------------------------------------------------------------------
