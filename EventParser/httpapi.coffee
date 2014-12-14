@@ -1,4 +1,4 @@
-
+console = require('better-console')
 
 class HttpAPI
 
@@ -87,7 +87,7 @@ class HttpAPI
 			host = server.address().address
 			port = server.address().port
 
-			console.log('HttpAPI listening on port %s', port)
+			console.info('HttpAPI listening on port %s', port)
 			console.log(""); #add a blank line
 
 module.exports = HttpAPI

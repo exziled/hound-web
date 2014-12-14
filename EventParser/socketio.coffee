@@ -1,3 +1,4 @@
+console = require('better-console')
 
 class SocketIO
 
@@ -32,7 +33,7 @@ class SocketIO
 		# -----------------------------------------------------------------------------
 
 		@io = require('socket.io')(settings.socketio_port);
-		console.log("Socket.IO server listening on port "+settings.socketio_port);
+		console.info("Socket.IO server listening on port "+settings.socketio_port);
 
 		# when a client connects
 		@io.on 'connection', (socket) =>
@@ -58,7 +59,7 @@ class SocketIO
 						if not err
 							socket.emit('who') # tell the web client that the subscription was created
 						else
-							console.error("%s unable to create websockets subsription", coreid, reply);
+							console.error(err);
 
 				else #others are already subscribed so lets just add us to the list of interested clients
 					@coresock[coreid].push(socket);

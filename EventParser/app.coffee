@@ -1,3 +1,4 @@
+console = require('better-console')
 
 #settings
 settings =
@@ -21,13 +22,13 @@ SocketIO = require('./socketio.coffee')
 socketio = new SocketIO(corecomm, settings)
 
 env = process.env.NODE_ENV || 'dev';
-console.log("Server running in %s mode", env);
+console.info("Server running in %s mode", env);
 
 #triggered on new sample sent from core
 corecomm.on 'samp', (err, data, rinfo) ->
 
 	if (err)
-		console.log("sample error", err);
+		console.error("sample error", err);
 	else
 		try
 			options = {
@@ -54,7 +55,7 @@ corecomm.on 'samp', (err, data, rinfo) ->
 						console.error(res.statusCode, str);
 
 			req.on 'error',  (err) ->
-				console.log("HTTP ERROR: ",err);
+				console.error("HTTP ERROR: ",err);
 
 
 			# This is the data we are posting, it needs to be a string or a buffer
@@ -62,7 +63,7 @@ corecomm.on 'samp', (err, data, rinfo) ->
 			req.end();
 
 		catch e
-			console.log("corecomm.on 'samp'", e, data);
+			console.error("corecomm.on 'samp'", e, data);
 
 
 #triggered when core comes online
@@ -71,4 +72,4 @@ corecomm.on 'broadcast', (err, data, rinfo) ->
 	#automatically create subscription when a core comes online
 	corecomm.createSub rinfo.address, (err, reply) ->
 		if not err
-			console.log("Subscription created with core",data.id);
+			console.info("Subscription created with core",data.id);

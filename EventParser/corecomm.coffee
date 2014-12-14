@@ -1,5 +1,6 @@
 dgram = require('dgram')
 json_sanitizer = require('json_sanitizer')
+console = require('better-console')
 
 # Let's change the order of the parameters to setTimeout for clairity
 delay = (ms, func) -> setTimeout func, ms
@@ -39,7 +40,7 @@ class CoreComm
 			json_sanitizer data, (err, result) =>
 				if (!err)
 					msg = JSON.parse(result)
-					# console.log(msg); #debug.printAllincommingUDPmessages
+					# console.log("Result:",result); #debug.printAllincommingUDPmessages
 
 					if (!msg.hasOwnProperty('e'))
 						console.error("msg does not have an e property", msg)
@@ -58,7 +59,7 @@ class CoreComm
 					for handler in handlers
 						handler(null, msg, rinfo) #callbacks must be in the format err, data
 				else
-					console.log("ERROR", err, result, data)
+					console.error("ERROR", err, result, data)
 
 	#callbacks must be in the format err, data
 	on: (evt, callback) ->
@@ -125,7 +126,7 @@ class CoreComm
 		client.send out1, 0, out1.length, @settings.outgoing_udp_port, ip, (err, bytes) =>
 			client.close();
 			client = null;
-			# console.log("Sent: ",out); #debug.printAllOutgoingUDPmessages
+			console.log("Sent: ",out); #debug.printAllOutgoingUDPmessages
 
 			if retrycount >= @settings.max_udp_retry
 				callback('UDP Permanently failed sending '+out+' after '+retrycount+' retries', null)
