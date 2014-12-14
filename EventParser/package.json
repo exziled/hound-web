@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "better-console": "^0.2.3",
     "express": "^4.10.4",
     "jade": "^1.8.1",
     "json_sanitizer": "0.0.2",
