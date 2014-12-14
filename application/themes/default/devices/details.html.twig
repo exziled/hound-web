@@ -278,12 +278,15 @@
 			xFormat: '%Y-%m-%d %H:%M:%S',
 			columns: [ //DO NOT CHANGE THIS ORDER
 				['x', {{data_time}}],
-				['RMS Voltage [V]', {{data_vrms}}],
-				['RMS Current [A]', {{data_irms}}],
-				['Apparent Power [VA]', {{data_app}}],
+				['RMS Voltage 1 [V]', {{data_vrms1}}],
+				['RMS Voltage 2 [V]', {{data_vrms2}}],
+				['RMS Current 1 [A]', {{data_irms1}}],
+				['RMS Current 2 [A]', {{data_irms2}}],
+				['Apparent Power 1 [VA]', {{data_app1}}],
+				['Apparent Power 2 [VA]', {{data_app2}}],
 			],
 			axes: {
-				'RMS Current [A]': 'y2'
+				'RMS Current 1 [A]': 'y2'
 			}
 		};
 
@@ -324,35 +327,56 @@
 
 		socket.on('data', function (datain){
 			console.log(datain);
-			// return;
-			$('#vrms').text(datain.vrms[0].toFixed(1));
-			$('#irms').text(datain.irms[0].toFixed(2));
-			// $('#real').text(datain.r.toFixed(3));
-			// $('#powerfactor').text(datain.pf.toFixed(3));
-			$('#apparent').text(datain.app[0].toFixed(1));
-			datain.t = moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss');
 
-			// remove the label, remove the old data element, readd the label, add the new data
-			label = data.columns[0].shift();
-			data.columns[0].shift();
-			data.columns[0].unshift(label);
-			data.columns[0].push(datain.t);
-			label = data.columns[1].shift();
-			data.columns[1].shift();
-			data.columns[1].unshift(label);
-			data.columns[1].push(datain.vrms[0]);
-			label = data.columns[2].shift();
-			data.columns[2].shift();
-			data.columns[2].unshift(label);
-			data.columns[2].push(datain.irms[0]);
-			label = data.columns[3].shift();
-			data.columns[3].shift();
-			data.columns[3].unshift(label);
-			data.columns[3].push(datain.app[0]);
-
-			chart.load(data);
-
+			if (datain.s_id == "0") {
+				$('#vrms_1').text(datain.vrms[0].toFixed(1));
+				$('#irms_1').text(datain.irms[0].toFixed(2));
+				$('#app_1').text(datain.app[0].toFixed(1));
+			}
+			if (datain.s_id == "1") {
+				$('#vrms_2').text(datain.vrms[0].toFixed(1));
+				$('#irms_2').text(datain.irms[0].toFixed(2));
+				$('#app_2').text(datain.app[0].toFixed(1));
+			}
 		});
+	// 		// return;
+			// $('#vrms').text(datain.vrms[0].toFixed(1));
+	// 		
+	// 		// $('#real').text(datain.r.toFixed(3));
+	// 		// $('#powerfactor').text(datain.pf.toFixed(3));
+	// 		$('#apparent').text(datain.app[0].toFixed(1));
+	// 		datain.t = moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss');
+
+	// 		// remove the label, remove the old data element, readd the label, add the new data
+	// 		label = data.columns[0].shift();
+	// 		data.columns[0].shift();
+	// 		data.columns[0].unshift(label);
+	// 		data.columns[0].push(datain.t);
+
+	// 		label = data.columns[1].shift();
+	// 		data.columns[1].shift();
+	// 		data.columns[1].unshift(label);
+	// 		data.columns[1].push(datain.vrms[0]);
+
+	// 		// if (datain.
+	// 		label = data.columns[2].shift();
+	// 		data.columns[2].shift();
+	// 		data.columns[2].unshift(label);
+	// 		data.columns[2].push(datain.irms[0]);
+
+	// 		label = data.columns[3].shift();
+	// 		data.columns[3].shift();
+	// 		data.columns[3].unshift(label);
+	// 		data.columns[3].push(datain.irms[0]);
+
+	// 		label = data.columns[4].shift();
+	// 		data.columns[4].shift();
+	// 		data.columns[4].unshift(label);
+	// 		data.columns[4].push(datain.app[0]);
+
+	// 		// chart.load(data);
+
+	// 	});
 
 
 
