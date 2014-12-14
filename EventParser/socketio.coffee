@@ -66,6 +66,7 @@ class SocketIO
 							socket.emit('who') # tell the web client that the subscription was created
 						else
 							console.error(err);
+							socket.emit('who_fail') # tell the web client that the sub creation failed, retry later
 
 				else #others are already subscribed so lets just add us to the list of interested clients
 					@coresock[coreid].push(socket);
@@ -81,13 +82,15 @@ class SocketIO
 
 				#read the current data from the core
 				@corecomm.getState coreid, (err, reply) ->
-
-					data = {
-						outlet1: if reply.result[1].state then "on" else "false"
-						outlet2: if reply.result[0].state then "on" else "false"
-					}
-					# send the current state of the outlets to the web client so they can accurately show the state.
-					socket.emit('status', data)
+					if not err
+						data = {
+							outlet1: if reply.result[1].state then "on" else "false"
+							outlet2: if reply.result[0].state then "on" else "false"
+						}
+						# send the current state of the outlets to the web client so they can accurately show the state.
+						socket.emit('status', data)
+					else
+						socket.emit('status_fail')
 
 			# when a client disconnects, (closes browser tab or navigates away)
 			socket.on 'disconnect', () =>
