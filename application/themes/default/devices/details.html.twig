@@ -272,18 +272,44 @@
 	<script>
 	$(document).ready(function(){
 
+		var series_labels = [
+			'x',
+			'RMS Voltage 1 [V]',
+			'RMS Voltage 2 [V]',
+			'RMS Current 1 [A]',
+			'RMS Current 2 [A]',
+			'Apparent Power 1 [VA]',
+			'Apparent Power 2 [VA]'
+		];
+
+		var series_vars = [
+			't',
+
+		];
+
+		// columns: [ //DO NOT CHANGE THIS ORDER
+		// 		[series_labels[0], {{data_time}}],
+		// 		[series_labels[1], {{data_vrms1}}],
+		// 		[series_labels[2], {{data_vrms2}}],
+		// 		[series_labels[3], {{data_irms1}}],
+		// 		[series_labels[4], {{data_irms2}}],
+		// 		[series_labels[5], {{data_app1}}],
+		// 		[series_labels[6], {{data_app2}}],
+		// 	],
+
 		var data = {
 			// type: 'spline',
 			x: 'x', // x data is stored in the column labeled 'x'
 			xFormat: '%Y-%m-%d %H:%M:%S',
 			columns: [ //DO NOT CHANGE THIS ORDER
-				['x', {{data_time}}],
-				['RMS Voltage 1 [V]', {{data_vrms1}}],
-				['RMS Voltage 2 [V]', {{data_vrms2}}],
-				['RMS Current 1 [A]', {{data_irms1}}],
-				['RMS Current 2 [A]', {{data_irms2}}],
-				['Apparent Power 1 [VA]', {{data_app1}}],
-				['Apparent Power 2 [VA]', {{data_app2}}],
+				[series_labels[0], {{data_time}}],
+				[series_labels[1], {{data_vrms1}}],
+				[series_labels[2], {{data_vrms2}}],
+				[series_labels[3], {{data_irms1}}],
+				[series_labels[4], {{data_irms2}}],
+				[series_labels[5], {{data_app1}}],
+				// [series_labels[6], {{data_app2}}],
+
 			],
 			axes: {
 				'RMS Current 1 [A]': 'y2'
@@ -328,20 +354,101 @@
 		socket.on('data', function (datain){
 			console.log(datain);
 
+			//Properly format the timestamp
+			datain.t = moment.unix(datain.t).format('YYYY-MM-DD HH:mm:ss');
+
+			// idx = 0;
+			// label = series_labels[idx];
+			// new_arr = data.columns[idx].slice(0); //make copy
+			// new_arr.shift(); //remove label
+			// new_arr.shift(); //remove first element
+			// new_arr.unshift(label);
+			// new_arr.push(datain.t);
+			// data.columns[idx] = new_arr;
+
 			if (datain.s_id == "0") {
 				$('#vrms_1').text(datain.vrms[0].toFixed(1));
 				$('#irms_1').text(datain.irms[0].toFixed(2));
 				$('#app_1').text(datain.app[0].toFixed(1));
+
+				// idx = 1;
+				// label = series_labels[idx];
+				// new_arr = data.columns[idx].slice(0); //make copy
+				// new_arr.shift(); //remove label
+				// new_arr.shift(); //remove first element
+				// new_arr.unshift(label);
+				// new_arr.push(datain.vrms[0]);
+				// data.columns[idx] = new_arr;
 			}
 			if (datain.s_id == "1") {
 				$('#vrms_2').text(datain.vrms[0].toFixed(1));
 				$('#irms_2').text(datain.irms[0].toFixed(2));
 				$('#app_2').text(datain.app[0].toFixed(1));
+
+				// idx = 2;
+				// label = series_labels[idx];
+				// new_arr = data.columns[idx].slice(0); //make copy
+				// new_arr.shift(); //remove label
+				// new_arr.shift(); //remove first element
+				// new_arr.unshift(label);
+				// new_arr.push(datain.vrms[0]);
+				// data.columns[idx] = new_arr;
 			}
+
+			
+
+			
+
+			// idx = 2;
+			// label = series_labels[idx];
+			// new_arr = data.columns[idx].slice(0); //make copy
+			// new_arr.shift(); //remove label
+			// new_arr.shift(); //remove first element
+			// new_arr.unshift(label);
+			// new_arr.push(datain.vrms[0]);
+			// data.columns[idx] = new_arr;
+
+			// idx = 3;
+			// label = series_labels[idx];
+			// new_arr = data.columns[idx].slice(0); //make copy
+			// new_arr.shift(); //remove label
+			// new_arr.shift(); //remove first element
+			// new_arr.unshift(label);
+			// new_arr.push(datain.irms[0]);
+			// data.columns[idx] = new_arr;
+
+			// idx = 4;
+			// label = series_labels[idx];
+			// new_arr = data.columns[idx].slice(0); //make copy
+			// new_arr.shift(); //remove label
+			// new_arr.shift(); //remove first element
+			// new_arr.unshift(label);
+			// new_arr.push(datain.irms[0]);
+			// data.columns[idx] = new_arr;
+
+			// idx = 5;
+			// label = series_labels[idx];
+			// new_arr = data.columns[idx].slice(0); //make copy
+			// new_arr.shift(); //remove label
+			// new_arr.shift(); //remove first element
+			// new_arr.unshift(label);
+			// new_arr.push(datain.app[0]);
+			// data.columns[idx] = new_arr;
+
+			// idx = 6;
+			// label = series_labels[idx];
+			// new_arr = data.columns[idx].slice(0); //make copy
+			// new_arr.shift(); //remove label
+			// new_arr.shift(); //remove first element
+			// new_arr.unshift(label);
+			// new_arr.push(datain.app[0]);
+			// data.columns[idx] = new_arr;
+
+			chart.load(data);
 		});
 	// 		// return;
 			// $('#vrms').text(datain.vrms[0].toFixed(1));
-	// 		
+	//
 	// 		// $('#real').text(datain.r.toFixed(3));
 	// 		// $('#powerfactor').text(datain.pf.toFixed(3));
 	// 		$('#apparent').text(datain.app[0].toFixed(1));
