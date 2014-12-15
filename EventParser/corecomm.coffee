@@ -47,7 +47,7 @@ class CoreComm
 			json_sanitizer data, (err, result) =>
 				if (!err)
 					msg = JSON.parse(result)
-					# console.log("Result:",result); #debug.printAllincommingUDPmessages
+					console.log("Result:",result); #debug.printAllincommingUDPmessages
 
 					if (!msg.hasOwnProperty('e'))
 						console.error("msg does not have an e property", msg)
