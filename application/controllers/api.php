@@ -233,4 +233,27 @@ class api extends MY_Controller {
 		}
 		$this->response(array("status"=>"error", "message"=>"malformed input"), 400);
 	}
+
+	public function program_get($id=null)
+	{
+		if ($id == null || !is_numeric($id)) {
+			// echo "first";
+			$data = $this->program
+				->select('device_id')
+				->where('xml <> ""')
+				->get_all();
+			// echo $this->db->last_query();
+			// print_r($data);
+			$this->response($data, 200);
+		} else {
+			// echo "second";
+			$data = $this->program
+				->select('*')
+				->where('xml <> ""')
+				->where('device_id',$id)
+				->get();
+			// echo $this->db->last_query();
+			$this->response($data, 200);
+		}
+	}
 }
