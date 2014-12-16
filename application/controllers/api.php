@@ -234,25 +234,29 @@ class api extends MY_Controller {
 		$this->response(array("status"=>"error", "message"=>"malformed input"), 400);
 	}
 
+	/**
+	 * Get the program for a device, or get a list of devices with programs
+	 * @param  id of the device of which to get program. When no supplied a list
+	 * of all of the devices with programs will be returned.
+	 * @return a devices program, or a list of devices with programs.
+	 */
 	public function program_get($id=null)
 	{
 		if ($id == null || !is_numeric($id)) {
-			// echo "first";
+			// List of devices with programs
 			$data = $this->program
 				->select('device_id')
 				->where('xml <> ""')
 				->get_all();
-			// echo $this->db->last_query();
-			// print_r($data);
 			$this->response($data, 200);
 		} else {
-			// echo "second";
+			// Singular program
 			$data = $this->program
-				->select('*')
+				->select('program.*, devices.core_id')
+				->join('devices', 'devices.device_id = program.device_id')
 				->where('xml <> ""')
-				->where('device_id',$id)
+				->where('devices.device_id',$id)
 				->get();
-			// echo $this->db->last_query();
 			$this->response($data, 200);
 		}
 	}
