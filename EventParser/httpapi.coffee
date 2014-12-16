@@ -69,8 +69,8 @@ class HttpAPI
 		routes.get {name: 'control', re:'/control/:core_id/:outlet/:state'}, (req, res) =>
 			outletnum = req.params['outlet'].replace('outlet','')
 			state = req.params['state']
-				if _.isBoolean(req.params['state'])
-					state = req.params['state']?"on":"off"
+			if _.isBoolean(req.params['state'])
+				state = req.params['state']?"on":"off"
 
 			@corecomm.control req.params['core_id'], 'outlet'+outletnum, , (err, reply) ->
 				res.send({'err':err, 'reply':reply})
