@@ -70,7 +70,7 @@ class HttpAPI
 			outletnum = req.params['outlet'].replace('outlet','')
 			state = req.params['state']
 			if _.isBoolean(req.params['state'])
-				state = req.params['state']?"on":"off"
+				state = if req.params['state'] then "on" else "off"
 
 			@corecomm.control req.params['core_id'], 'outlet'+outletnum, state, (err, reply) ->
 				res.send({'err':err, 'reply':reply})

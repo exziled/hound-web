@@ -42,6 +42,9 @@ deviceProgram = (device_id, callback) ->
 			callback(err||("bad status code "+res.statusCode), null)
 
 control = (coreid, outlet, state, callback) ->
+	if _.isBoolean(state)
+		console.log("boolean");
+		state = if state then "on" else "off"
 	url = 'http://houndplex.plextex.com'+':8082/control/'+coreid+'/'+outlet+'/'+state
 	console.log(url);
 	request url, (err, res, body) ->
