@@ -41,12 +41,26 @@ deviceProgram = (device_id, callback) ->
 		else
 			callback(err||("bad status code "+res.statusCode), null)
 
+latestSample = (device_id, callback) ->
+	request API_ENDPOINT+'/api/sample/'+device_id, (err, res, body) ->
+		if not err and res.statusCode == 200
+			try
+				data = JSON.parse(body)
+			catch e
+				console.error("HTTP Error: ", e)
+				callback(e, null)
+				return
+
+			callback(null, data)
+		else
+			callback(err||("bad status code "+res.statusCode), null)
+
 control = (coreid, outlet, state, callback) ->
 	if _.isBoolean(state)
-		console.log("boolean");
+
 		state = if state then "on" else "off"
-	url = 'http://houndplex.plextex.com'+':8082/control/'+coreid+'/'+outlet+'/'+state
-	console.log(url);
+	url = 'http://houndplex.plextex.com'+':8082/control/'+coreid+'/'+outlet+'/'+state #@todo API_ENDPOINT
+
 	request url, (err, res, body) ->
 		if not err and res.statusCode == 200
 			try
@@ -59,6 +73,12 @@ control = (coreid, outlet, state, callback) ->
 			callback(null, data)
 		else
 			callback(err||("bad status code "+res.statusCode), null)
+
+
+
+# deviceProgram 14, (err, data)->
+# 	console.log(err,data);
+
 
 
 # * * * * *
@@ -88,28 +108,32 @@ coderunner.loadTemplate (err, reply) ->
 				console.log("unable to get list of devices, try again in 10 mins", err)
 				return
 			else
-				console.log(devices);
+				# console.log(devices);
 				for device_id in devices
-					console.log("Device %s", device_id);
-					deviceProgram device_id, (err, data) ->
-						# console.log(data);
+					# console.log("Device %s", device_id);
+					deviceProgram device_id, (err, prgmdata) ->
+						# console.log(prgmdata);
 						if err
 							console.log("Unable to get program for ", device_id, err)
 							return
 						else
-							coderunner.runCode data.javascript, (err, output)->
-								# console.log("done?", output.result);
-								json_sanitizer output.result, (err, result) =>
-									if err
-										console.error('Unable to parse result: ', output)
-									else
-										result =  JSON.parse(result)
-										# console.log(result);
-										# Handle Email
-										# Handle SMS - later
-										# Handle Control
-										for outlet of result.control
-											console.log(outlet);
-											control data.core_id, outlet, result.control[outlet], (err, data) ->
-												console.log(err, data);
+							latestSample device_id, (err, samples)->
+								if err
+									console.log("Unable to samples for ", device_id, err)
+									return
+								else
+									coderunner.runCode samples, prgmdata.javascript, (err, output)->
+										# console.log("done?", output.result);
+										json_sanitizer output.result, (err, result) =>
+											if err
+												console.error('Unable to parse result: ', output)
+											else
+												result =  JSON.parse(result)
+												# Handle Email
+												# Handle SMS - later
+												# Handle Control
+												for outlet of result.control
+													control prgmdata.core_id, outlet, result.control[outlet], (err, data) ->
+														if err
+															console.error("Unable to change socket state",err);
 

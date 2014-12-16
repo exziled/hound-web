@@ -1,13 +1,6 @@
 
 
-var DATA = {
-	tempc_1: 55,
-	tempc_2: 55,
-	vrms_1: 120.5,
-	irms_1: 1.25,
-	vrms_2: 120.5,
-	irms_2: 1.25,
-};
+var DATA = {{data}};
 
 var OUTPUT = {
 	email: [],

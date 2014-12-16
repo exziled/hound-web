@@ -6,21 +6,26 @@ class api extends MY_Controller {
 		parent::__construct();
 	}
 
+	/**
+	 * List all of the api endpoints
+	 */
 	public function index_get()
 	{
-		echo "API";
-		// $this->post('fred')
+		$me = get_class_methods($this);
+		$parent = get_class_methods('MY_Controller');
+		$this->response(array_diff($me, $parent), 200);
 	}
 
+	/**
+	 * Get the properties of a device
+	 * @param  num $id optional id of device to read information
+	 */
 	public function device_get($id=null)
 	{
-		if (is_null($id))
-		{
+		if (is_null($id)) {
 			$device = $this->device_model
 			->get_all();
-		}
-		else
-		{
+		} else {
 			$device = $this->device_model
 			->where('device_id',$id)
 			->get();
@@ -28,43 +33,20 @@ class api extends MY_Controller {
 
 		$this->response($device, 200);
 	}
+
+	/**
+	 * Handle the plural case
+	 * @param  see above
+	 */
 	public function devices_get($id=null)
 	{
 		$this->device_get($id);
 	}
 
-	public function device_group_get($id=null)
-	{
-		if (is_null($id))
-		{
-			$device = $this->device_group
-			->get_all();
-		}
-		else
-		{
-			$device = $this->device_group
-			->where('device_group_id',$id)
-			->get();
-		}
-
-		$this->response($device, 200);
-	}
-	public function devices_in_group_get($groupid=null)
-	{
-		if (is_null($groupid))
-		{
-			$this->response(array("status"=>"failure", "message"=>"Group ID required"), 400);
-		}
-		else
-		{
-			$devicesingrp = $this->device_model
-				->join("devices_device_group AS map", "map.device_id = devices.device_id")
-				->where('map.device_group_id',$groupid)
-				->get_all();
-			$this->response($devicesingrp, 200);
-		}
-	}
-
+	/**
+	 * Receive data from the NodeJS EventManager
+	 * @return json 201 code on success, 400 on error
+	 */
 	public function samples_post()
 	{
 		if (!$this->_post_input_exists(array(
@@ -121,33 +103,6 @@ class api extends MY_Controller {
 			$this->response(array("status"=>"success", "id"=>$out), 201);
 		} else if (in_array(0, $out)) {
 			$this->response(array("status"=>"partial success", "id"=>$out), 201);
-		} else {
-			$this->response(array("status"=>"error"), 400);
-		}
-	}
-
-	public function samples2_post()
-	{
-		if (!$this->_post_input_exists(array(
-				'socket_id',
-				'current',
-				'voltage',
-				'powerfactor',
-				'frequency',
-				'temperature',
-				'wifi_strength',
-				'apparent_power',
-				'useruuid',
-				'real_power'
-			))) {
-			$this->response(array("status"=>"error", "message"=>"malformed input"), 400);
-			return;
-		}
-		// print_r($this->post());
-		// $this->response(array("status"=>"error", "message"=>"malformed input"), 400);
-		if ($id = $this->samples->insert($this->post()))
-		{
-			$this->response(array("status"=>"success", "id"=>$id), 200);
 		} else {
 			$this->response(array("status"=>"error"), 400);
 		}
@@ -210,30 +165,6 @@ class api extends MY_Controller {
 		$this->response($data, 200);
 	}
 
-	public function control_post()
-	{
-		if ($this->_post_input_exists(array(
-				'socket',
-				'status',
-			))) {
-			if ($this->_post_input_exists(array('device_id')) || $this->_post_input_exists(array('core_id'))) {
-				// we have device_id or core_id and {socket, status}
-				$core_id = $this->post('core_id');
-				if ($this->_post_input_exists(array('device_id'))) {
-					$core_id = $this->device_model->deviceid2coreid($this->post('device_id'));
-				}
-				$action = array(
-					'core_id'=>$core_id,
-					'socket'=>$this->post('socket'),
-					'status'=>$this->post('status'),
-				);
-				curl_post(); //@todo
-				$this->response(array('status'=>'success'), 200);
-			}
-		}
-		$this->response(array("status"=>"error", "message"=>"malformed input"), 400);
-	}
-
 	/**
 	 * Get the program for a device, or get a list of devices with programs
 	 * @param  id of the device of which to get program. When no supplied a list
@@ -245,7 +176,8 @@ class api extends MY_Controller {
 		if ($id == null || !is_numeric($id)) {
 			// List of devices with programs
 			$data = $this->program
-				->select('device_id')
+				->select('program.device_id, devices.core_id')
+				->join('devices', 'devices.device_id = program.device_id')
 				->where('xml <> ""')
 				->get_all();
 			$this->response($data, 200);
@@ -259,5 +191,24 @@ class api extends MY_Controller {
 				->get();
 			$this->response($data, 200);
 		}
+	}
+
+	/**
+	 * Get the most recent sample for each socket of $device_id
+	 * @param  num $device_id device of which to get sample for
+	 */
+	public function sample_get($device_id=null)
+	{
+		if ($device_id == null) {
+			$this->response(array("status"=>"error", "message"=>"malformed input. Missing device_id parameter"), 400);
+			return;
+		}
+		$data = $this->samples
+			->select('socket, current, voltage, powerfactor, temperature, apparent_power, real_power')
+			->where('device_id',$device_id)
+			->order_by('sample_id desc')
+			->limit(2)
+			->get_all();
+		$this->response($data, 200);
 	}
 }
