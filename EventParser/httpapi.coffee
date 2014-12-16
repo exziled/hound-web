@@ -72,7 +72,7 @@ class HttpAPI
 			if _.isBoolean(req.params['state'])
 				state = req.params['state']?"on":"off"
 
-			@corecomm.control req.params['core_id'], 'outlet'+outletnum, , (err, reply) ->
+			@corecomm.control req.params['core_id'], 'outlet'+outletnum, state, (err, reply) ->
 				res.send({'err':err, 'reply':reply})
 
 		# routes.get {name: 'getData', re:'/getData/:core_id/'}, (req, res) =>
