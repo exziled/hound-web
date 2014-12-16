@@ -69,8 +69,8 @@ class HttpAPI
 			@corecomm.control req.params['core_id'], 'outlet'+req.params['outlet'], req.params['state'], (err, reply) ->
 				res.send({'err':err, 'reply':reply})
 
-		routes.get {name: 'getData', re:'/getData/:core_id/'}, (req, res) =>
-			res.send("Not currently implimented!")
+		# routes.get {name: 'getData', re:'/getData/:core_id/'}, (req, res) =>
+		# 	res.send("Not currently implimented!")
 
 		routes.get {name: 'getState', re:'/getState/:core_id'}, (req, res) =>
 			@corecomm.getState req.params['core_id'], (err, reply) ->
