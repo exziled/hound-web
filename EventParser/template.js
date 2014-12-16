@@ -1,7 +1,8 @@
 
 
 var DATA = {
-	tempc: 55,
+	tempc_1: 55,
+	tempc_2: 55,
 	vrms_1: 120.5,
 	irms_1: 1.25,
 	vrms_2: 120.5,
@@ -18,8 +19,16 @@ var OUTPUT = {
 function setOutlet (num, on) {
 	OUTPUT.control['outlet'+num.valueOf()] = on;
 }
-function getTemp () {
-	return DATA.tempc;
+function getTemp (cf, sensor) {
+	if (cf = 'C') {
+		if (sensor == 1)
+			return DATA.tempc_1;
+		return DATA.tempc_2;
+	} else {
+		if (sensor == 1)
+			return DATA.tempc_1 * 9 / 5 + 32;
+		return DATA.tempc_2 * 9 / 5 + 32;
+	}
 }
 function getIrms (socket) {
 	if (socket == 1)
@@ -30,6 +39,15 @@ function getVrms (socket) {
 	if (socket == 1)
 		return DATA.vrms_1;
 	return DATA.vrms_2;
+}
+
+function sendEmail (addy, message) {
+	var em = {
+		address:addy,
+		subject:"Message from H.O.U.N.D.",
+		message:message
+	};
+	OUTPUT.email.push(em)
 }
 
 {{code}}

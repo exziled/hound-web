@@ -19,7 +19,6 @@ class CodeRunner
 				callback(err,null)
 				return
 			@codetempl = code.toString('utf8');
-			console.log("Code Loaded");
 			callback(null,code)
 
 	runCode: (code2run, callback) ->
@@ -28,6 +27,7 @@ class CodeRunner
 			return
 		else
 			code = @codetempl.replace("{{code}}", code2run)
+			# console.log("Running: |", code,"|");
 			@s.run code, (output) ->
 				callback(null, output)
 
