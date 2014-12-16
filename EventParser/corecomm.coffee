@@ -161,7 +161,7 @@ class CoreComm
 	# destroy a data subscripton
 	destroySub: (core_id, callback) ->
 		@send 0x0802, core_id, (err, reply) ->
-			if not err and reply.result == 1
+			if not err and reply.result == 0
 				callback(null, reply) # Subscription destroyed
 			else
 				callback(err||"Unable to destroy subscription", reply)

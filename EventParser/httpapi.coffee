@@ -1,4 +1,5 @@
 console = require('better-console')
+_ = require('lodash')
 
 class HttpAPI
 
@@ -66,7 +67,12 @@ class HttpAPI
 				res.send({'err':err, 'reply':reply})
 
 		routes.get {name: 'control', re:'/control/:core_id/:outlet/:state'}, (req, res) =>
-			@corecomm.control req.params['core_id'], 'outlet'+req.params['outlet'], req.params['state'], (err, reply) ->
+			outletnum = req.params['outlet'].replace('outlet','')
+			state = req.params['state']
+				if _.isBoolean(req.params['state'])
+					state = req.params['state']?"on":"off"
+
+			@corecomm.control req.params['core_id'], 'outlet'+outletnum, , (err, reply) ->
 				res.send({'err':err, 'reply':reply})
 
 		# routes.get {name: 'getData', re:'/getData/:core_id/'}, (req, res) =>
