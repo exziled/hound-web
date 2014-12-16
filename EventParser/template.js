@@ -34,4 +34,5 @@ function getVrms (socket) {
 
 {{code}}
 
-console.log(JSON.stringify(OUTPUT));
+// console.log(JSON.stringify(OUTPUT));
+OUTPUT;

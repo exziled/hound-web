@@ -46,7 +46,8 @@
 				}
 
 				Blockly.mainWorkspace.reset();
-				window.parent.blocklyLoaded(Blockly);
+				if (window.parent.blocklyLoaded)
+					window.parent.blocklyLoaded(Blockly);
 			}
 
 		</script>

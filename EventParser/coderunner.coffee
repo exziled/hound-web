@@ -27,9 +27,8 @@ class CodeRunner
 			callback("error: code template not loaded")
 			return
 		else
-			console.log("template", @codetempl);
-			code = @codetempl.replace("{{code}}", code2run);
-			@s.run code, ( output ) ->
-				console.log(output)
+			code = @codetempl.replace("{{code}}", code2run)
+			@s.run code, (output) ->
+				callback(null, output)
 
 module.exports = CodeRunner

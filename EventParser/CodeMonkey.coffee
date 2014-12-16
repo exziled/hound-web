@@ -54,19 +54,18 @@ coderunner.loadTemplate (err, reply) ->
 	if err
 		console.log("Unable to load template")
 	else
-		# devicesWithProgram (err, data) ->
-		# 	if err
-		# 		console.log("unable to get list of devices, try again in 10 mins", err)
-		# 		return
-		# 	else
-		# 		for device_id in data
-		# 			deviceProgram device_id, (err, data) ->
-		# 				if err
-		# 					console.log("Unable to get program for ", device_id, err)
-		# 					return
-		# 				else
-		# 					# coderunner.runCode(data.javascript)
-		# 					console.log(data.javascript)
-		coderunner.runCode "if (false) {}", ()->
-			console.log("done?");
+		devicesWithProgram (err, devices) ->
+			if err
+				console.log("unable to get list of devices, try again in 10 mins", err)
+				return
+			else
+				for device_id in devices
+					console.log("Device %s", device_id);
+					deviceProgram device_id, (err, data) ->
+						if err
+							console.log("Unable to get program for ", device_id, err)
+							return
+						else
+							coderunner.runCode data.javascript, ()->
+								console.log("done?");
 
