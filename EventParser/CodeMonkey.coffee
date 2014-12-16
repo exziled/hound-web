@@ -1,13 +1,20 @@
 
 request = require('request')
 _ = require('lodash')
+json_sanitizer = require('json_sanitizer')
 
 CodeRunner = require('./coderunner.coffee')
 coderunner = new CodeRunner()
 
+env = process.env.NODE_ENV || 'dev';
+
+API_ENDPOINT = 'http://houndplex.plextex.com'
+if env == 'dev'
+	API_ENDPOINT = 'http://hound'
+
 
 devicesWithProgram = (callback) ->
-	request 'http://hound/api/program', (err, res, body) ->
+	request API_ENDPOINT+'/api/program', (err, res, body) ->
 		if not err and res.statusCode == 200
 			try
 				data = JSON.parse(body)
@@ -17,9 +24,11 @@ devicesWithProgram = (callback) ->
 				return
 
 			callback(null, _.pluck(data, 'device_id'))
+		else
+			callback(err||("bad status code "+res.statusCode), null)
 
 deviceProgram = (device_id, callback) ->
-	request 'http://hound/api/program/'+device_id, (err, res, body) ->
+	request API_ENDPOINT+'/api/program/'+device_id, (err, res, body) ->
 		if not err and res.statusCode == 200
 			try
 				data = JSON.parse(body)
@@ -29,6 +38,24 @@ deviceProgram = (device_id, callback) ->
 				return
 
 			callback(null, data)
+		else
+			callback(err||("bad status code "+res.statusCode), null)
+
+control = (coreid, outlet, state, callback) ->
+	url = 'http://houndplex.plextex.com'+':8082/control/'+coreid+'/'+outlet+'/'+state
+	console.log(url);
+	request url, (err, res, body) ->
+		if not err and res.statusCode == 200
+			try
+				data = JSON.parse(body)
+			catch e
+				console.error("HTTP Error: ", e)
+				callback(e, null)
+				return
+
+			callback(null, data)
+		else
+			callback(err||("bad status code "+res.statusCode), null)
 
 
 # * * * * *
@@ -41,7 +68,7 @@ deviceProgram = (device_id, callback) ->
 
 # crontab = require('node-crontab')
 # jobId = crontab.scheduleJob "*/10 * * * *", ()->
-#     console.log("%s we are starting!", Date.now())
+# 	console.log("%s we are starting!", Date.now())
 
 # console.log("%s Init complete", Date.now())
 
@@ -49,7 +76,6 @@ deviceProgram = (device_id, callback) ->
 #"*/10 * * * *" # every 10 minutes
 
 # Every 10 minutes:
-
 coderunner.loadTemplate (err, reply) ->
 	if err
 		console.log("Unable to load template")
@@ -59,13 +85,28 @@ coderunner.loadTemplate (err, reply) ->
 				console.log("unable to get list of devices, try again in 10 mins", err)
 				return
 			else
+				console.log(devices);
 				for device_id in devices
 					console.log("Device %s", device_id);
 					deviceProgram device_id, (err, data) ->
+						# console.log(data);
 						if err
 							console.log("Unable to get program for ", device_id, err)
 							return
 						else
-							coderunner.runCode data.javascript, ()->
-								console.log("done?");
+							coderunner.runCode data.javascript, (err, output)->
+								# console.log("done?", output.result);
+								json_sanitizer output.result, (err, result) =>
+									if err
+										console.error('Unable to parse result: ', output)
+									else
+										result =  JSON.parse(result)
+										# console.log(result);
+										# Handle Email
+										# Handle SMS - later
+										# Handle Control
+										for outlet of result.control
+											console.log(outlet);
+											control data.core_id, outlet, result.control[outlet], (err, data) ->
+												console.log(err, data);
 
