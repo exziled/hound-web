@@ -25,7 +25,7 @@ class HttpAPI
 					}
 					'createSub': {
 						'text':'Creates a data subscription with the core.'
-						'ex':['/createSub/192.168.1.113']
+						'ex':['/createSub/192.168.1.147']
 					}
 					'destroySub': {
 						'text':'Destroys a data subscription with the core.'
@@ -62,7 +62,7 @@ class HttpAPI
 				res.send({'err':err, 'reply':reply})
 
 		routes.get {name: 'destroySub', re:'/destroySub/:core_id'}, (req, res) =>
-			@corecomm.control req.params['core_id'], (err, reply) ->
+			@corecomm.destroySub req.params['core_id'], (err, reply) ->
 				res.send({'err':err, 'reply':reply})
 
 		routes.get {name: 'control', re:'/control/:core_id/:outlet/:state'}, (req, res) =>
