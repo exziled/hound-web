@@ -16,21 +16,24 @@
 		<block type="data_temp"></block>
 		<block type="data_irms"></block>
 		<block type="data_vrms"></block>
+		<!-- <block type="data_socket"></block> -->
 	</category>
 	<category name="Control">
 		<block type="control_outlet"></block>
 		<!-- <block type="math_arithmetic"></block>
 		<block type="math_single"></block> -->
 	</category>
-	<category name="Scheduling">
-		<block type="schedule_recurring_event"></block>
+
+	<!-- <category name="Scheduling">
+		<block type="schedule_recurring_event"></block> -->
 		<!-- <block type="math_arithmetic"></block>
 		<block type="math_single"></block> -->
-	</category>
+	<!-- </category> -->
+
 	<category name="Communication">
 		<block type="text"></block>
 		<block type="text_join"></block>
-		<block type="comm_sms"></block>
+		<!-- <block type="comm_sms"></block> -->
 		<block type="comm_email"></block>
 	</category>
 	<category name="Variables" custom="VARIABLE"></category>
