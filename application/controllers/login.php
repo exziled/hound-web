@@ -59,6 +59,10 @@ class Login extends MY_Controller {
 			redirect('/');
 		}
 	}
+	public function validate_get()
+	{
+		echo "here";
+	}
 
 	// Simple logout function
 	public function logout_get()
