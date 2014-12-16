@@ -13,10 +13,9 @@ class Devices extends MY_Controller {
 	public function index_get()
 	{
 		$devices = $this->device_model->getDevicesForUser($this->user->user_data->id);
-		// print_r($devices);
-		// exit();
+
 		foreach ($devices as $device => $prop) {
-			// echo $devices[$device]['ID'];
+
 			$id = $devices[$device]['ID'];
 			unset($devices[$device]['ID']);
 			$name = $devices[$device]['Name'];
@@ -38,13 +37,9 @@ class Devices extends MY_Controller {
 
 			$devices[$device]['kVAh Last 24hrs'] = $this->samples->getKWH24hrs($id);
 
-			// unset($devices[$device]['Form Factor']);
 			unset($devices[$device]['Sockets']);
 			unset($devices[$device]['Last Checkin']);
-
 		}
-		// print_r($devices);
-		// exit();
 
 		$this->twiggy->set('action', site_url("/devices/add"));
 		$this->twiggy->set('devices', $devices);
@@ -68,21 +63,13 @@ class Devices extends MY_Controller {
 	 */
 	public function add_post()
 	{
-		//@todo input validation
-
 		$data = $this->input->post();
 		$data['user_id'] = $this->user->user_data->id;
 
-		$ret = $this->device_model
-			->insert($data);
-		if ($ret)
-		{
+		$success = $this->device_model->insert($data);
+		if ($success) {
 			$this->session->set_message("Success",'New device successfully added.');
-			//@todo send post to spark core
-		}
-		else
-		{
-			//@todo add better error message
+		} else {
 			$this->session->set_message("Danger",'Unable to add device.');
 		}
 		redirect("/devices");
@@ -111,16 +98,12 @@ class Devices extends MY_Controller {
 
 		$data['user_id'] = $this->user->user_data->id;
 
-		$ret = $this->device_model
-					->update($data['device_id'], $data);
+		$success = $this->device_model->update($data['device_id'], $data);
 
-		if ($ret)
+		if ($success)
 		{
 			$this->session->set_message("Success",'Device changes saved.');
-		}
-		else
-		{
-			//@todo add better error message
+		} else {
 			$this->session->set_message("Danger",'Unable to change device.');
 		}
 		redirect("/devices");
@@ -130,8 +113,10 @@ class Devices extends MY_Controller {
 	 * display details about a spesificc hound device
 	 * @return [type]
 	 */
-	public function details_get($id)
+	public function details_get($id=null)
 	{
+		if ($id == null)
+			redirect('/devices');
 		$device = $this->device_model
 			->where('device_id', $id)
 			->get();
@@ -144,9 +129,9 @@ class Devices extends MY_Controller {
 		$app1 = array();
 		$app2 = array();
 		$time = array();
-		// $time2 = array();
+
 		foreach ($data as $idx => $el) {
-			// print_r($el);
+
 			if ($el['socket'] == 0) {
 				array_push($vrms1, $el['voltage']);
 				array_push($irms1, $el['current']);
@@ -158,7 +143,7 @@ class Devices extends MY_Controller {
 			}
 			array_push($time, $el['timestamp']);
 		}
-		// exit();
+
 
 		// the substring removes the [] so that the json can be embedded in a js array
 		$this->twiggy->set('data_vrms1', substr(json_encode($vrms1), 1, -1));
@@ -180,11 +165,6 @@ class Devices extends MY_Controller {
 
 		$this->twiggy->set('stats', $stats);
 
-		// $this->twiggy->set('data_vrms', substr(json_encode($data['voltage']), 1, -1));
-		// $this->twiggy->set('data_irms', substr(json_encode($data['current']), 1, -1));
-		// $this->twiggy->set('data_app', substr(json_encode($data['apparent_power']), 1, -1));
-		// $this->twiggy->set('data_time', substr(json_encode($data['timestamp']), 1, -1));
-
 		$this->twiggy->set('vrms', "...");
 		$this->twiggy->set('irms', "...");
 		$this->twiggy->set('real', "...");
@@ -197,41 +177,20 @@ class Devices extends MY_Controller {
 		$this->twiggy->display('devices/details');
 	}
 
-	public function refresh_get($id)
+	/**
+	 * [remove_get description]
+	 * @param  [type]
+	 * @return [type]
+	 */
+	public function remove_get($id=null)
 	{
-		// //lookup the core ID in the DB
-		// $devices = $this->device_model
-		// 	->where('device_id', $id)
-		// 	->get();
+		if ($id == null)
+			redirect("/devices");
 
-		// $function = 'activate';
-		// $url = $this->config->item('core_url');
-
-		// $url = str_replace('$(FUNCTION)', $function, $url);
-		// $url = str_replace('$(COREID)', $devices['core_id'], $url);
-		// $url = str_replace('$(ACCESS_TOKEN)', $devices['access_token'], $url);
-		// $url = trim($url);
-		// die($url);
-		// $response = curl_post($url);
-
-		// $response = json_decode($response, true);
-		// if (!is_null($response))
-		// {
-		// 	print_r($response);
-		// 	if ($response['id'] == $devices['core_id']) {
-		// 		if ($response['return_value'] == 0) {
-		// 			//core subscription created
-		// 		} else {
-		// 			//set the core in an error state
-		// 		}
-		// 	}
-		// }
-	}
-	public function remove_get($id)
-	{
-		$this->samples->delete(array('device_id' => $id));
 		//@todo handle foreign key constraints
-		//@todo Confirm the deletion with the user.
+		$this->samples->delete(array('device_id' => $id));
+		$this->program->delete(array('device_id' => $id));
+
 		if (!$this->device_model->delete(array('device_id' => $id)))
 		{
 			$this->session->set_message("Danger",'Unable to delete device.');
@@ -239,8 +198,14 @@ class Devices extends MY_Controller {
 		redirect('/devices');
 	}
 
-	public function program_get($id)
+	/**
+	 * Render the blockly programming interface. Load the user's previous program
+	 * if one exists.
+	 */
+	public function program_get($id = null)
 	{
+		if ($id == null)
+			redirect("/devices");
 		$device = $this->device_model->where('device_id', $id)->get();
 		$code = $this->program->where('device_id', $id)->get();
 
@@ -251,14 +216,26 @@ class Devices extends MY_Controller {
 		$this->twiggy->display('devices/program');
 	}
 
+	/**
+	 * Store the users program in the database. Or update the current program.
+	 */
 	public function program_post()
 	{
-		print_r($this->post());
+		$exists = $this->program
+						->select("count(*) AS e")
+						->where('device_id',$this->post('device_id'))
+						->get();
+		$exists = $exists['e'];
 
-		$success = $this->program->insertOrUpdate($this->post());
+		$success = FALSE;
+		if ($exists) {
+			$success = $this->program->update($this->post('device_id'), $this->post());
+		} else {
+			$success = $this->program->insert($this->post());
+		}
 
 		if ($success){
-			$this->session->set_message("Success",'Program Updated!');
+			$this->session->set_message("Success",'Program Updated.');
 			redirect('/devices');
 		}else{
 			$this->session->set_message("Danger",'Unable to update program.');
