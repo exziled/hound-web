@@ -52,21 +52,30 @@
 				</div>
 			</div>
 
-			<!-- <div class="col-lg-2 col-md-6">
+			<div class="col-lg-2 col-md-6"></div>
+
+			<div class="col-lg-4 col-md-6">
 				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<div class="row">
-							<div class="col-xs-3">
-								<i class="fa fa-bolt fa-5x"></i>
-							</div>
-							<div class="col-xs-9 text-right">
-								<div class="huge" id="real">{{real}}</div>
-								<div style="margin-left: -10px;">Real Power</div>
-							</div>
+					<div class="panel-heading text-right">
+						<div class="huge">
+							<span id="pf_1">{{irms}}</span> | <span id="pf_2">{{irms}}</span>
 						</div>
+						<div>Power Factor</div>
 					</div>
 				</div>
-			</div> -->
+			</div>
+
+			<div class="col-lg-4 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading text-right">
+						<div class="huge">
+							<span id="real_1">{{real}}</span> | <span id="real_2">{{real}}</span><span class="small"> W</span>
+						</div>
+						<div>Real Power</div>
+					</div>
+				</div>
+			</div>
+
 
 			<!-- <div class="col-lg-2 col-md-6">
 				<div class="panel panel-primary">
@@ -370,6 +379,8 @@
 				$('#vrms_1').text(datain.vrms[0].toFixed(1));
 				$('#irms_1').text(datain.irms[0].toFixed(2));
 				$('#app_1').text(datain.app[0].toFixed(1));
+				$('#real_1').text(datain.real[0].toFixed(1));
+				$('#pf_1').text(datain.pf[0].toFixed(2));
 
 				// idx = 1;
 				// label = series_labels[idx];
@@ -384,6 +395,8 @@
 				$('#vrms_2').text(datain.vrms[0].toFixed(1));
 				$('#irms_2').text(datain.irms[0].toFixed(2));
 				$('#app_2').text(datain.app[0].toFixed(1));
+				$('#real_2').text(datain.real[0].toFixed(1));
+				$('#pf_2').text(datain.pf[0].toFixed(2));
 
 				// idx = 2;
 				// label = series_labels[idx];
