@@ -160,8 +160,7 @@ class CoreComm
 
 	# destroy a data subscripton
 	destroySub: (core_id, callback) ->
-		@send 0x0802, ip, (err, reply) ->
-			console.log("destroy", reply);
+		@send 0x0802, core_id, (err, reply) ->
 			if not err and reply.result == 1
 				callback(null, reply) # Subscription destroyed
 			else
